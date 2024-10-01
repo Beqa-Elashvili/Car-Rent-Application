@@ -1,0 +1,1 @@
+export { createCarImage } from "./CreateCarImage";
