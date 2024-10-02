@@ -1,10 +1,9 @@
 "use client";
 
-import { createCarImage } from "./CreateCarImage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import mclarenImage from "/mclaren.jpeg";
+import { Main } from "./Components/Main";
 
 export default function Home() {
   const router = useRouter();
@@ -49,26 +48,13 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    fetchCarData();
-  }, []);
+  // useEffect(() => {
+  //   fetchCarData();
+  // }, []);
 
   return (
     <div className="w-full">
-      <div className="relative flex items-center justify-center">
-        <img
-          className="w-full object-contain"
-          src="/mclaren.jpeg"
-          alt="mclaren"
-        />
-        <div className="absolute w-full text-white ">
-          <div className="relative w-full flex flex-col justify-center text-white">
-            <p className="bg-white absolute mb-14 w-full h-px"></p>
-            <p className="text-8xl  pl-14">THE GOLD</p>
-            <p className="bg-white absolute mt-20 w-full h-px"></p>
-          </div>
-        </div>
-      </div>
+      <Main />
     </div>
   );
 }
