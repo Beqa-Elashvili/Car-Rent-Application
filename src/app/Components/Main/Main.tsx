@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 import { SiLamborghini } from "react-icons/si";
+import { SiAstonmartin } from "react-icons/si";
+import { SiFerrari } from "react-icons/si";
+import { SiPorsche } from "react-icons/si";
+import { SiBugatti } from "react-icons/si";
 
 export function Main() {
   return (
@@ -72,11 +76,12 @@ export function Main() {
             exhilarating experience, there is no better answer than Rental Cars.
           </p>
         </div>
-        <div className="inline relative bg-red-200 h-[1000px]">
+        <div className="inline relative bg-red-200 ">
           <img className="object-contain" src="/porche.jpg" alt="" />
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black"></div>
+          <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
         </div>
-        <h1 className="px-2 flex items-end">Our Featured Rides</h1>
+        <h1 className="px-2 flex items-end mt-20">Our Featured Rides</h1>
         <div className="relative flex flex-col items-center justify-center">
           <img className="w-full" src="/lamborgini.jpeg" alt="" />
           <div className="absolute  m-auto w-4/6">
@@ -119,8 +124,37 @@ export function Main() {
             </div>
           </div>
         </div>
-        <div className="w-4/6 relative h-40 flex flex-col overflow-hidden justify-center m-auto">
-          <SiLamborghini className="text-[200px] absolute" />
+        <div className="text-9xl font-medium ">
+          <div className="relative h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
+            <SiLamborghini className="opacity-40 text-[220px] absolute" />
+            <h1 className="ml-36">HURACAN COUPE</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
+            <SiAstonmartin className="opacity-40 text-[220px] absolute -rotate-12" />
+            <h1 className="ml-36">DB12 V8</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
+            <SiFerrari className="opacity-40 text-[220px] -top-3 absolute" />
+            <h1 className="ml-36">SF90 SPIDER</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
+            <SiPorsche className="opacity-40 text-[220px] absolute top-2 -rotate-12" />
+            <h1 className="ml-36">911 GT3</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
+            <SiBugatti className="opacity-40 text-[220px] top-2 absolute" />
+            <h1 className="ml-36">BUGATTI CHIRON</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+        </div>
+        <div className="h-40"></div>
+        <div className="h-px bg-gray-900 w-full"></div>
+        <div className="relative h-40 bg-green-900">
+          <div className="absolute inset-0 h-40 bg-gradient-to-t to-black from-transparent opacity-90 "></div>
         </div>
       </div>
     </div>

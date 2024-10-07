@@ -32,7 +32,7 @@ export default function Home() {
       const response = await axios.get(
         "https://cars-by-api-ninjas.p.rapidapi.com/v1/cars",
         {
-          params: { make: "Mercedes-Benz", limit: 10 },
+          params: { make: "bugatti", model: "", limit: 10, year: "2024" },
           headers: {
             "x-rapidapi-key":
               "3ab71f1fe5msh3809073701083acp1c1c13jsn96cf5f721c27",
@@ -51,6 +51,7 @@ export default function Home() {
   // useEffect(() => {
   //   fetchCarData();
   // }, []);
+  console.log(carData);
 
   return (
     <div className="w-full">
