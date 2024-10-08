@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export function Header() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <div className="absolute w-full text-white h-full text-2xl z-10 top-2">
+    <div className="absolut w-full text-white h-full text-2xl z-10 top-2">
       <div className="flex justify-between px-2">
         <div className="flex relative items-center  gap-2">
           <button onClick={() => setIsOpen(!isOpen)}>
