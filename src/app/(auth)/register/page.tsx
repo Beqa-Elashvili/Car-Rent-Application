@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 function Register() {
+  const router = useRouter();
   const [info, setInfo] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
@@ -10,7 +12,7 @@ function Register() {
   const handleInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
     setInfo((prev) => ({ ...prev, [name]: value }));
-    setError("something wrong while registered");
+    setError("");
   };
 
   async function handleSubmit(e: {
@@ -21,6 +23,7 @@ function Register() {
     const { username, email, password } = info;
     if (!username || !email || !password) {
       setError("please input all providers");
+      return;
     }
     try {
       setPending(true);
@@ -35,7 +38,7 @@ function Register() {
         setPending(false);
         const form = e.target;
         form.reset();
-        console.log("user registered");
+        router.push("/login");
       } else {
         const errorData = await res.json();
         setError(errorData.message);
