@@ -1,6 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth/next";
-import { ConnectDB } from "utils/connect";
 import User from "models/userModal";
 import bcrypt from "bcrypt";
 
@@ -39,6 +38,7 @@ export const authOptions = {
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
@@ -46,20 +46,20 @@ export const authOptions = {
         token.email = user.email;
         token.id = user.id;
       }
-      console.log("this is token", token);
+      console.log("Final token", token);
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
       if (token) {
         session.user.username = token.username;
         session.user.email = token.email;
-        session.user.id === token.id;
+        session.user.id = token.id;
       }
       console.log("this is Session", session);
       return session;
     },
   },
 };
-const handler = NextAuth(authOptions);
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
