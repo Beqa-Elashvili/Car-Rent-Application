@@ -4,6 +4,7 @@ import { SiAstonmartin } from "react-icons/si";
 import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
+import { Input, Button, Select } from "antd";
 
 export function Main() {
   return (
@@ -153,8 +154,68 @@ export function Main() {
         </div>
         <div className="h-40"></div>
         <div className="h-px bg-gray-900 w-full"></div>
-        <div className="relative h-40 bg-green-900">
-          <div className="absolute inset-0 h-40 bg-gradient-to-t to-black from-transparent opacity-90 "></div>
+        <div className="relative h-96 bg-green-900 ">
+          <div className="absolute inset-0 h-96 bg-gradient-to-t to-black from-transparent opacity-90 ">
+            <div className="w-3/4 py-12 m-auto">
+              <h1 className="text-6xl">Get a quote</h1>
+              <div className="grid grid-cols-2 items-center mt-12 gap-8">
+                <Input
+                  placeholder="Name"
+                  className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
+                />
+                <Input
+                  placeholder="Phone"
+                  className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
+                />
+                <Input
+                  placeholder="Email"
+                  className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
+                />
+                <select
+                  defaultValue={""}
+                  className="p-2 rounded-xl bg-gray-400 text-white focus:outline-none"
+                >
+                  <option
+                    className="text-black rounded bg-white"
+                    disabled
+                    value=""
+                  >
+                    Car
+                  </option>
+                  <option
+                    className="text-black rounded bg-white"
+                    value="Porche"
+                  >
+                    Porche
+                  </option>
+                  <option
+                    className="text-black rounded bg-white"
+                    value="Lamborghini"
+                  >
+                    Lamborghini
+                  </option>
+                  <option className="text-black rounded bg-white" value="Bmw">
+                    Bmw
+                  </option>
+                  <option
+                    className="text-black rounded bg-white"
+                    value="McLaren"
+                  >
+                    McLaren
+                  </option>
+                  <option
+                    className="text-black rounded bg-white"
+                    value="Mercedes"
+                  >
+                    Mercedes
+                  </option>
+                </select>
+              </div>
+              <Button className="bg-blue-500 text-xl mt-4 w-40 border-none text-white font-medium">
+                Submit
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

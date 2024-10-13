@@ -37,7 +37,7 @@ export default function RootLayout({
             <Header />
           </header>
           {children}
-          <footer>fhgh</footer>
+          <footer></footer>
         </SessionProvider>
       </body>
     </html>

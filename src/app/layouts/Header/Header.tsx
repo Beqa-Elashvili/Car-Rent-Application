@@ -5,12 +5,16 @@ import { GiCarKey } from "react-icons/gi";
 import { FaHandPeace } from "react-icons/fa";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import UserProfile from "@/app/Components/userInfo/page";
+import { useSession } from "next-auth/react";
 
 export function Header() {
+  const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
-    <div className="absolut w-full text-white h-full text-2xl z-10 top-2">
-      <div className="flex justify-between px-2">
+    <div className=" bg-yellow-900 w-full text-white h-full text-2xl">
+      <div className="flex justify-between p-2">
         <div className="flex relative items-center  gap-2">
           <button onClick={() => setIsOpen(!isOpen)}>
             <IoIosMenu
@@ -28,13 +32,13 @@ export function Header() {
               initial={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.5 }}
               exit={{ opacity: 0, x: -100 }}
-              className="absolute left-0 top-8 h-full rounded-e-lg"
+              className="absolute left-0 top-8 h-full rounded-e-lg z-20"
               style={{
                 background:
                   "linear-gradient(174deg, rgba(235,216,0,1) 1%, rgba(206,125,20,1) 37%, rgba(209,127,20,1) 49%, rgba(74,52,5,1) 98%)",
               }}
             >
-              <div className="p-6 flex flex-col gap-2 text-xl">
+              <div className="p-6 flex flex-col gap-2 text-xl ">
                 <p>Rent</p>
                 <p>Costumer</p>
                 <p>Date</p>
@@ -48,7 +52,9 @@ export function Header() {
           <GiCarKey />
           <p>Rental Cars</p>
         </div>
-        <div className="flex items-center">
+
+        <div className="flex items-center gap-2">
+          <UserProfile />
           <h1 className="text-2xl flex items-center gap-2">Relax</h1>
           <FaHandPeace />
         </div>

@@ -1,28 +1,55 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
+import { Popover, Avatar, Button } from "antd";
+import { useRouter } from "next/navigation";
+import { UserOutlined } from "@ant-design/icons";
 
 const UserProfile = () => {
+  const rounter = useRouter();
   const { data: session, status } = useSession();
 
   if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  if (!session) {
-    return <div>You are not logged in</div>;
-  }
-
-  return (
-    <div className="px-2">
-      <h1>Welcome, {session?.user?.username}</h1>
-      <p>Email: {session?.user?.email}</p>
+  const content = (
+    <div className="flex flex-col gap-2">
       <button
-        className="bg-rose-500 p-2 w-20  rounded-xl hover:bg-rose-400"
+        className="bg-rose-500 p-2 rounded hover:bg-rose-400"
         onClick={() => signOut()}
       >
-        Logout
+        Log Out
       </button>
+    </div>
+  );
+
+  return (
+    <div className="flex items-center">
+      {!session ? (
+        <button
+          onClick={() => rounter.push("/register")}
+          className="p-1 px-4 bg-orange-400 text-white border-none rounded-xl hover:shadow: hover:bg-orange-600"
+        >
+          <h1 className="text-xl">Sign Up</h1>
+        </button>
+      ) : (
+        <>
+          <Popover content={content} placement="bottom" trigger="click">
+            <button>
+              <Avatar.Group>
+                <Avatar style={{ backgroundColor: "#f56a00" }}>
+                  {session.user.username}
+                </Avatar>
+                <Avatar
+                  style={{ backgroundColor: "#87d068" }}
+                  icon={<UserOutlined />}
+                />
+              </Avatar.Group>
+            </button>
+          </Popover>
+        </>
+      )}
     </div>
   );
 };
