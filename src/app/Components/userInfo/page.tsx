@@ -4,13 +4,19 @@ import { signOut, useSession } from "next-auth/react";
 import { Popover, Avatar, Button } from "antd";
 import { useRouter } from "next/navigation";
 import { UserOutlined } from "@ant-design/icons";
+import { GiTridentShield } from "react-icons/gi";
+import { Spin } from "antd";
 
 const UserProfile = () => {
   const rounter = useRouter();
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Spin />
+      </div>
+    );
   }
 
   const content = (
@@ -29,9 +35,10 @@ const UserProfile = () => {
       {!session ? (
         <button
           onClick={() => rounter.push("/register")}
-          className="p-1 px-4 bg-orange-400 text-white border-none rounded-xl hover:shadow: hover:bg-orange-600"
+          className="p-1 px-4 bg-orange-400 text-white border-none rounded-xl hover:shadow: hover:bg-orange-600 flex items-center"
         >
           <h1 className="text-xl">Sign Up</h1>
+          <GiTridentShield />
         </button>
       ) : (
         <>
