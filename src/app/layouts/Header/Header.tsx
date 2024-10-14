@@ -28,7 +28,10 @@ export function Header() {
             <div className="hover:text-green-400 cursor-pointer">
               CONDITIONS
             </div>
-            <div className="flex items-center gap-2 text-xl hover:text-green-400 cursor-pointer ">
+            <div
+              onClick={() => router.push("/pages/collection")}
+              className="flex items-center gap-2 text-xl hover:text-green-400 cursor-pointer "
+            >
               <GiCarKey />
               <p>Collection</p>
             </div>

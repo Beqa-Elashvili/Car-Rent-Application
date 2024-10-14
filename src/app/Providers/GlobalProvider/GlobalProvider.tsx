@@ -3,12 +3,12 @@ import { PropsWithChildren, useState } from "react";
 import { GlobalContext } from "./GlobalContext";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
-  const [saleProducts, setSaleProducts] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
   return (
     <GlobalContext.Provider
       value={{
-        saleProducts,
-        setSaleProducts,
+        collections,
+        setCollections,
       }}
     >
       {children}

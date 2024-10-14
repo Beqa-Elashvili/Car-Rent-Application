@@ -1,11 +1,11 @@
 import { Dispatch, ReactNode, SetStateAction, createContext } from "react";
 
 interface GlobalContextProps {
-  saleProducts: any[];
-  setSaleProducts: Dispatch<SetStateAction<any[]>>;
+  collections: any[];
+  setCollections: Dispatch<SetStateAction<any[]>>;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
-  saleProducts: [],
-  setSaleProducts: () => {},
+  collections: [],
+  setCollections: () => {},
 });
