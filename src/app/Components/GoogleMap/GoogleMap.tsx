@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { randomIconUrl } from ".";
 import {
   MapContainer,
@@ -15,38 +15,37 @@ export function GoogleMap() {
   const [clickedPosition, setClickedPosition] = useState<
     [number, number] | null
   >(null);
-  const defaultPosition: [number, number] = [52.54, 10];
+  const [CurrentPosition, setCurrentPosition] = useState<
+    [number, number] | null
+  >(null);
 
-//   function LocationMarker() {
-//     const [position, setPosition] = useState(null);
-//     const map = useMapEvents({
-//       click() {
-//         map.locate();
-//       },
-//       locationfound(e: any) {
-//         setPosition(e.latlng);
-//         map.flyTo(e.latlng, map.getZoom());
-//       },
-//     });
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          setCurrentPosition([latitude, longitude]);
+        },
+        () => {
+          console.error("Unable to retrieve your location.");
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
-      function LocationMarker() {
-        const [position, setPosition] = useState(null);
-        const map = useMapEvents({
-          click(e) {
-            // Set the clicked position
-            setClickedPosition([e.latlng.lat, e.latlng.lng]);
-            // Optional: Fly to clicked position
-            map.flyTo(e.latlng, map.getZoom());
-          },
-          locationfound(e: any) {
-            setPosition(e.latlng);
-            map.flyTo(e.latlng, map.getZoom());
-          },
-        });
+  function LocationMarker() {
+    const map = useMapEvents({
+      click(e) {
+        setClickedPosition([e.latlng.lat, e.latlng.lng]);
+        map.flyTo(e.latlng, map.getZoom());
+      },
+    });
 
-    return position === null ? null : (
-      <Marker position={position} icon={DefaultIcon}>
-        <Popup>You are here</Popup>
+    return clickedPosition === null ? null : (
+      <Marker position={clickedPosition} icon={DefaultIcon}>
+        <Popup>You clicked here</Popup>
       </Marker>
     );
   }
@@ -57,29 +56,37 @@ export function GoogleMap() {
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
   });
-
   return (
     <div>
-      <MapContainer
-        center={defaultPosition}
-        zoom={10}
-        scrollWheelZoom={false}
-        style={{ width: "500px", height: "200px", borderRadius: 4 }}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=d3k12FZaz83jdLUdUwqb"
-        />
-        {clickedPosition && (
-          <Marker position={clickedPosition} icon={DefaultIcon}>
-            <Popup>
-              You clicked here: {clickedPosition[0].toFixed(4)},{" "}
-              {clickedPosition[1].toFixed(4)}
-            </Popup>
-          </Marker>
-        )}
-        <LocationMarker />
-      </MapContainer>
+      {CurrentPosition && (
+        <MapContainer
+          center={CurrentPosition}
+          zoom={10}
+          scrollWheelZoom={false}
+          style={{ width: "500px", height: "200px", borderRadius: 4 }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=d3k12FZaz83jdLUdUwqb"
+          />
+          {clickedPosition ? (
+            <Marker position={clickedPosition} icon={DefaultIcon}>
+              <Popup>
+                You clicked here: {clickedPosition[0].toFixed(4)},{" "}
+                {clickedPosition[1].toFixed(4)}
+              </Popup>
+            </Marker>
+          ) : (
+            <Marker position={CurrentPosition} icon={DefaultIcon}>
+              <Popup>
+                You are here: {CurrentPosition[0].toFixed(4)},{" "}
+                {CurrentPosition[1].toFixed(4)}
+              </Popup>
+            </Marker>
+          )}
+          <LocationMarker />
+        </MapContainer>
+      )}
     </div>
   );
 }
