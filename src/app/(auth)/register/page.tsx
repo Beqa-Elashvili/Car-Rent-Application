@@ -2,10 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FaHandPeace } from "react-icons/fa";
+import { GiTridentShield } from "react-icons/gi";
+import { GoogleMap } from "@/app/Components/GoogleMap";
 
 function Register() {
   const router = useRouter();
-  const [info, setInfo] = useState({ username: "", email: "", password: "" });
+  const [info, setInfo] = useState({
+    username: "",
+    email: "",
+    password: "",
+    lastname: "",
+    phonenumber: "",
+  });
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
 
@@ -50,10 +59,14 @@ function Register() {
   }
 
   return (
-    <div>
+    <div className="bg-gray-800 w-full relative h-screen flex items-center justify-center flex-col gap-2">
+      <div className="absolute left-0 top-0 flex items-center gap-2">
+        <GiTridentShield className="text-orange-500 size-20" />
+        <h1 className="text-white text-3xl font-medium">REGISTRATION</h1>
+      </div>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center gap-2"
+        className="flex flex-col items-center gap-4 border p-12 rounded-xl "
       >
         <div>
           <input
@@ -64,6 +77,28 @@ function Register() {
             onChange={handleInput}
             autoComplete="username"
             placeholder="UserName"
+          />
+        </div>
+        <div>
+          <input
+            className="border rounded p-2"
+            name="username"
+            type="text"
+            value={info.lastname}
+            onChange={handleInput}
+            autoComplete="username"
+            placeholder="LastName"
+          />
+        </div>
+        <div>
+          <input
+            className="border rounded p-2"
+            name="username"
+            type="text"
+            value={info.phonenumber}
+            onChange={handleInput}
+            autoComplete="username"
+            placeholder="PhoneNumber"
           />
         </div>
         <div>
@@ -100,6 +135,7 @@ function Register() {
           Submit
         </button>
       </form>
+      <GoogleMap />
     </div>
   );
 }
