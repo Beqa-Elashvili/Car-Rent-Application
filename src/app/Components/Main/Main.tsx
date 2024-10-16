@@ -127,28 +127,99 @@ export function Main() {
         </div>
         <div className="text-9xl font-medium ">
           <div className="relative h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
-            <SiLamborghini className="opacity-40 text-[220px] absolute" />
-            <h1 className="ml-36">HURACAN COUPE</h1>
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              transition={{ duration: 1 }}
+              className="text-[220px] absolute"
+            >
+              <SiLamborghini className="opacity-40 " />
+            </motion.div>
+
+            <motion.h1
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+              className="ml-36"
+            >
+              HURACAN COUPE
+            </motion.h1>
           </div>
           <div className="h-px bg-gray-900 w-full"></div>
           <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <SiAstonmartin className="opacity-40 text-[220px] absolute -rotate-12" />
-            <h1 className="ml-36">DB12 V8</h1>
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              transition={{ duration: 1 }}
+              className="text-[220px] absolute"
+            >
+              <SiAstonmartin className="opacity-40  -rotate-12" />
+            </motion.div>
+            <motion.h1
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+              className="ml-36"
+            >
+              DB12 V8
+            </motion.h1>
           </div>
           <div className="h-px bg-gray-900 w-full"></div>
           <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <SiFerrari className="opacity-40 text-[220px] -top-3 absolute" />
-            <h1 className="ml-36">SF90 SPIDER</h1>
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              transition={{ duration: 1 }}
+              className="absolute text-[220px]"
+            >
+              <SiFerrari className="opacity-40  -top-3" />
+            </motion.div>
+            <motion.h1
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+              className="ml-36"
+            >
+              SF90 SPIDER
+            </motion.h1>
           </div>
           <div className="h-px bg-gray-900 w-full"></div>
           <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <SiPorsche className="opacity-40 text-[220px] absolute top-2 -rotate-12" />
-            <h1 className="ml-36">911 GT3</h1>
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              transition={{ duration: 1 }}
+              className="text-[220px] absolute"
+            >
+              <SiPorsche className="opacity-40  top-2 -rotate-12" />
+            </motion.div>
+            <motion.h1
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+              className="ml-36"
+            >
+              911 GT3
+            </motion.h1>
           </div>
           <div className="h-px bg-gray-900 w-full"></div>
           <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <SiBugatti className="opacity-40 text-[220px] top-2 absolute" />
-            <h1 className="ml-36">BUGATTI CHIRON</h1>
+            <motion.div
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: -100 }}
+              transition={{ duration: 1 }}
+              className="text-[220px] absolute"
+            >
+              <SiBugatti className="opacity-40  top-2" />
+            </motion.div>
+            <motion.h1
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              transition={{ duration: 1 }}
+              className="ml-36"
+            >
+              BUGATTI CHIRON
+            </motion.h1>
           </div>
           <div className="h-px bg-gray-900 w-full"></div>
         </div>
