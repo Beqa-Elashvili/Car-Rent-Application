@@ -10,7 +10,7 @@ export function Header() {
   const router = useRouter();
 
   return (
-    <div className=" bg-gray-900 w-full text-white h-full text-2xl">
+    <div className="bg-gray-900 w-full text-white h-full text-2xl">
       <div className="flex justify-between p-2 text-xl items-center">
         <div
           onClick={() => router.push("/")}

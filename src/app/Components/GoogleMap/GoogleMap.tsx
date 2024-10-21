@@ -10,6 +10,8 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Button } from "antd";
+import { FaMapMarkedAlt } from "react-icons/fa";
 
 export function GoogleMap() {
   const [clickedPosition, setClickedPosition] = useState<
@@ -57,13 +59,17 @@ export function GoogleMap() {
     popupAnchor: [1, -34],
   });
   return (
-    <div>
+    <div className="flex flex-col gap-2 text-white">
+      <div className="flex gap-2 items-center text-2xl">
+        <FaMapMarkedAlt className="text-yellow-500" />
+        <h1> Add your Current Position</h1>
+      </div>
       {CurrentPosition && (
         <MapContainer
           center={CurrentPosition}
           zoom={10}
           scrollWheelZoom={false}
-          style={{ width: "500px", height: "200px", borderRadius: 4 }}
+          style={{ width: "500px", height: "400px", borderRadius: 4 }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -87,6 +93,12 @@ export function GoogleMap() {
           <LocationMarker />
         </MapContainer>
       )}
+      <Button
+        onClick={() => setClickedPosition(CurrentPosition)}
+        className="border-none text-white rounded-xl p-2 bg-blue-400 font-medium"
+      >
+        RESET
+      </Button>
     </div>
   );
 }
