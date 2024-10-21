@@ -1,19 +1,25 @@
-import { StaticImageData } from "next/dist/shared/lib/get-img-props";
 import { Dispatch, SetStateAction, createContext } from "react";
 
+export interface TLocation {
+  city: string | null;
+  street: string | null;
+}
+export interface TCollecttion {
+  name: string | undefined;
+  logo: string | undefined;
+}
+
 interface GlobalContextProps {
-  collections: { name: string; logo: string }[];
-  setCollections: Dispatch<
-    SetStateAction<
-      {
-        name: string;
-        logo: string;
-      }[]
-    >
-  >;
+  location: TLocation;
+  setLocation: React.Dispatch<React.SetStateAction<TLocation>>;
+
+  collections: TCollecttion[];
+  setCollections: Dispatch<SetStateAction<TCollecttion[]>>;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
+  location: { city: null, street: null },
+  setLocation: () => {},
   collections: [],
   setCollections: () => {},
 });

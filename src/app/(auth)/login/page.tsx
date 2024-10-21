@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import UserProfile from "@/app/Components/userInfo/page";
 
 function SignIn() {
   const [info, setInfo] = useState({ email: "", password: "" });
@@ -79,7 +78,6 @@ function SignIn() {
           {pending ? "loging" : "log in"}
         </button>
       </form>
-      <UserProfile />
     </div>
   );
 }

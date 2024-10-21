@@ -7,7 +7,7 @@ export default function Page() {
   const router = useRouter();
   return (
     <div className="bg-gray-800 h-screen flex items-center justify-center flex-wrap gap-2">
-      {collections.map((item, index) => (
+      {collections?.map((item, index) => (
         <div
           onClick={() => router.push(`/pages/brands/${item.name}`)}
           className="p-2 flex flex-col items-center border object-contain rounded-xl transition duration-300 hover:bg-gray-500  hover:cursor-pointer"
@@ -19,7 +19,7 @@ export default function Page() {
             alt="brand-logo"
           />
           <h1 className="text-3xl font-medium text-white">
-            {item.name.toUpperCase()}
+            {item.name?.toUpperCase()}
           </h1>
         </div>
       ))}

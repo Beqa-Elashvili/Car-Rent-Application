@@ -6,8 +6,10 @@ import { FaHandPeace } from "react-icons/fa";
 import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
 import { Input, Button } from "antd";
+import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 function Register() {
+  const { location } = useGlobalProvider();
   const router = useRouter();
   const [info, setInfo] = useState({
     username: "",
@@ -18,6 +20,7 @@ function Register() {
   });
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<boolean>(true);
 
   const handleInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
@@ -60,8 +63,13 @@ function Register() {
   }
 
   return (
-    <div className="text-white bg-gray-800 w-full h-screen relative flex items-center justify-center flex-wrap gap-12">
-      <div className=" mt-20 border rounded-xl p-12 flex gap-12 flex-wrap w-10/12">
+    <div className="text-white bg-gray-800 w-full h-full relative flex items-center justify-center flex-wrap gap-12">
+      <div
+        style={{
+          boxShadow: "0 10px 100px rgba(0, 0, 10, 5)",
+        }}
+        className=" mt-20 border rounded-xl p-12 flex gap-12 flex-wrap w-10/12"
+      >
         <div className="absolute left-0 top-0 flex items-center gap-2">
           <GiTridentShield className="text-orange-500 size-20" />
           <h1 className="text-white text-3xl font-medium">REGISTRATION</h1>
@@ -69,12 +77,12 @@ function Register() {
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 w-full lg:w-2/4"
+          className="flex flex-col gap-2 w-full lg:w-2/4"
         >
           <h1 className="text-2xl ">Please Input all Providers</h1>
           <div>
             <Input
-              className="border rounded p-2"
+              className="border rounded  p-2"
               name="username"
               type="text"
               value={info.username}
@@ -85,7 +93,7 @@ function Register() {
           </div>
           <div>
             <Input
-              className="border rounded p-2"
+              className="border  rounded p-2"
               name="lastname"
               type="text"
               value={info.lastname}
@@ -96,9 +104,10 @@ function Register() {
           </div>
           <div>
             <Input
-              className="border rounded p-2"
+              className="border   rounded p-2"
               name="phonenumber"
               type="number"
+              maxLength={9}
               value={info.phonenumber}
               onChange={handleInput}
               autoComplete="phoneNumber"
@@ -107,7 +116,7 @@ function Register() {
           </div>
           <div>
             <Input
-              className="border rounded p-2"
+              className="border  rounded p-2"
               name="email"
               type="email"
               value={info.email}
@@ -127,19 +136,22 @@ function Register() {
               placeholder="Password"
             />
           </div>
-
-          <Button
-            className="border-none rounded-xl  w-full py-4 text-white bg-blue-500 hover:bg-blue-600 hover:shadow-xl mt-4"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-          <div className="h-12">
+          <div>
             {error && (
-              <div className="text-red-700 bg-red-200 border border-white rounded-xl p-4 w-40 text-center mt-2">
+              <div className="text-red-700   bg-red-200 border border-white rounded-xl p-4 w-40 text-center mt-2">
                 {error}
               </div>
             )}
+          </div>
+          <Button
+            className="border-none rounded-xl w-full py-5 text-white bg-blue-500 hover:bg-blue-600 hover:shadow-xl mt-4"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>{" "}
+          <div className="text-3xl">
+            <h1>{location.city}</h1>
+            <h1>{location.street}</h1>
           </div>
         </form>
         <GoogleMap />
