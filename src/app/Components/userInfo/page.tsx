@@ -19,6 +19,7 @@ const UserProfile = () => {
     );
   }
 
+  console.log(session, status);
   const content = (
     <div className="flex flex-col gap-2">
       <button

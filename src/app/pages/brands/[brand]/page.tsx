@@ -230,11 +230,12 @@ export default function Page({ params }: { params: { brand: string } }) {
             }
             return angle;
           };
+          console.log(carData);
           return (
-            <div key={index} className="bg-gray-300 text-white  rounded-xl">
+            <div key={index} className="bg-gray-300 text-white rounded-xl">
               <img src={createCarImage(car, handleimg())} alt="carimg" />
-              <div className="bg-gray-900 p-2 rounded-b-xl">
-                <h1 className="text-2xl">
+              <div className="bg-gray-900 h-max p-2 rounded-b-xl">
+                <h1 className="text-2xl min-h-16">
                   {car.make.toUpperCase()} {car.model.toUpperCase()}
                 </h1>
                 <h1 className="mt-2 text-lg">

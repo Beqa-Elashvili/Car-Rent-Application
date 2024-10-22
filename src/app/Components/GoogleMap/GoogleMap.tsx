@@ -17,7 +17,7 @@ import axios from "axios";
 
 export function GoogleMap() {
   const { location, setLocation } = useGlobalProvider();
-  
+
   const [clickedPosition, setClickedPosition] = useState<
     [number, number] | null
   >(null);
@@ -133,10 +133,7 @@ export function GoogleMap() {
           <LocationMarker />
         </MapContainer>
       )}
-      <div className="text-3xl">
-        <h1>{location.city}</h1>
-        <h1>{location.street}</h1>
-      </div>
+
       <Button
         onClick={() => setClickedPosition(CurrentPosition)}
         className="border-none text-white rounded-xl p-2 bg-blue-400 font-medium"

@@ -1,15 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FaHandPeace } from "react-icons/fa";
 import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
 import { Input, Button } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 function Register() {
-  const { location } = useGlobalProvider();
+  const { location, setLocation } = useGlobalProvider();
   const router = useRouter();
   const [info, setInfo] = useState({
     username: "",
@@ -17,13 +16,19 @@ function Register() {
     password: "",
     lastname: "",
     phonenumber: "",
+    city: "",
+    street: "",
   });
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<boolean>(true);
 
   const handleInput = (e: { target: { name: string; value: string } }) => {
     const { name, value } = e.target;
+    if (name === "city") {
+      setLocation({ city: "", street: "" });
+    } else if (name === "street") {
+      setLocation((prev) => ({ ...prev, street: "" }));
+    }
     setInfo((prev) => ({ ...prev, [name]: value }));
     setError("");
   };
@@ -49,7 +54,7 @@ function Register() {
       });
       if (res.ok) {
         setPending(false);
-        const form = e.target;
+        const form = e.target.value;
         form.reset();
         router.push("/login");
       } else {
@@ -62,8 +67,23 @@ function Register() {
     }
   }
 
+  useEffect(() => {
+    if (location.city) {
+      setInfo((prev) => ({
+        ...prev,
+        city: location.city || "",
+      }));
+    }
+    if (location.street) {
+      setInfo((prev) => ({
+        ...prev,
+        street: location.street || "",
+      }));
+    }
+  }, [location]);
+
   return (
-    <div className="text-white bg-gray-800 w-full h-full relative flex items-center justify-center flex-wrap gap-12">
+    <div className="text-white bg-gray-800 w-full h-full relative flex items-center justify-center flex-wrap gap-12 py-8">
       <div
         style={{
           boxShadow: "0 10px 100px rgba(0, 0, 10, 5)",
@@ -136,6 +156,29 @@ function Register() {
               placeholder="Password"
             />
           </div>
+          <div>Location:</div>
+          <div>
+            <Input
+              className="border rounded p-2"
+              name="city"
+              type="text"
+              value={info.city}
+              onChange={handleInput}
+              autoComplete="city"
+              placeholder="city"
+            />
+          </div>
+          <div>
+            <Input
+              className="border rounded p-2"
+              name="street"
+              type="text"
+              value={info.street}
+              onChange={handleInput}
+              autoComplete="street"
+              placeholder="street"
+            />
+          </div>
           <div>
             {error && (
               <div className="text-red-700   bg-red-200 border border-white rounded-xl p-4 w-40 text-center mt-2">
@@ -148,11 +191,7 @@ function Register() {
             onClick={handleSubmit}
           >
             Submit
-          </Button>{" "}
-          <div className="text-3xl">
-            <h1>{location.city}</h1>
-            <h1>{location.street}</h1>
-          </div>
+          </Button>
         </form>
         <GoogleMap />
       </div>
