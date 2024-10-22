@@ -19,11 +19,10 @@ const UserProfile = () => {
     );
   }
 
-  console.log(session, status);
   const content = (
     <div className="flex flex-col gap-2">
       <button
-        className="bg-rose-500 p-2 rounded hover:bg-rose-400"
+        className="font-medium p-2 rounded hover:text-red-500"
         onClick={() => signOut()}
       >
         Log Out
@@ -43,11 +42,11 @@ const UserProfile = () => {
         </button>
       ) : (
         <>
-          <Popover content={content} placement="bottom" trigger="click">
+          <Popover content={content} placement="bottom" trigger="hover">
             <button>
               <Avatar.Group>
                 <Avatar style={{ backgroundColor: "#f56a00" }}>
-                  {session.user.username}
+                  {session.user.username[0].toUpperCase()}
                 </Avatar>
                 <Avatar
                   style={{ backgroundColor: "#87d068" }}
