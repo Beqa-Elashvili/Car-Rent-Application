@@ -54,8 +54,8 @@ function SignIn() {
             name="email"
             type="text"
             onChange={handleInput}
-            autoComplete="username"
-            placeholder="Username"
+            autoComplete="email"
+            placeholder="email"
           />
         </div>
         <div>

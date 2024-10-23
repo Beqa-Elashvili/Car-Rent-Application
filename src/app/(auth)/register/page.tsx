@@ -4,45 +4,53 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
-import { Input, Button } from "antd";
+import { Input, Button, Spin, Form } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 function Register() {
-  const { location, setLocation } = useGlobalProvider();
+  const [form] = Form.useForm();
+  const { location } = useGlobalProvider();
   const router = useRouter();
-  const [info, setInfo] = useState({
-    username: "",
-    email: "",
-    password: "",
-    lastname: "",
-    phonenumber: "",
-    city: "",
-    street: "",
-  });
-  const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const handleInput = (e: { target: { name: string; value: string } }) => {
-    const { name, value } = e.target;
-    if (name === "city") {
-      setLocation({ city: "", street: "" });
-    } else if (name === "street") {
-      setLocation((prev) => ({ ...prev, street: "" }));
-    }
-    setInfo((prev) => ({ ...prev, [name]: value }));
-    setError("");
-  };
+  const handleSubmit = async (values: any) => {
+    const {
+      username,
+      email,
+      password,
+      repeatPassword,
+      lastname,
+      phonenumber,
+      city,
+      street,
+    } = values;
 
-  async function handleSubmit(e: {
-    [x: string]: any;
-    preventDefault: () => void;
-  }) {
-    e.preventDefault();
-    const { username, email, password } = info;
-    if (!username || !email || !password) {
-      setError("please input all providers");
+    if (values.phonenumber.length !== 9) {
+      form.setFields([
+        {
+          name: "phonenumber",
+          errors: ["ნომერი უნდა შედგებოდეს 9 რიცხვისაგან"],
+        },
+      ]);
       return;
     }
+    if (values.password !== values.repeatPassword) {
+      form.setFields([
+        {
+          name: "repeatPassword",
+          errors: ["შემოყვანილი პაროლი არ ემთხვევა არსებულს"],
+        },
+      ]);
+      return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     try {
       setPending(true);
       const res = await fetch("api/register", {
@@ -50,35 +58,30 @@ function Register() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(info),
+        body: JSON.stringify(values),
       });
       if (res.ok) {
-        setPending(false);
-        const form = e.target.value;
-        form.reset();
+        localStorage.setItem("city", city);
+        localStorage.setItem("street", street);
         router.push("/login");
       } else {
         const errorData = await res.json();
         setError(errorData.message);
-        setPending(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.log("error", error);
+      setError("An error occurred while registering.");
+    } finally {
+      setPending(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (location.city) {
-      setInfo((prev) => ({
-        ...prev,
-        city: location.city || "",
-      }));
+      form.setFieldsValue({ city: location.city });
     }
     if (location.street) {
-      setInfo((prev) => ({
-        ...prev,
-        street: location.street || "",
-      }));
+      form.setFieldsValue({ street: location.street });
     }
   }, [location]);
 
@@ -88,111 +91,111 @@ function Register() {
         style={{
           boxShadow: "0 10px 100px rgba(0, 0, 10, 5)",
         }}
-        className=" mt-20 border rounded-xl p-12 flex gap-12 flex-wrap w-10/12"
+        className="mt-20 border rounded-xl p-12 flex gap-12 flex-wrap w-10/12"
       >
         <div className="absolute left-0 top-0 flex items-center gap-2">
           <GiTridentShield className="text-orange-500 size-20" />
           <h1 className="text-white text-3xl font-medium">REGISTRATION</h1>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-2 w-full lg:w-2/4"
+        <Form
+          form={form}
+          className="flex flex-col w-full text-white lg:w-2/4"
+          name="basic"
+          onFinish={handleSubmit}
+          autoComplete="off"
         >
-          <h1 className="text-2xl ">Please Input all Providers</h1>
-          <div>
+          <h1 className="text-2xl mb-4">Please Input all Providers</h1>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "Please input your username!" }]}
+          >
+            <Input className="border rounded p-2" placeholder="UserName" />
+          </Form.Item>
+          <Form.Item
+            name="lastname"
+            rules={[
+              { required: true, message: "Please input your last name!" },
+            ]}
+          >
+            <Input className="border rounded p-2" placeholder="LastName" />
+          </Form.Item>
+          <Form.Item
+            name="phonenumber"
+            rules={[
+              { required: true, message: "Please input your phone number!" },
+            ]}
+          >
             <Input
-              className="border rounded  p-2"
-              name="username"
-              type="text"
-              value={info.username}
-              onChange={handleInput}
-              autoComplete="username"
-              placeholder="UserName"
-            />
-          </div>
-          <div>
-            <Input
-              className="border  rounded p-2"
-              name="lastname"
-              type="text"
-              value={info.lastname}
-              onChange={handleInput}
-              autoComplete="username"
-              placeholder="LastName"
-            />
-          </div>
-          <div>
-            <Input
-              className="border   rounded p-2"
-              name="phonenumber"
+              className="border rounded p-2"
               type="number"
               maxLength={9}
-              value={info.phonenumber}
-              onChange={handleInput}
-              autoComplete="phoneNumber"
               placeholder="PhoneNumber"
             />
-          </div>
-          <div>
-            <Input
-              className="border  rounded p-2"
-              name="email"
-              type="email"
-              value={info.email}
-              onChange={handleInput}
-              autoComplete="email"
-              placeholder="Email"
-            />
-          </div>
-          <div>
+          </Form.Item>
+          <Form.Item
+            name="email"
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please input a valid email!",
+              },
+            ]}
+          >
+            <Input className="border rounded p-2" placeholder="Email" />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{ required: true, message: "Please input your password!" }]}
+          >
             <Input
               className="border rounded p-2"
-              name="password"
               type="password"
-              value={info.password}
-              onChange={handleInput}
-              autoComplete="current-password"
+              autoComplete="password"
               placeholder="Password"
             />
-          </div>
+          </Form.Item>
+          <Form.Item
+            name="repeatPassword"
+            rules={[
+              { required: true, message: "Please repeat your password!" },
+            ]}
+          >
+            <Input
+              className="border rounded p-2"
+              type="password"
+              autoComplete="repeatPassword"
+              placeholder="repeatPassword"
+            />
+          </Form.Item>
           <div>Location:</div>
-          <div>
-            <Input
-              className="border rounded p-2"
-              name="city"
-              type="text"
-              value={info.city}
-              onChange={handleInput}
-              autoComplete="city"
-              placeholder="city"
-            />
-          </div>
-          <div>
-            <Input
-              className="border rounded p-2"
-              name="street"
-              type="text"
-              value={info.street}
-              onChange={handleInput}
-              autoComplete="street"
-              placeholder="street"
-            />
-          </div>
-          <div>
-            {error && (
-              <div className="text-red-700   bg-red-200 border border-white rounded-xl p-4 w-40 text-center mt-2">
-                {error}
-              </div>
-            )}
-          </div>
+          <Form.Item
+            name="city"
+            rules={[{ required: true, message: "Please input your city!" }]}
+          >
+            <Input className="border rounded p-2" placeholder="City" />
+          </Form.Item>
+          <Form.Item
+            name="street"
+            rules={[{ required: true, message: "Please input your street!" }]}
+          >
+            <Input className="border rounded p-2" placeholder="Street" />
+          </Form.Item>
+          {error && (
+            <div className="text-red-700 bg-red-200 border border-white rounded-xl p-4 w-40 text-center mt-2">
+              {error}
+            </div>
+          )}
           <Button
-            className="border-none rounded-xl w-full py-5 text-white bg-blue-500 hover:bg-blue-600 hover:shadow-xl mt-4"
-            onClick={handleSubmit}
+            className="border-none flex items-center gap-2 rounded-xl w-full py-5 text-white bg-blue-500 hover:bg-blue-600 hover:shadow-xl mt-4"
+            type="primary"
+            loading={pending}
+            htmlType="submit"
           >
             Submit
           </Button>
-        </form>
+        </Form>
         <GoogleMap />
       </div>
     </div>
