@@ -48,7 +48,7 @@ const UserProfile = () => {
               <Avatar.Group>
                 <Avatar style={{ backgroundColor: "#f56a00" }}>
                   {(
-                    session.user.username?.[0] as name? ||
+                    session.user.username?.[0] ||
                     session.user.name?.[0] ||
                     ""
                   ).toUpperCase()}
