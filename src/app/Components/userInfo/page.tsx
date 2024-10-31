@@ -35,10 +35,12 @@ const UserProfile = () => {
       {!session ? (
         <button
           onClick={() => rounter.push("/register")}
-          className="p-1 px-4 bg-orange-400 text-white border-none rounded-xl hover:shadow: hover:bg-orange-600 flex items-center"
+          className="p-1 px-2 relative text-white border-none flex items-center"
         >
-          <h1 className="text-xl">Sign Up</h1>
-          <GiTridentShield />
+          <span className="absolute left-0 border  border-gray-400 h-full"></span>
+          <Avatar className="bg-orange-700" icon={<UserOutlined />} />
+          <h1 className="text-xl ml-2">Sign Up</h1>
+          <span className="absolute right-0 border border-gray-400 h-full"></span>
         </button>
       ) : (
         <>
@@ -46,7 +48,11 @@ const UserProfile = () => {
             <button>
               <Avatar.Group>
                 <Avatar style={{ backgroundColor: "#f56a00" }}>
-                  {session.user.username[0].toUpperCase()}
+                  {(
+                    session.user.username?.[0] ||
+                    session.user.name?.[0] ||
+                    ""
+                  ).toUpperCase()}
                 </Avatar>
                 <Avatar
                   style={{ backgroundColor: "#87d068" }}

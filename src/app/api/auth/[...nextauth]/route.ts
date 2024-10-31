@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth/next";
 import User from "models/userModal";
 import bcrypt from "bcrypt";
+import GoogleProvider from "next-auth/providers/google";
 
 async function login(credentials: any) {
   try {
@@ -19,7 +20,6 @@ async function login(credentials: any) {
     throw new Error("Something went wrong");
   }
 }
-
 export const authOptions = {
   pages: {
     signIn: "/login",
@@ -33,12 +33,16 @@ export const authOptions = {
           const user = await login(credentials);
           return user;
         } catch (error: any) {
-          throw new Error("Failed to login.", error);
+          throw new Error("Failed to login.");
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
-
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {

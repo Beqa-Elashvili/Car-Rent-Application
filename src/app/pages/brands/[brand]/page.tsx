@@ -3,11 +3,14 @@ import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { createCarImage } from "@/app/CreateCarImage";
-import { Checkbox, Button } from "antd";
+import { Checkbox, Button, Divider } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
 import { CiCircleMinus } from "react-icons/ci";
+import { TCollecttion } from "@/app/Providers/GlobalProvider/GlobalContext";
+import { useRouter } from "next/navigation";
+import { Spin, Skeleton } from "antd";
 
 export default function Page({ params }: { params: { brand: string } }) {
   type CarsType = {
@@ -34,8 +37,11 @@ export default function Page({ params }: { params: { brand: string } }) {
   const [carPrices, setCarPrices] = useState<number[]>([]);
   const [carsCount, setCarsCount] = useState<CarsCount>({});
   const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);
-
+  const { collections } = useGlobalProvider();
+  const router = useRouter();
   const initialPrice = 1230;
+  const numb = 9;
+  const pathname = window.location.pathname.split("/").pop();
 
   async function fetchCarData() {
     try {
@@ -55,6 +61,8 @@ export default function Page({ params }: { params: { brand: string } }) {
       setLoading(false);
     } catch (error: any) {
       setError(error);
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   }
@@ -77,6 +85,8 @@ export default function Page({ params }: { params: { brand: string } }) {
     } catch (error: any) {
       setError(error);
       setLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
   useEffect(() => {
@@ -89,7 +99,7 @@ export default function Page({ params }: { params: { brand: string } }) {
       newPrices[index] = initialPrice - days * 100;
       return newPrices;
     });
-    setSelectedDays((prevSelectedDays) => {
+    setSelectedDays((_prevSelectedDays) => {
       const newSelectedDays = Array(carData.length).fill(0);
       newSelectedDays[index] = days;
       return newSelectedDays;
@@ -122,7 +132,7 @@ export default function Page({ params }: { params: { brand: string } }) {
   };
 
   const calculateTotalPrice = () => {
-    return ReserveCars.reduce((total, item, index) => {
+    return ReserveCars.reduce((total, _item, index) => {
       const carsNum = carsCount[index] || 1;
       return total + initialPrice * carsNum;
     }, 0);
@@ -135,7 +145,7 @@ export default function Page({ params }: { params: { brand: string } }) {
   }, [ReserveCars]);
 
   return (
-    <div className="bg-gray-800 relative">
+    <div className="bg-gray-800 relative p-2 h-full">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -164,7 +174,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                   };
                   return (
                     <>
-                      <div className="bg-yellow-500 p-2 rounded-xl flex items-center">
+                      <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
                         <img
                           className="w-40"
                           src={createCarImage(item)}
@@ -221,72 +231,111 @@ export default function Page({ params }: { params: { brand: string } }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2">
-        {carData.map((car, index) => {
-          const handleimg = () => {
-            let angle = "";
-            if (index % 2 !== 0) {
-              angle = "29";
-            }
-            return angle;
-          };
-          console.log(carData);
-          return (
-            <div key={index} className="bg-gray-300 text-white rounded-xl">
-              <img src={createCarImage(car, handleimg())} alt="carimg" />
-              <div className="bg-gray-900 h-max p-2 rounded-b-xl">
-                <h1 className="text-2xl min-h-16">
-                  {car.make.toUpperCase()} {car.model.toUpperCase()}
-                </h1>
-                <h1 className="mt-2 text-lg">
-                  {car.displacement} | {car.transmission} | {car.fuel_type}
-                </h1>
-                <h1 className="mt-2 text-xl text-green-500">
-                  ${carPrices[index]}
-                </h1>
-                <div className="flex gap-2 mt-2">
-                  <Checkbox
-                    checked={selectedDays[index] === 2}
-                    onChange={() => handlePriceChange(index, 2)}
-                    type="checkbox"
-                  />
-                  <p>2 days</p>
-                </div>
-                <div className="flex gap-2">
-                  <Checkbox
-                    checked={selectedDays[index] === 4}
-                    onChange={() => handlePriceChange(index, 4)}
-                    type="checkbox"
-                  />
-                  <p>4 days</p>
-                </div>
-                <div className="flex gap-2">
-                  <Checkbox
-                    checked={selectedDays[index] === 6}
-                    onChange={() => handlePriceChange(index, 6)}
-                    type="checkbox"
-                  />
-                  <p>6 days</p>
-                </div>
-                <div className="flex gap-2">
-                  <Checkbox
-                    checked={selectedDays[index] === 8}
-                    onChange={() => handlePriceChange(index, 8)}
-                    type="checkbox"
-                  />
-                  <p>8+ days</p>
-                </div>
-                <Button
-                  onClick={() => handleCars(car.make, car.model)}
-                  className="w-full mt-2 bg-green-500 border-none"
-                >
-                  RESERVE
-                </Button>
-              </div>
+      <div className="flex justify-between text-white h-full">
+        <div className="bg-gray-700 rounded p-2 w-60">
+          {collections.map((item: TCollecttion, index: number) => (
+            <div
+              key={index}
+              onClick={() => router.push(`/pages/brands/${item.name}`)}
+              className={`flex items-center cursor-pointer hover:bg-gray-700 h-14 overflow-hidden rounded-xl p-2 gap-2 ${
+                pathname === item.name && "bg-gray-800"
+              }`}
+            >
+              <img
+                className="w-12 h-12 object-contain"
+                src={item.logo}
+                alt="logo"
+              />
+              <p>{item.name}</p>
             </div>
-          );
-        })}
-        <img src="/" alt="" />
+          ))}
+        </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2 text-center">
+            {Array.from({ length: numb }).map((_item, index: number) => (
+              <div key={index} className="flex flex-col gap-4">
+                <Skeleton.Image active />
+                <Skeleton.Input active size="large" />
+                <Skeleton.Input active size="large" />
+                <img className="w-3/5 m-auto" src="/Animation.gif" alt="" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <>
+            <div className="bg-gray-700 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
+              {carData.map((car, index) => {
+                const handleimg = () => {
+                  let angle = "";
+                  if (index % 2 !== 0) {
+                    angle = "29";
+                  }
+                  return angle;
+                };
+                return (
+                  <div
+                    key={index}
+                    className="bg-gray-300 text-white rounded-xl"
+                  >
+                    <img src={createCarImage(car, handleimg())} alt="carimg" />
+                    <div className="bg-gray-900 h-max p-2 rounded-b-xl">
+                      <h1 className="text-2xl min-h-16">
+                        {car.make.toUpperCase()} {car.model.toUpperCase()}
+                      </h1>
+                      <h1 className="mt-2 text-lg">
+                        {car.displacement} | {car.transmission} |{" "}
+                        {car.fuel_type}
+                      </h1>
+                      <h1 className="mt-2 text-xl text-green-500">
+                        ${carPrices[index]}
+                      </h1>
+                      <div className="flex gap-2 mt-2">
+                        <Checkbox
+                          checked={selectedDays[index] === 2}
+                          onChange={() => handlePriceChange(index, 2)}
+                          type="checkbox"
+                        />
+                        <p>2 days</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Checkbox
+                          checked={selectedDays[index] === 4}
+                          onChange={() => handlePriceChange(index, 4)}
+                          type="checkbox"
+                        />
+                        <p>4 days</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Checkbox
+                          checked={selectedDays[index] === 6}
+                          onChange={() => handlePriceChange(index, 6)}
+                          type="checkbox"
+                        />
+                        <p>6 days</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Checkbox
+                          checked={selectedDays[index] === 8}
+                          onChange={() => handlePriceChange(index, 8)}
+                          type="checkbox"
+                        />
+                        <p>8+ days</p>
+                      </div>
+                      <Button
+                        onClick={() => handleCars(car.make, car.model)}
+                        className="w-full mt-2 bg-green-500 border-none"
+                      >
+                        RESERVE
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <img src="/" alt="" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

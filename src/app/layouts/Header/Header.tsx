@@ -24,10 +24,13 @@ export function Header() {
         <div className="w-2/6 m-auto">
           <div className="flex justify-between">
             <div className="hover:text-green-400 cursor-pointer">MAIN</div>
+            <span className="border bg-gray-500"></span>
             <div className="hover:text-green-400 cursor-pointer">BEST</div>
+            <span className="border bg-gray-500"></span>
             <div className="hover:text-green-400 cursor-pointer">
               CONDITIONS
             </div>
+            <span className="border bg-gray-500"></span>
             <div
               onClick={() => router.push("/pages/collection")}
               className="flex items-center gap-2 text-xl hover:text-green-400 cursor-pointer "

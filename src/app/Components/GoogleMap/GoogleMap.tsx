@@ -109,7 +109,11 @@ export function GoogleMap() {
           center={CurrentPosition}
           zoom={10}
           scrollWheelZoom={false}
-          style={{ width: "500px", height: "400px", borderRadius: 4 }}
+          style={{
+            width: "",
+            height: "400px",
+            borderRadius: 4,
+          }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
