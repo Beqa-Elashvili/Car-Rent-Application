@@ -4,14 +4,15 @@ import { SiAstonmartin } from "react-icons/si";
 import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
-import { Input, Button, Select } from "antd";
+import { Input, Button } from "antd";
+import Image from "next/image";
 
 export function Main() {
   return (
     <div>
       <div className="relative flex items-center justify-center">
         <div className="relative w-full">
-          <img
+          <Image
             className="w-full object-contain"
             src="/mclaren.jpeg"
             alt="mclaren"
@@ -78,13 +79,13 @@ export function Main() {
           </p>
         </div>
         <div className="inline relative bg-red-200 ">
-          <img className="object-contain" src="/porche.jpg" alt="" />
+          <Image className="object-contain" src="/porche.jpg" alt="" />
           <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
         </div>
         <h1 className="px-2 flex items-end mt-20">Our Featured Rides</h1>
         <div className="relative flex flex-col items-center justify-center">
-          <img className="w-full" src="/lamborgini.jpeg" alt="" />
+          <Image className="w-full" src="/lamborgini.jpeg" alt="" />
           <div className="absolute  m-auto w-4/6">
             <h1 className="text-2xl mb-40">LAMBORGHINI</h1>
             <div className="flex items-center justify-between">

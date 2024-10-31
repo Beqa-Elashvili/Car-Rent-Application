@@ -1,10 +1,9 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { Popover, Avatar, Button } from "antd";
+import { Popover, Avatar } from "antd";
 import { useRouter } from "next/navigation";
 import { UserOutlined } from "@ant-design/icons";
-import { GiTridentShield } from "react-icons/gi";
 import { Spin } from "antd";
 
 const UserProfile = () => {
@@ -49,7 +48,7 @@ const UserProfile = () => {
               <Avatar.Group>
                 <Avatar style={{ backgroundColor: "#f56a00" }}>
                   {(
-                    session.user.username?.[0] ||
+                    session.user.username?.[0] as name? ||
                     session.user.name?.[0] ||
                     ""
                   ).toUpperCase()}

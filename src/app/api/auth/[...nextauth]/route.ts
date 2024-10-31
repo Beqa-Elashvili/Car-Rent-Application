@@ -4,7 +4,12 @@ import User from "models/userModal";
 import bcrypt from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
 
-async function login(credentials: any) {
+interface Credentials {
+  email: string;
+  password: string;
+}
+
+async function login(credentials: Credentials) {
   try {
     const user = await User.findOne({ email: credentials.email });
     if (!user) {

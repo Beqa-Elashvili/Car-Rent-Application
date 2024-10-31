@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { Form, Input, Button, Typography } from "antd";
 import { GiTridentShield } from "react-icons/gi";
 import { FcGoogle } from "react-icons/fc";
+import Image from "next/image";
 
 const { Text } = Typography;
 
@@ -55,7 +56,7 @@ function SignIn() {
         }}
         className="relative w-11/12 h-10/12 flex items-center justify-center rounded-xl p-2"
       >
-        <img
+        <Image
           className="absolute top-60 object-contain lg:w-3/6 left-0 top-20 z-10"
           src="/pngimg.com - lamborghini.png"
           alt=""

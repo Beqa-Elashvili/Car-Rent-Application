@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
-import { Input, Button, Spin, Form } from "antd";
+import { Input, Button, Form } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
@@ -18,12 +18,8 @@ function Register() {
 
   const handleSubmit = async (values: any) => {
     const {
-      username,
       email,
-      password,
-      repeatPassword,
-      lastname,
-      phonenumber,
+
       city,
       street,
     } = values;

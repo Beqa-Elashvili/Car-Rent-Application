@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { randomIconUrl } from ".";
 import {
@@ -16,7 +16,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import axios from "axios";
 
 export function GoogleMap() {
-  const { location, setLocation } = useGlobalProvider();
+  const { setLocation } = useGlobalProvider();
 
   const [clickedPosition, setClickedPosition] = useState<
     [number, number] | null
@@ -25,40 +25,43 @@ export function GoogleMap() {
     [number, number] | null
   >(null);
 
-  const getCityFromCoordinates = async (lat: number, lon: number) => {
-    const apiKey = "AIzaSyDxeIDULZ9kmFSCGXpZYZYjbqVU_GkZrJ8";
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`;
+  const getCityFromCoordinates = useCallback(
+    async (lat: number, lon: number) => {
+      const apiKey = "AIzaSyDxeIDULZ9kmFSCGXpZYZYjbqVU_GkZrJ8";
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`;
 
-    try {
-      const response = await axios.get(url);
-      const results = response.data.results;
+      try {
+        const response = await axios.get(url);
+        const results = response.data.results;
 
-      if (results.length > 0) {
-        const addressComponents = results[0].address_components;
-        const cityComponent = addressComponents.find((component: any) =>
-          component.types.includes("locality")
-        );
-        const streetComponent = addressComponents.find((component: any) =>
-          component.types.includes("route")
-        );
+        if (results.length > 0) {
+          const addressComponents = results[0].address_components;
+          const cityComponent = addressComponents.find((component: any) =>
+            component.types.includes("locality")
+          );
+          const streetComponent = addressComponents.find((component: any) =>
+            component.types.includes("route")
+          );
 
-        setLocation({
-          city: cityComponent ? cityComponent.long_name : null,
-          street: streetComponent ? streetComponent.long_name : null,
-        });
+          setLocation({
+            city: cityComponent ? cityComponent.long_name : null,
+            street: streetComponent ? streetComponent.long_name : null,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching city:", error);
       }
-    } catch (error) {
-      console.error("Error fetching city:", error);
-    }
-  };
-
+    },
+    []
+  );
+  
   useEffect(() => {
     if (clickedPosition) {
       getCityFromCoordinates(clickedPosition[0], clickedPosition[1]);
     } else if (CurrentPosition) {
       getCityFromCoordinates(CurrentPosition[0], CurrentPosition[1]);
     }
-  }, [clickedPosition, CurrentPosition]);
+  }, [clickedPosition, CurrentPosition, getCityFromCoordinates]);
 
   useEffect(() => {
     if (navigator.geolocation) {

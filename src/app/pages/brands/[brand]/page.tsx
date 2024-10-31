@@ -3,14 +3,14 @@ import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { createCarImage } from "@/app/CreateCarImage";
-import { Checkbox, Button, Divider } from "antd";
+import { Checkbox, Button } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
 import { CiCircleMinus } from "react-icons/ci";
 import { TCollecttion } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
-import { Spin, Skeleton } from "antd";
+import { Skeleton } from "antd";
 
 export default function Page({ params }: { params: { brand: string } }) {
   type CarsType = {
@@ -99,7 +99,7 @@ export default function Page({ params }: { params: { brand: string } }) {
       newPrices[index] = initialPrice - days * 100;
       return newPrices;
     });
-    setSelectedDays((_prevSelectedDays) => {
+    setSelectedDays((_prevSelectedDays: number[]) => {
       const newSelectedDays = Array(carData.length).fill(0);
       newSelectedDays[index] = days;
       return newSelectedDays;
@@ -331,7 +331,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                   </div>
                 );
               })}
-
+              {error && <div>{error}</div>}
               <img src="/" alt="" />
             </div>
           </>

@@ -1,10 +1,10 @@
 "use client";
 
-import { IoIosMenu } from "react-icons/io";
 import { GiCarKey } from "react-icons/gi";
 import { FaHandPeace } from "react-icons/fa";
 import UserProfile from "@/app/Components/userInfo/page";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export function Header() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export function Header() {
           onClick={() => router.push("/")}
           className="flex hover:cursor-pointer"
         >
-          <img className="w-24" src="/car-stainless-logo-png.webp" alt="" />
+          <Image className="w-24" src="/car-stainless-logo-png.webp" alt="" />
           <p className="flex flex-col text-sm font-medium">
             LUXURY <span className="text-red-400">DRIVE</span>
           </p>
