@@ -13,7 +13,7 @@ function SignIn() {
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
 
-  const handleInput = (e: { target: { name: string; value: string } }) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInfo((prev) => ({ ...prev, [name]: value }));
     setError("");
@@ -36,7 +36,7 @@ function SignIn() {
         setPending(false);
         return;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log("error", error);
     } finally {
       setPending(false);
@@ -60,6 +60,7 @@ function SignIn() {
           className="absolute top-60 object-contain lg:w-3/6 left-0 top-20 z-10"
           src="/pngimg.com - lamborghini.png"
           alt=""
+          width={300} height={400}
         />
 
         <Form

@@ -99,7 +99,7 @@ export default function Page({ params }: { params: { brand: string } }) {
       newPrices[index] = initialPrice - days * 100;
       return newPrices;
     });
-    setSelectedDays((_prevSelectedDays: number[]) => {
+    setSelectedDays((_prevSelectedDays) => {
       const newSelectedDays = Array(carData.length).fill(0);
       newSelectedDays[index] = days;
       return newSelectedDays;

@@ -16,6 +16,8 @@ export function Main() {
             className="w-full object-contain"
             src="/mclaren.jpeg"
             alt="mclaren"
+            width={300}
+            height={400}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
         </div>
@@ -79,13 +81,13 @@ export function Main() {
           </p>
         </div>
         <div className="inline relative bg-red-200 ">
-          <Image className="object-contain" src="/porche.jpg" alt="" />
+          <Image width={300} height={400} className="object-contain" src="/porche.jpg" alt="" />
           <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
         </div>
         <h1 className="px-2 flex items-end mt-20">Our Featured Rides</h1>
         <div className="relative flex flex-col items-center justify-center">
-          <Image className="w-full" src="/lamborgini.jpeg" alt="" />
+          <Image width={300} height={400} className="w-full" src="/lamborgini.jpeg" alt="" />
           <div className="absolute  m-auto w-4/6">
             <h1 className="text-2xl mb-40">LAMBORGHINI</h1>
             <div className="flex items-center justify-between">
