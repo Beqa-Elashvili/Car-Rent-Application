@@ -16,7 +16,7 @@ export function Header() {
           onClick={() => router.push("/")}
           className="flex hover:cursor-pointer"
         >
-          <Image height={24} width={40} className="w-24" src="/car-stainless-logo-png.webp" alt="" />
+          <Image height={500} width={1000} className="w-24" src="/car-stainless-logo-png.webp" alt="" />
           <p className="flex flex-col text-sm font-medium">
             LUXURY <span className="text-red-400">DRIVE</span>
           </p>

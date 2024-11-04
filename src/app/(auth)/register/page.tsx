@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
-import { Input, Button, Form } from "antd";
+import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
+import { FaMapMarkedAlt } from "react-icons/fa";
 
 function Register() {
   const [form] = Form.useForm();
@@ -15,14 +16,22 @@ function Register() {
   const router = useRouter();
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const handleSubmit = async (values: any) => {
-    const {
-      email,
-
-      city,
-      street,
-    } = values;
+    const { email, city, street } = values;
 
     if (values.phonenumber.length !== 9) {
       form.setFields([
@@ -94,7 +103,7 @@ function Register() {
           backgroundImage:
             "linear-gradient(to right, #168361 20%, transparent 80%)",
         }}
-        className="w-11/12 mt-20 p-2 lg:p-12 rounded-xl m-auto border flex justify-center items-center"
+        className="w-11/12 mt-20 p-2 lg:p-12 rounded-xl m-auto flex justify-center items-center"
       >
         <div
           style={{
@@ -102,12 +111,13 @@ function Register() {
             backgroundImage:
               "linear-gradient(to right, #2fa07c 20%, transparent 80%)",
           }}
-          className="backdrop-blur-xl flex-wrap jsutify-center  rounded-xl p-12 flex gap-12 flex w-10/12"
+          className="relative flex-wrap jsutify-center  rounded-xl p-12 flex gap-12 flex w-10/12"
         >
+          <div className="absolute inset-0 backdrop-blur-lg z-10 rounded-lg"></div>
           <Form
             form={form}
             layout="vertical"
-            className="w-full text-white"
+            className="w-full text-white relative z-20"
             name="basic"
             onFinish={handleSubmit}
             autoComplete="off"
@@ -199,6 +209,26 @@ function Register() {
                 {error}
               </div>
             )}
+            <>
+              <Button type="primary" onClick={showModal}>
+                Open Modal
+              </Button>
+              <Modal
+                title={
+                  <>
+                    <div className="flex gap-2 items-center text-2xl">
+                      <FaMapMarkedAlt className="text-yellow-500" />
+                      <h1 className="text-black">Add your Current Position</h1>
+                    </div>
+                  </>
+                }
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+              >
+                <GoogleMap />
+              </Modal>
+            </>
             <div className="w-full flex flex-col items-center gap-2">
               <Button
                 className="border-none font-medium flex items-center gap-2 rounded-xl w-full py-5 text-white bg-blue-500 hover:bg-blue-600 hover:shadow-xl mt-4"
@@ -233,9 +263,6 @@ function Register() {
               </Button>
             </div>
           </Form>
-          <div>
-            <GoogleMap />
-          </div>
         </div>
       </div>
     </div>

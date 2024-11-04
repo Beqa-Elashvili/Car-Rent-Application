@@ -60,76 +60,81 @@ function SignIn() {
           className="absolute top-60 object-contain lg:w-3/6 left-0 top-20 z-10"
           src="/pngimg.com - lamborghini.png"
           alt=""
-          width={300} height={400}
+          width={1000}
+          height={300}
         />
-
-        <Form
-          onFinish={handleSubmit}
-          layout="vertical"
-          style={{
-            boxShadow: "0 10px 100px rgba(0, 0, 10, 5)",
-          }}
-          className=" p-4 z-20 backdrop-blur-md border h-fit text-white rounded shadow-lg flex flex-col"
-        >
-          <h1 className="text-center text-3xl font-medium">
-            Login your Account
-          </h1>
-          <p className="text-center text-sm text-gray-200 py-4">
-            Since that is your first trip, you'll need to provide us with some
-            information before you can check out.
-          </p>
-          <p className="mb-2">Email:</p>
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Please input your email!" }]}
+        <div className="relative">
+          <div className="absolute inset-0 backdrop-blur-lg z-10 rounded-lg"></div>
+          <Form
+            onFinish={handleSubmit}
+            layout="vertical"
+            style={{
+              boxShadow: "0 10px 100px rgba(0, 0, 10, 5)",
+            }}
+            className=" p-4 z-20 relative h-fit text-white rounded shadow-lg flex flex-col"
           >
-            <Input
+            <h1 className="text-center text-3xl font-medium">
+              Log in your Account
+            </h1>
+            <p className="text-center text-sm text-gray-200 py-4">
+              Since that is your first trip, you'll need to provide us with some
+              information before you can check out.
+            </p>
+            <p className="mb-2">Email:</p>
+            <Form.Item
               name="email"
-              type="text"
-              onChange={handleInput}
-              autoComplete="email"
-              placeholder="Enter your email"
-            />
-          </Form.Item>
-          <p className="mb-2">Password:</p>
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password
+              rules={[{ required: true, message: "Please input your email!" }]}
+            >
+              <Input
+                name="email"
+                type="text"
+                onChange={handleInput}
+                autoComplete="email"
+                placeholder="Enter your email"
+              />
+            </Form.Item>
+            <p className="mb-2">Password:</p>
+            <Form.Item
               name="password"
-              onChange={handleInput}
-              autoComplete="current-password"
-              placeholder="Enter your password"
-            />
-          </Form.Item>
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password
+                name="password"
+                onChange={handleInput}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+              />
+            </Form.Item>
 
-          {error && (
-            <Text className="mb-2" type="danger">
-              {error} !
-            </Text>
-          )}
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="w-full"
-            loading={pending}
-          >
-            {pending ? "Logging in..." : "Log in"}
-          </Button>
-          <div className="w-full flex items-center gap-2">
-            <div className="flex-1 h-px bg-gray-400"></div>
-            <p className="text-gray-300 mb-1">or</p>
-            <div className="flex-1 h-px bg-gray-400"></div>
-          </div>
-          <Button
-            onClick={() => signIn("google")}
-            className="flex items-center font-medium py-5 rounded-xl w-full"
-          >
-            <FcGoogle className="size-6" />
-            Sign in with Google
-          </Button>
-        </Form>
+            {error && (
+              <Text className="mb-2" type="danger">
+                {error} !
+              </Text>
+            )}
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="w-full"
+              loading={pending}
+            >
+              {pending ? "Logging in..." : "Log in"}
+            </Button>
+            <div className="w-full flex items-center gap-2">
+              <div className="flex-1 h-px bg-gray-400"></div>
+              <p className="text-gray-300 mb-1">or</p>
+              <div className="flex-1 h-px bg-gray-400"></div>
+            </div>
+            <Button
+              onClick={() => signIn("google")}
+              className="flex items-center font-medium py-5 rounded-xl w-full"
+            >
+              <FcGoogle className="size-6" />
+              Sign in with Google
+            </Button>
+          </Form>
+        </div>
       </div>
     </div>
   );

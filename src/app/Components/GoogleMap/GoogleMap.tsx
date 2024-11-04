@@ -12,7 +12,6 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Button } from "antd";
-import { FaMapMarkedAlt } from "react-icons/fa";
 import axios from "axios";
 
 export function GoogleMap() {
@@ -54,7 +53,7 @@ export function GoogleMap() {
     },
     []
   );
-  
+
   useEffect(() => {
     if (clickedPosition) {
       getCityFromCoordinates(clickedPosition[0], clickedPosition[1]);
@@ -103,10 +102,6 @@ export function GoogleMap() {
 
   return (
     <div className="flex flex-col gap-2 text-white">
-      <div className="flex gap-2 items-center text-2xl">
-        <FaMapMarkedAlt className="text-yellow-500" />
-        <h1> Add your Current Position</h1>
-      </div>
       {CurrentPosition && (
         <MapContainer
           center={CurrentPosition}
