@@ -108,7 +108,8 @@ export function GoogleMap() {
           zoom={10}
           scrollWheelZoom={false}
           style={{
-            width: "",
+            width: "100%",
+            maxWidth: "800px",
             height: "400px",
             borderRadius: 4,
           }}

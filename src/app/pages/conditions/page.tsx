@@ -1,0 +1,85 @@
+"use client";
+import { GoogleMap } from "@/app/Components/GoogleMap";
+import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+import { useSession } from "next-auth/react";
+import { Button } from "antd";
+import { useRouter } from "next/navigation";
+import { CgMail } from "react-icons/cg";
+import { IoLocation } from "react-icons/io5";
+import { CiUser } from "react-icons/ci";
+export default function Conditions() {
+  const { data: session, status } = useSession();
+  const { location } = useGlobalProvider();
+  const router = useRouter();
+
+  return (
+    <div className="bg-gray-900 h-full w-full text-white">
+      <div className="relative bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-20 items-center py-28">
+        <h1 className=" text-[200px] lg:text-9xl flex flex-col bg-gradient-to-r from-green-700 to-transparent text-transparent bg-clip-text text-balance absolute">
+          LUXURY <span>DRIVE</span>
+        </h1>
+        <div className="z-20 lg:px-40 text-white">
+          <h1 className="text-4xl font-bold">
+            Conditions for renting a car in Georgia
+          </h1>
+          <p className="mt-6 text-2xl max-w-2xl">
+            Find out the key conditions for renting a car in Georgia:
+            requirements, insurance, traffic rules. Plan safe and comfortable
+            trips with our information
+          </p>
+        </div>
+      </div>
+      <div className="py-12 w-10/12 m-auto">
+        <h1 className="text-2xl font-medium mb-4">
+          ADD YOUR LOCATION FOR BETTER CONVERSATION
+        </h1>
+        <div className=" flex flex-wrap lg:flex-nowrap justify-between gap-12">
+          <div className="inline-flex w-full lg:w-1/2 flex-col">
+            <div className="bg-gray-800 h-full flex flex-col justify-between text-2xl p-8 rounded-xl">
+              <div>
+                <div className="flex gap-2">
+                  <IoLocation className="mt-1" />
+                  <div>
+                    <h1>Address:</h1>
+                    <p className="text-green-700 text-lg">
+                      {location.city},{location.street}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <CgMail className="mt-1" />
+                  <div>
+                    <h1>E-Mail:</h1>
+                    <p className="text-green-700 text-lg">
+                      {session ? session?.user.email : "Not Registered"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <CiUser className="mt-1" />
+                  <div>
+                    <h1>Username:</h1>
+                    <p className="text-green-700 text-lg">
+                      {session ? session.user.username : "Not registered"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <Button
+                  onClick={() => router.push("/register")}
+                  className="flex items-center py-5 rounded-xl bg-blue-500 border-none text-white font-medium w-full"
+                >
+                  Sign up
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="w-full">
+            <GoogleMap />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
