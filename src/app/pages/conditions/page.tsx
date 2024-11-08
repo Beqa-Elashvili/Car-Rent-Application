@@ -7,15 +7,19 @@ import { useRouter } from "next/navigation";
 import { CgMail } from "react-icons/cg";
 import { IoLocation } from "react-icons/io5";
 import { CiUser } from "react-icons/ci";
+import { TConditions } from "@/app/Providers/GlobalProvider/GlobalContext";
+import { motion } from "framer-motion";
+
 export default function Conditions() {
   const { data: session, status } = useSession();
   const { location } = useGlobalProvider();
   const router = useRouter();
+  const { conditions } = useGlobalProvider();
 
   return (
     <div className="bg-gray-900 h-full w-full text-white">
       <div className="relative bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-20 items-center py-28">
-        <h1 className=" text-[200px] lg:text-9xl flex flex-col bg-gradient-to-r from-green-700 to-transparent text-transparent bg-clip-text text-balance absolute">
+        <h1 className="text-[200px] lg:text-9xl flex flex-col bg-gradient-to-r from-green-700 to-transparent text-transparent bg-clip-text text-balance absolute">
           LUXURY <span>DRIVE</span>
         </h1>
         <div className="z-20 lg:px-40 text-white">
@@ -41,7 +45,7 @@ export default function Conditions() {
                   <IoLocation className="mt-1" />
                   <div>
                     <h1>Address:</h1>
-                    <p className="text-green-700 text-lg">
+                    <p className="text-green-600 text-lg">
                       {location.city},{location.street}
                     </p>
                   </div>
@@ -50,7 +54,7 @@ export default function Conditions() {
                   <CgMail className="mt-1" />
                   <div>
                     <h1>E-Mail:</h1>
-                    <p className="text-green-700 text-lg">
+                    <p className="text-green-600 text-lg">
                       {session ? session?.user.email : "Not Registered"}
                     </p>
                   </div>
@@ -59,7 +63,7 @@ export default function Conditions() {
                   <CiUser className="mt-1" />
                   <div>
                     <h1>Username:</h1>
-                    <p className="text-green-700 text-lg">
+                    <p className="text-green-600 text-lg">
                       {session ? session.user.username : "Not registered"}
                     </p>
                   </div>
@@ -75,9 +79,48 @@ export default function Conditions() {
               </div>
             </div>
           </div>
-          <div className="w-full">
-            <GoogleMap />
-          </div>
+          <div className="w-full">{/* <GoogleMap /> */}</div>
+        </div>
+        <div className="flex flex-col gap-8 mt-8">
+          <h1 className="text-center my-4 text-4xl">Car rental conditions</h1>
+          {conditions.map((item: TConditions, index: number) => (
+            <div key={index} className="flex justify-between items-start gap-4">
+              <motion.h1
+                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -100 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="text-6xl"
+              >
+                {item.title}
+              </motion.h1>
+              <motion.div
+                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: 100 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="bg-gray-800 text-xl rounded-xl p-8 w-full max-w-3xl flex flex-col gap-2"
+              >
+                <div className="flex items-center gap-2">
+                  <item.icon className="size-6 text-green-500" />
+                  <p>{item.text1}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {item.icon2 && (
+                    <item.icon2 className="size-6 text-green-500" />
+                  )}
+                  <p>{item.text2}</p>
+                </div>
+                <div className="h-px w-full bg-green-500"></div>
+                <p className="text-lg">{item.description}</p>
+                <div className="flex flex-col gap-2">
+                  {item.rules?.map((item: string, index: number) => (
+                    <div key={index} className="flex gap-2">
+                      <span>&#8226;</span> <p>{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
