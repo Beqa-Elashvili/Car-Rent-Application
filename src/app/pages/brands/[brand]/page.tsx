@@ -232,7 +232,7 @@ export default function Page({ params }: { params: { brand: string } }) {
         )}
       </AnimatePresence>
       <div className="flex justify-between text-white h-full">
-        <div className="bg-gray-700 rounded p-2 w-60">
+        <div className="bg-gray-700 z-30 rounded p-2 w-60">
           {collections.map((item: TCollecttion, index: number) => (
             <div
               key={index}
@@ -249,6 +249,13 @@ export default function Page({ params }: { params: { brand: string } }) {
               <p>{item.name}</p>
             </div>
           ))}
+          <Button
+            disabled={ReserveCars.length === 0}
+            onClick={() => setIsOpen(!isOpen)}
+            className="rounded w-full border-none font-medium text-white bg-green-600 p-2 cursor-pointer hover:bg-green-700 mt-2"
+          >
+            Reserved
+          </Button>
         </div>
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2 text-center">

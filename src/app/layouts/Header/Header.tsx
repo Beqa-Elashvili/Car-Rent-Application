@@ -31,7 +31,7 @@ export function Header() {
       <div className="flex justify-between p-2 text-xl h-full items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-xl mr-2 inline lg:hidde"
+          className="rounded-xl mr-2 inline lg:hidden"
         >
           {isOpen ? (
             <RiMenuFoldFill className="size-8" />
