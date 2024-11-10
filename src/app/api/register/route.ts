@@ -1,5 +1,5 @@
 import { ConnectDB } from "utils/connect";
-import User from "models/userModal";
+import { User } from "models/userModal";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 

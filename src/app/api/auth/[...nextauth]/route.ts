@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth/next";
-import User from "models/userModal";
+import { User } from "models/userModal";
 import bcrypt from "bcrypt";
 import GoogleProvider from "next-auth/providers/google";
 

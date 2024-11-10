@@ -5,6 +5,10 @@ interface IUser extends Document {
   email: string;
   password: string;
 }
+interface ICars extends Document {
+  title: string;
+  description: string;
+}
 
 const userSchema: Schema = new Schema(
   {
@@ -27,6 +31,23 @@ const userSchema: Schema = new Schema(
   }
 );
 
-const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+const carsSchema: Schema = new Schema(
+  {
+    title: {
+      type: String,
+      required: [true, "Must provide a title for the car"],
+    },
+    description: {
+      type: String,
+      required: [true, "Must provide a description for the car"],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-export default User;
+const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+const Cars = mongoose.models.Cars || mongoose.model<ICars>("Cars", carsSchema);
+
+export { User, Cars };
