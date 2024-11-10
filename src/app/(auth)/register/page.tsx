@@ -103,7 +103,7 @@ function Register() {
           backgroundImage:
             "linear-gradient(to right, #168361 20%, transparent 80%)",
         }}
-        className="w-11/12 mt-20 p-2 lg:p-12 rounded-xl m-auto flex justify-center items-center"
+        className="w-11/12 mt-20 p-4 lg:p-12 rounded-xl m-auto flex justify-center items-center"
       >
         <div
           style={{
@@ -111,7 +111,7 @@ function Register() {
             backgroundImage:
               "linear-gradient(to right, #2fa07c 20%, transparent 80%)",
           }}
-          className="relative flex-wrap jsutify-center  rounded-xl p-12 flex gap-12 flex w-10/12"
+          className="relative flex-wrap justify-center  rounded-xl p-4 lg:p-12 flex gap-12 flex w-full lg:w-10/12"
         >
           <div className="absolute inset-0 backdrop-blur-lg z-10 rounded-lg"></div>
           <Form

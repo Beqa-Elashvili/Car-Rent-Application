@@ -79,7 +79,9 @@ export default function Conditions() {
               </div>
             </div>
           </div>
-          <div className="w-full">{/* <GoogleMap /> */}</div>
+          <div className="w-full">
+            <GoogleMap />
+          </div>
         </div>
         <div className="flex flex-col gap-8 mt-8">
           <h1 className="text-center my-4 text-4xl">Car rental conditions</h1>

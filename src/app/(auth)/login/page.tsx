@@ -54,7 +54,7 @@ function SignIn() {
           backgroundImage:
             "linear-gradient(to right, #168361 20%, transparent 80%)",
         }}
-        className="relative w-11/12 h-10/12 flex items-center justify-center rounded-xl p-2"
+        className="relative w-11/12 mt-4 h-10/12 flex items-center justify-center rounded-xl p-2"
       >
         <Image
           className="absolute top-60 object-contain lg:w-3/6 left-0 top-20 z-10"

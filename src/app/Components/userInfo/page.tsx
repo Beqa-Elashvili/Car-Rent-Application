@@ -19,7 +19,7 @@ const UserProfile = () => {
   }
 
   const content = (
-    <div className="flex flex-col gap-2">
+    <div>
       <button
         className="font-medium p-2 rounded hover:text-red-500"
         onClick={() => signOut()}
@@ -38,7 +38,7 @@ const UserProfile = () => {
         >
           <span className="absolute left-0 border  border-gray-400 h-full"></span>
           <Avatar className="bg-orange-700" icon={<UserOutlined />} />
-          <h1 className="text-xl ml-2">Sign Up</h1>
+          <h1 className="text-xl hidden lg:inline ml-2">Sign Up</h1>
           <span className="absolute right-0 border border-gray-400 h-full"></span>
         </button>
       ) : (
