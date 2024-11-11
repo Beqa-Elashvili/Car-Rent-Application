@@ -8,6 +8,7 @@ interface IUser extends Document {
 interface ICars extends Document {
   title: string;
   description: string;
+  userId: string;
 }
 
 const userSchema: Schema = new Schema(
@@ -35,6 +36,11 @@ const reservedCarSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

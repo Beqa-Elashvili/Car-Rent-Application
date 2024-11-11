@@ -1,44 +1,99 @@
 import { ConnectDB } from "utils/connect";
-import { reservedCars } from "models/userModal";
+import { reservedCars, User } from "models/userModal";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
 export async function GET(req: any) {
   try {
+    // Connect to the database
     await ConnectDB();
-    const ReservedCars = await reservedCars.find();
+
+    // Retrieve the userId from query parameters
+    const userId = req.nextUrl.searchParams.get("userId");
+
+    // If no userId is provided, return an error
+    if (!userId) {
+      return NextResponse.json(
+        { message: "User ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate that userId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        { message: "Invalid User ID format" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Looking for userId:", userId); // Debugging output
+
+    const ReservedCars = await reservedCars.find({ userId });
+
+    console.log("Found Reserved Cars:", ReservedCars); // Debugging output
+
+    if (ReservedCars.length === 0) {
+      return NextResponse.json(
+        { message: "No cars reserved by this user." },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({ ReservedCars });
   } catch (error) {
-    console.error("Error fetching cars", error);
+    console.error("Error fetching cars:", error);
+
     return NextResponse.json(
-      { message: "Error fetching cars data" },
+      { message: "Error fetching cars data", error: error },
       { status: 500 }
     );
   }
 }
-
 export async function POST(req: any) {
   try {
-    const { title, description } = await req.json();
-    await ConnectDB();
-    console.log("Database connected successfully");
-    await reservedCars.create({ title, description });
-    return NextResponse.json({ message: "Cars Reserved" }, { status: 201 });
+    const { title, description, userId } = await req.json();
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+    const existingReservation = await reservedCars.findOne({
+      title,
+      userId,
+    });
+
+    if (existingReservation) {
+      return NextResponse.json(
+        { message: "User has already reserved this car." },
+        { status: 400 }
+      );
+    }
+
+    await reservedCars.create({ title, description, userId });
+
+    return NextResponse.json({ message: "Car Reserved" }, { status: 201 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
-      { message: "Failed to reserve car" },
+      { message: "Failed to reserve car", error },
       { status: 500 }
     );
   }
 }
-
 export async function DELETE(req: any) {
   try {
     const id = req.nextUrl.searchParams.get("id");
+
     if (!id) {
       return NextResponse.json(
         { message: "Car ID is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { message: "Invalid Car ID format" },
         { status: 400 }
       );
     }
@@ -49,7 +104,7 @@ export async function DELETE(req: any) {
     }
 
     return NextResponse.json(
-      { message: "Reserved car deleted" },
+      { message: "Reserved car deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
