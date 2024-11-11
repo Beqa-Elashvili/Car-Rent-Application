@@ -31,23 +31,17 @@ const userSchema: Schema = new Schema(
   }
 );
 
-const carsSchema: Schema = new Schema(
+const reservedCarSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: [true, "Must provide a title for the car"],
-    },
-    description: {
-      type: String,
-      required: [true, "Must provide a description for the car"],
-    },
+    title: { type: String, required: true },
+    description: { type: String, required: true },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
-const Cars = mongoose.models.Cars || mongoose.model<ICars>("Cars", carsSchema);
+const reservedCars =
+  mongoose.models.ReservedCars ||
+  mongoose.model<ICars>("reservedCars", reservedCarSchema);
 
-export { User, Cars };
+export { User, reservedCars };
