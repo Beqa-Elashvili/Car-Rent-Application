@@ -5,13 +5,8 @@ import mongoose from "mongoose";
 
 export async function GET(req: any) {
   try {
-    // Connect to the database
     await ConnectDB();
-
-    // Retrieve the userId from query parameters
     const userId = req.nextUrl.searchParams.get("userId");
-
-    // If no userId is provided, return an error
     if (!userId) {
       return NextResponse.json(
         { message: "User ID is required" },
@@ -19,7 +14,6 @@ export async function GET(req: any) {
       );
     }
 
-    // Validate that userId is a valid MongoDB ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid User ID format" },
@@ -27,11 +21,11 @@ export async function GET(req: any) {
       );
     }
 
-    console.log("Looking for userId:", userId); // Debugging output
+    console.log("Looking for userId:", userId); 
 
     const ReservedCars = await reservedCars.find({ userId });
 
-    console.log("Found Reserved Cars:", ReservedCars); // Debugging output
+    console.log("Found Reserved Cars:", ReservedCars); 
 
     if (ReservedCars.length === 0) {
       return NextResponse.json(

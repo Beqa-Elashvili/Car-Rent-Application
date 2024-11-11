@@ -11,6 +11,7 @@ import { CiCircleMinus } from "react-icons/ci";
 import { TCollecttion } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
+import { useSession } from "next-auth/react";
 
 export default function Page({ params }: { params: { brand: string } }) {
   type CarsType = {
@@ -67,28 +68,6 @@ export default function Page({ params }: { params: { brand: string } }) {
     }
   }
 
-  async function fetchReservecars(make: string, model: string) {
-    try {
-      const response = await axios.get(
-        "https://cars-by-api-ninjas.p.rapidapi.com/v1/cars",
-        {
-          params: { make: make, model: model, limit: 1 },
-          headers: {
-            "x-rapidapi-key":
-              "3ab71f1fe5msh3809073701083acp1c1c13jsn96cf5f721c27",
-            "x-rapidapi-host": "cars-by-api-ninjas.p.rapidapi.com",
-          },
-        }
-      );
-      setReserveCars((prev) => [...prev, ...response.data]);
-      setLoading(false);
-    } catch (error: any) {
-      setError(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  }
   useEffect(() => {
     fetchCarData();
   }, []);
@@ -106,10 +85,6 @@ export default function Page({ params }: { params: { brand: string } }) {
     });
   };
 
-  const handleCars = async (make: string, model: string) => {
-    await fetchReservecars(make, model);
-    setIsOpen(true);
-  };
   interface CarsCount {
     [key: string]: number;
   }
@@ -143,6 +118,51 @@ export default function Page({ params }: { params: { brand: string } }) {
       setIsOpen(false);
     }
   }, [ReserveCars]);
+
+  async function fetchReservedCars() {
+    try {
+      const response = await axios.get("/api/reservedCars");
+      setReserveCars(response.data.ReservedCars);
+      setLoading(false);
+    } catch (error: any) {
+      setError(error.message || "Error fetching reserved cars");
+      setLoading(false);
+    }
+  }
+
+  const { data: session, status } = useSession();
+
+  const addCarToReserve = async (make: string, model: string) => {
+    // try {
+    //   const userId = session?.user.id;
+    //   if (!userId) {
+    //     console.error("User is not authenticated");
+    //     return;
+    //   }
+    //   const response = await axios.post("/api/reservedCars", {
+    //     title: `${make} ${model}`,
+    //     description: `Reserved ${make} ${model}`,
+    //     userId,
+    //   });
+    //   if (response.status === 201) {
+    //     fetchReservedCars();
+    //     setIsOpen(true);
+    //   }
+    // } catch (error: any) {
+    //   console.error("Error adding car to reserve:", error);
+    // }
+  };
+
+  const deleteReservedCar = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/reservedCars?id=${id}`);
+      if (response.status === 200) {
+        setReserveCars(ReserveCars.filter((car) => car.id !== id)); // Remove from UI
+      }
+    } catch (error: any) {
+      console.error("Error deleting reserved car:", error);
+    }
+  };
 
   return (
     <div className="bg-gray-800 relative p-2 h-full">
@@ -329,7 +349,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <p>8+ days</p>
                       </div>
                       <Button
-                        onClick={() => handleCars(car.make, car.model)}
+                        onClick={() => addCarToReserve(car.make, car.model)}
                         className="w-full mt-2 bg-green-500 border-none"
                       >
                         RESERVE
