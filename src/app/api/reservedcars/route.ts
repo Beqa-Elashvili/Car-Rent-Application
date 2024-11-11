@@ -1,5 +1,6 @@
 import { ConnectDB } from "utils/connect";
-import { reservedCars, User } from "models/userModal";
+import { User } from "models/userModal";
+import { reservedCars } from "models/reversedCars";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
@@ -21,11 +22,11 @@ export async function GET(req: any) {
       );
     }
 
-    console.log("Looking for userId:", userId); 
+    console.log("Looking for userId:", userId);
 
     const ReservedCars = await reservedCars.find({ userId });
 
-    console.log("Found Reserved Cars:", ReservedCars); 
+    console.log("Found Reserved Cars:", ReservedCars);
 
     if (ReservedCars.length === 0) {
       return NextResponse.json(

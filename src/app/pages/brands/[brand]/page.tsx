@@ -133,24 +133,25 @@ export default function Page({ params }: { params: { brand: string } }) {
   const { data: session, status } = useSession();
 
   const addCarToReserve = async (make: string, model: string) => {
-    // try {
-    //   const userId = session?.user.id;
-    //   if (!userId) {
-    //     console.error("User is not authenticated");
-    //     return;
-    //   }
-    //   const response = await axios.post("/api/reservedCars", {
-    //     title: `${make} ${model}`,
-    //     description: `Reserved ${make} ${model}`,
-    //     userId,
-    //   });
-    //   if (response.status === 201) {
-    //     fetchReservedCars();
-    //     setIsOpen(true);
-    //   }
-    // } catch (error: any) {
-    //   console.error("Error adding car to reserve:", error);
-    // }
+    try {
+      const userId = session?.user.id;
+      if (!userId) {
+        console.error("User is not authenticated");
+        return;
+      }
+      const response = await axios.post("/api/reservedcars", {
+        title: `${make} ${model}`,
+        description: `Reserved ${make} ${model}`,
+        userId: userId,
+      });
+
+      if (response.status === 201) {
+        fetchReservedCars(); // Update UI with new reservations
+        setIsOpen(true); // Open the modal or show success message
+      }
+    } catch (error: any) {
+      console.error("Error adding car to reserve:", error);
+    }
   };
 
   const deleteReservedCar = async (id: string) => {
