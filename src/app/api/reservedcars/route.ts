@@ -47,14 +47,23 @@ export async function GET(req: any) {
 }
 export async function POST(req: any) {
   try {
-    const { title, description, userId } = await req.json();
+    const { userId, car } = await req.json();
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        { message: "Invalid userId format" },
+        { status: 400 }
+      );
+    }
+
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
+
     const existingReservation = await reservedCars.findOne({
-      title,
       userId,
+      "ReversedCars.model": car.model,
     });
 
     if (existingReservation) {
@@ -64,8 +73,12 @@ export async function POST(req: any) {
       );
     }
 
-    await reservedCars.create({ title, description, userId });
+    const newReservation = new reservedCars({
+      ReversedCars: [car],
+      userId,
+    });
 
+    await newReservation.save();
     return NextResponse.json({ message: "Car Reserved" }, { status: 201 });
   } catch (error) {
     console.error("Error:", error);
@@ -75,6 +88,7 @@ export async function POST(req: any) {
     );
   }
 }
+
 export async function DELETE(req: any) {
   try {
     const id = req.nextUrl.searchParams.get("id");

@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 
 export default function Page({ params }: { params: { brand: string } }) {
   type CarsType = {
-    id: any;
+    id: string;
     city_mpg: number;
     class: string;
     combination_mpg: number;
@@ -132,28 +132,28 @@ export default function Page({ params }: { params: { brand: string } }) {
 
   const { data: session, status } = useSession();
 
-  const addCarToReserve = async (make: string, model: string) => {
+  const addCarToReserve = async (car: CarsType) => {
     try {
       const userId = session?.user.id;
       if (!userId) {
         console.error("User is not authenticated");
         return;
       }
+
+      // Send the userId and car object to the server in the correct format
       const response = await axios.post("/api/reservedcars", {
-        title: `${make} ${model}`,
-        description: `Reserved ${make} ${model}`,
-        userId: userId,
+        userId,
+        car,
       });
 
       if (response.status === 201) {
-        fetchReservedCars(); // Update UI with new reservations
-        setIsOpen(true); // Open the modal or show success message
+        fetchReservedCars(); // Re-fetch the reserved cars if the reservation was successful
+        setIsOpen(true); // Open a modal or update UI to indicate success
       }
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
     }
   };
-
   const deleteReservedCar = async (id: string) => {
     try {
       const response = await axios.delete(`/api/reservedCars?id=${id}`);
@@ -350,7 +350,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <p>8+ days</p>
                       </div>
                       <Button
-                        onClick={() => addCarToReserve(car.make, car.model)}
+                        onClick={() => addCarToReserve(car)}
                         className="w-full mt-2 bg-green-500 border-none"
                       >
                         RESERVE
