@@ -37,7 +37,7 @@ export default function Page({ params }: { params: { brand: string } }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [carPrices, setCarPrices] = useState<number[]>([]);
   const [carsCount, setCarsCount] = useState<CarsCount>({});
-  const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);
+  const [ReserveCars, setReserveCars] = useState([]);
   const { collections } = useGlobalProvider();
   const router = useRouter();
   const initialPrice = 1230;
@@ -119,18 +119,28 @@ export default function Page({ params }: { params: { brand: string } }) {
     }
   }, [ReserveCars]);
 
+  const { data: session, status } = useSession();
+  const userId = session?.user.id;
+
+  console.log("this is user id", userId);
+
   async function fetchReservedCars() {
     try {
-      const response = await axios.get("/api/reservedCars");
-      setReserveCars(response.data.ReservedCars);
-      setLoading(false);
+      if (userId) {
+        const response = await axios.get("/api/reservedcars", {
+          params: { userId },
+        });
+        setReserveCars(response.data.ReservedCars);
+        setLoading(false);
+      }
     } catch (error: any) {
       setError(error.message || "Error fetching reserved cars");
       setLoading(false);
     }
   }
-
-  const { data: session, status } = useSession();
+  useEffect(() => {
+    fetchReservedCars();
+  }, [userId]);
 
   const addCarToReserve = async (car: CarsType) => {
     try {
@@ -147,18 +157,20 @@ export default function Page({ params }: { params: { brand: string } }) {
       });
 
       if (response.status === 201) {
-        fetchReservedCars(); // Re-fetch the reserved cars if the reservation was successful
-        setIsOpen(true); // Open a modal or update UI to indicate success
+        fetchReservedCars();
+        setIsOpen(true);
       }
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
     }
   };
+  console.log(ReserveCars);
+
   const deleteReservedCar = async (id: string) => {
     try {
-      const response = await axios.delete(`/api/reservedCars?id=${id}`);
+      const response = await axios.delete(`/api/reservedcars?id=${id}`);
       if (response.status === 200) {
-        setReserveCars(ReserveCars.filter((car) => car.id !== id)); // Remove from UI
+        alert("Delete susccesfuly");
       }
     } catch (error: any) {
       console.error("Error deleting reserved car:", error);
@@ -186,7 +198,7 @@ export default function Page({ params }: { params: { brand: string } }) {
             <div className="mt-12">
               <div className="bg-gray-200 h-px w-full"></div>
               <div className="mt-4 flex flex-col gap-4">
-                {ReserveCars.map((item: CarsType, index: number) => {
+                {ReserveCars.map((item: any, index: number) => {
                   const initialPrice = 1230;
                   const carsNum = carsCount[index] || 1;
 
@@ -198,13 +210,15 @@ export default function Page({ params }: { params: { brand: string } }) {
                       <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
                         <img
                           className="w-40"
-                          src={createCarImage(item)}
+                          src={createCarImage(
+                            item?.ReversedCars?.map((item: CarsType) => item)
+                          )}
                           alt="Carimg"
                         />
                         <div className="flex flex-col w-full">
                           <p className="font-medium text-lg">
-                            {item.make.toUpperCase()} |{" "}
-                            {item.model.toUpperCase()}
+                            {item.ReservedCars.make.toUpperCase()} |{" "}
+                            {item.ReservedCars.model.toUpperCase()}
                           </p>
                           <div className="flex justify-between w-full">
                             <div className="text-sm">
@@ -271,7 +285,7 @@ export default function Page({ params }: { params: { brand: string } }) {
             </div>
           ))}
           <Button
-            disabled={ReserveCars.length === 0}
+            // disabled={ReserveCars.length === 0}
             onClick={() => setIsOpen(!isOpen)}
             className="rounded w-full border-none font-medium text-white bg-green-600 p-2 cursor-pointer hover:bg-green-700 mt-2"
           >

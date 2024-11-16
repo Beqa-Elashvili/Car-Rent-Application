@@ -63,7 +63,7 @@ export async function POST(req: any) {
 
     const existingReservation = await reservedCars.findOne({
       userId,
-      "ReversedCars.model": car.model,
+      model: car.model,
     });
 
     if (existingReservation) {
@@ -74,7 +74,18 @@ export async function POST(req: any) {
     }
 
     const newReservation = new reservedCars({
-      ReversedCars: [car],
+      city_mpg: car.city_mpg,
+      class: car.class,
+      combination_mpg: car.combination_mpg,
+      cylinders: car.cylinders,
+      displacement: car.displacement,
+      drive: car.drive,
+      fuel_type: car.fuel_type,
+      highway_mpg: car.highway_mpg,
+      make: car.make,
+      model: car.model,
+      transmission: car.transmission,
+      year: car.year,
       userId,
     });
 
@@ -91,30 +102,61 @@ export async function POST(req: any) {
 
 export async function DELETE(req: any) {
   try {
-    const id = req.nextUrl.searchParams.get("id");
+    const userId = req.nextUrl.searchParams.get("userId");
+    const carId = req.nextUrl.searchParams.get("id");
 
-    if (!id) {
+    if (userId) {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return NextResponse.json(
+          { message: "Invalid User ID format" },
+          { status: 400 }
+        );
+      }
+
+      await ConnectDB();
+
+      const deletedCars = await reservedCars.deleteMany({ userId });
+
+      if (deletedCars.deletedCount === 0) {
+        return NextResponse.json(
+          { message: "No cars found to delete for this user" },
+          { status: 404 }
+        );
+      }
+
       return NextResponse.json(
-        { message: "Car ID is required" },
-        { status: 400 }
+        { message: "All reserved cars deleted successfully" },
+        { status: 200 }
       );
     }
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    // Case 2: Deleting a specific car by its ID
+    if (carId) {
+      if (!mongoose.Types.ObjectId.isValid(carId)) {
+        return NextResponse.json(
+          { message: "Invalid Car ID format" },
+          { status: 400 }
+        );
+      }
+
+      await ConnectDB();
+
+      const deletedCar = await reservedCars.findOneAndDelete({ _id: carId });
+
+      if (!deletedCar) {
+        return NextResponse.json({ message: "Car not found" }, { status: 404 });
+      }
+
       return NextResponse.json(
-        { message: "Invalid Car ID format" },
-        { status: 400 }
+        { message: "Reserved car deleted successfully" },
+        { status: 200 }
       );
     }
-    await ConnectDB();
-    const deletedCar = await reservedCars.findOneAndDelete({ _id: id });
-    if (!deletedCar) {
-      return NextResponse.json({ message: "Car not found" }, { status: 404 });
-    }
 
+    // If neither userId nor id is provided
     return NextResponse.json(
-      { message: "Reserved car deleted successfully" },
-      { status: 200 }
+      { message: "Car ID or User ID is required" },
+      { status: 400 }
     );
   } catch (error) {
     console.error("Error while deleting car:", error);
