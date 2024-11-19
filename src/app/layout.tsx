@@ -33,15 +33,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GlobalProvider>
-          <SessionProvider>
+        <SessionProvider>
+          <GlobalProvider>
             <header>
               <Header />
             </header>
             {children}
             <footer></footer>
-          </SessionProvider>
-        </GlobalProvider>
+          </GlobalProvider>
+        </SessionProvider>
       </body>
     </html>
   );

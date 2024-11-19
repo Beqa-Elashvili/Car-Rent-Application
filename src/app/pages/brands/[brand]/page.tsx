@@ -8,37 +8,30 @@ import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
 import { CiCircleMinus } from "react-icons/ci";
-import { TCollecttion } from "@/app/Providers/GlobalProvider/GlobalContext";
+import {
+  CarsType,
+  TCollecttion,
+} from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
 
 export default function Page({ params }: { params: { brand: string } }) {
-  type CarsType = {
-    id: string;
-    city_mpg: number;
-    class: string;
-    combination_mpg: number;
-    cylinders: number;
-    displacement: number;
-    drive: string;
-    fuel_type: string;
-    highway_mpg: number;
-    make: string;
-    model: string;
-    transmission: string;
-    year: number;
-  };
-
   const [carData, setCarData] = useState<CarsType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [carPrices, setCarPrices] = useState<number[]>([]);
   const [carsCount, setCarsCount] = useState<CarsCount>({});
-  const [ReserveCars, setReserveCars] = useState([]);
-  const { collections } = useGlobalProvider();
+  const {
+    collections,
+    ReserveCars,
+    setReserveCars,
+    loading,
+    setLoading,
+    error,
+    setError,
+    fetchReservedCars,
+  } = useGlobalProvider();
   const router = useRouter();
   const initialPrice = 1230;
   const numb = 9;
@@ -96,16 +89,6 @@ export default function Page({ params }: { params: { brand: string } }) {
     }));
   };
 
-  const deleteCar = (index: number) => {
-    setCarsCount((prevCounts) => {
-      const newCounts = { ...prevCounts };
-      delete newCounts[index];
-      return newCounts;
-    });
-
-    setReserveCars((prevCars) => prevCars.filter((_, i) => i !== index));
-  };
-
   const calculateTotalPrice = () => {
     return ReserveCars.reduce((total, _item, index) => {
       const carsNum = carsCount[index] || 1;
@@ -119,28 +102,7 @@ export default function Page({ params }: { params: { brand: string } }) {
     }
   }, [ReserveCars]);
 
-  const { data: session, status } = useSession();
-  const userId = session?.user.id;
-
-  console.log("this is user id", userId);
-
-  async function fetchReservedCars() {
-    try {
-      if (userId) {
-        const response = await axios.get("/api/reservedcars", {
-          params: { userId },
-        });
-        setReserveCars(response.data.ReservedCars);
-        setLoading(false);
-      }
-    } catch (error: any) {
-      setError(error.message || "Error fetching reserved cars");
-      setLoading(false);
-    }
-  }
-  useEffect(() => {
-    fetchReservedCars();
-  }, [userId]);
+  const { data: session } = useSession();
 
   const addCarToReserve = async (car: CarsType) => {
     try {
@@ -149,8 +111,6 @@ export default function Page({ params }: { params: { brand: string } }) {
         console.error("User is not authenticated");
         return;
       }
-
-      // Send the userId and car object to the server in the correct format
       const response = await axios.post("/api/reservedcars", {
         userId,
         car,
@@ -164,16 +124,27 @@ export default function Page({ params }: { params: { brand: string } }) {
       console.error("Error adding car to reserve:", error);
     }
   };
-  console.log(ReserveCars);
 
-  const deleteReservedCar = async (id: string) => {
+  const deleteReservedCar = async (id: string, isUserId: boolean) => {
     try {
-      const response = await axios.delete(`/api/reservedcars?id=${id}`);
+      let url = "/api/reservedcars";
+      if (isUserId) {
+        url += `?userId=${id}`;
+        setReserveCars([]);
+      } else {
+        url += `?id=${id}`;
+      }
+      const response = await axios.delete(url);
+      await fetchReservedCars();
       if (response.status === 200) {
-        alert("Delete susccesfuly");
+        alert(
+          isUserId
+            ? "Deleted all cars successfully"
+            : "Car deleted successfully"
+        );
       }
     } catch (error: any) {
-      console.error("Error deleting reserved car:", error);
+      console.error("Error deleting reserved car(s):", error);
     }
   };
 
@@ -198,7 +169,7 @@ export default function Page({ params }: { params: { brand: string } }) {
             <div className="mt-12">
               <div className="bg-gray-200 h-px w-full"></div>
               <div className="mt-4 flex flex-col gap-4">
-                {ReserveCars.map((item: any, index: number) => {
+                {ReserveCars.map((item: CarsType, index: number) => {
                   const initialPrice = 1230;
                   const carsNum = carsCount[index] || 1;
 
@@ -206,19 +177,17 @@ export default function Page({ params }: { params: { brand: string } }) {
                     return initialPrice * carsNum;
                   };
                   return (
-                    <>
+                    <div key={item._id}>
                       <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
                         <img
                           className="w-40"
-                          src={createCarImage(
-                            item?.ReversedCars?.map((item: CarsType) => item)
-                          )}
+                          src={createCarImage(item)}
                           alt="Carimg"
                         />
                         <div className="flex flex-col w-full">
                           <p className="font-medium text-lg">
-                            {item.ReservedCars.make.toUpperCase()} |{" "}
-                            {item.ReservedCars.model.toUpperCase()}
+                            {item.make.toUpperCase()} |{" "}
+                            {item.model.toUpperCase()}
                           </p>
                           <div className="flex justify-between w-full">
                             <div className="text-sm">
@@ -244,21 +213,35 @@ export default function Page({ params }: { params: { brand: string } }) {
                                 <CiCircleMinus className="size-8 text-gray-600 hover:text-gray-700" />
                               </button>
                               <div>${handleTotalPrices()}</div>
-                              <button onClick={() => deleteCar(index)}>
+                              <button
+                                onClick={() =>
+                                  deleteReservedCar(item._id, false)
+                                }
+                              >
                                 <TiDeleteOutline className="size-8 text-gray-600 hover:text-gray-700" />
                               </button>
                             </div>
                           </div>
                         </div>
                       </div>
+
                       <div className="bg-gray-200 h-px w-full"></div>
-                    </>
+                    </div>
                   );
                 })}
               </div>
               <h1 className="float-end font-medium text-xl">
                 TOTAL: ${calculateTotalPrice()}{" "}
               </h1>
+              <Button
+                disabled={!session}
+                onClick={() =>
+                  session && deleteReservedCar(session?.user?.id, true)
+                }
+                className="w-full mt-2 bg-red-500 border-none p-6 font-medium text-xl text-white"
+              >
+                Delete All
+              </Button>
               <Button className="w-full mt-2 bg-green-500 border-none p-6 font-medium text-xl text-white">
                 RESERVE
               </Button>
@@ -285,7 +268,7 @@ export default function Page({ params }: { params: { brand: string } }) {
             </div>
           ))}
           <Button
-            // disabled={ReserveCars.length === 0}
+            disabled={ReserveCars.length === 0}
             onClick={() => setIsOpen(!isOpen)}
             className="rounded w-full border-none font-medium text-white bg-green-600 p-2 cursor-pointer hover:bg-green-700 mt-2"
           >

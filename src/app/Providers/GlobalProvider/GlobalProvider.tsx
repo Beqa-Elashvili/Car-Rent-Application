@@ -1,5 +1,5 @@
-import { PropsWithChildren, useState } from "react";
-import { GlobalContext } from "./GlobalContext";
+import { PropsWithChildren, useEffect, useState } from "react";
+import { CarsType, GlobalContext } from "./GlobalContext";
 import { TLocation } from "./GlobalContext";
 import { TCollecttion } from "./GlobalContext";
 import { TConditions } from "./GlobalContext";
@@ -10,6 +10,9 @@ import { FaCar } from "react-icons/fa";
 import { FaUniregistry } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { CgDanger } from "react-icons/cg";
+import { CardType } from "antd/es/card/Card";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
   const Brands = [
@@ -88,16 +91,48 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   });
   const [collections, setCollections] = useState<TCollecttion[]>(Brands);
   const [conditions, setConditions] = useState<TConditions[]>(ConditionsRules);
+  const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { data: session } = useSession();
+  const userId = session?.user.id;
+
+  async function fetchReservedCars() {
+    try {
+      if (userId) {
+        const response = await axios.get("/api/reservedcars", {
+          params: { userId },
+        });
+        setReserveCars(response.data.ReservedCars);
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setError(error.message || "Error fetching reserved cars");
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchReservedCars();
+  }, [userId]);
 
   return (
     <GlobalContext.Provider
       value={{
+        loading,
+        setLoading,
+        error,
+        setError,
         conditions,
+        ReserveCars,
+        setReserveCars,
         setConditions,
         location,
         setLocation,
         collections,
         setCollections,
+        fetchReservedCars,
       }}
     >
       {children}
