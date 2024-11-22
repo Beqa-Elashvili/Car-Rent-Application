@@ -20,6 +20,7 @@ export interface TConditions {
   rules?: string[];
 }
 export interface CarsType {
+  carDayCount: number;
   _id: string;
   id: string;
   city_mpg: number;

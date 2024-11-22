@@ -67,34 +67,87 @@ export async function POST(req: any) {
     });
 
     if (existingReservation) {
+      existingReservation.carDayCount += 1;
+      await existingReservation.save();
+
       return NextResponse.json(
-        { message: "User has already reserved this car." },
-        { status: 400 }
+        { message: "Car reservation updated. Day count increased." },
+        { status: 200 }
       );
+    } else {
+      const newReservation = new reservedCars({
+        city_mpg: car.city_mpg,
+        class: car.class,
+        combination_mpg: car.combination_mpg,
+        cylinders: car.cylinders,
+        displacement: car.displacement,
+        drive: car.drive,
+        fuel_type: car.fuel_type,
+        highway_mpg: car.highway_mpg,
+        make: car.make,
+        model: car.model,
+        transmission: car.transmission,
+        year: car.year,
+        carDayCount: 1,
+        userId,
+      });
+
+      await newReservation.save();
+      return NextResponse.json({ message: "Car Reserved" }, { status: 201 });
     }
-
-    const newReservation = new reservedCars({
-      city_mpg: car.city_mpg,
-      class: car.class,
-      combination_mpg: car.combination_mpg,
-      cylinders: car.cylinders,
-      displacement: car.displacement,
-      drive: car.drive,
-      fuel_type: car.fuel_type,
-      highway_mpg: car.highway_mpg,
-      make: car.make,
-      model: car.model,
-      transmission: car.transmission,
-      year: car.year,
-      userId,
-    });
-
-    await newReservation.save();
-    return NextResponse.json({ message: "Car Reserved" }, { status: 201 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
       { message: "Failed to reserve car", error },
+      { status: 500 }
+    );
+  }
+}
+export async function PUT(req: any) {
+  try {
+    const { userId, carId } = await req.json();
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        { message: "Invalid User ID format" },
+        { status: 400 }
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(carId)) {
+      return NextResponse.json(
+        { message: "Invalid Car ID format" },
+        { status: 400 }
+      );
+    }
+
+    await ConnectDB();
+    const reservation = await reservedCars.findOne({ _id: carId, userId });
+
+    if (!reservation) {
+      return NextResponse.json(
+        { message: "Reservation not found for this car and user" },
+        { status: 404 }
+      );
+    }
+
+    if (reservation.carDayCount > 1) {
+      reservation.carDayCount -= 1;
+      await reservation.save();
+      return NextResponse.json(
+        { message: "Car day count decremented successfully" },
+        { status: 200 }
+      );
+    } else {
+      return NextResponse.json(
+        { message: "Car day count cannot be less than 1" },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
+    console.error("Error while decrementing car day count:", error);
+    return NextResponse.json(
+      { message: "Failed to decrement car day count", error },
       { status: 500 }
     );
   }
@@ -130,7 +183,6 @@ export async function DELETE(req: any) {
       );
     }
 
-    // Case 2: Deleting a specific car by its ID
     if (carId) {
       if (!mongoose.Types.ObjectId.isValid(carId)) {
         return NextResponse.json(

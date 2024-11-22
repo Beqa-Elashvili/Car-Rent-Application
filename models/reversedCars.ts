@@ -14,6 +14,7 @@ const reservedCarSchema = new mongoose.Schema(
     model: { type: String, required: true },
     transmission: { type: String, required: true },
     year: { type: Number, required: true },
+    carDayCount: { type: Number, required: true, default: 0 },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

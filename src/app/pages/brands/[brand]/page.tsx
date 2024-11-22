@@ -81,18 +81,12 @@ export default function Page({ params }: { params: { brand: string } }) {
   interface CarsCount {
     [key: string]: number;
   }
-
-  const updateCarCount = (id: number, count: number) => {
-    setCarsCount((prevCounts) => ({
-      ...prevCounts,
-      [id]: count,
-    }));
-  };
-
   const calculateTotalPrice = () => {
-    return ReserveCars.reduce((total, _item, index) => {
-      const carsNum = carsCount[index] || 1;
-      return total + initialPrice * carsNum;
+    const initialPrice = 1230; // Assuming this is the base price per car per day
+    return ReserveCars.reduce((total, item) => {
+      const pricePerDay = initialPrice; // Price per day for the car
+      const totalCarPrice = pricePerDay * item.carDayCount; // Total price for this car
+      return total + totalCarPrice; // Accumulate the total price
     }, 0);
   };
 
@@ -116,10 +110,8 @@ export default function Page({ params }: { params: { brand: string } }) {
         car,
       });
 
-      if (response.status === 201) {
-        fetchReservedCars();
-        setIsOpen(true);
-      }
+      fetchReservedCars();
+      setIsOpen(true);
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
     }
@@ -142,9 +134,34 @@ export default function Page({ params }: { params: { brand: string } }) {
             ? "Deleted all cars successfully"
             : "Car deleted successfully"
         );
+        if (ReserveCars.length < 0) {
+          setIsOpen(false);
+        }
       }
     } catch (error: any) {
       console.error("Error deleting reserved car(s):", error);
+    }
+  };
+
+  const decrementCarDayCount = async (car: CarsType) => {
+    try {
+      const userId = session?.user.id;
+      if (!userId) {
+        console.error("User is not authenticated");
+        return;
+      }
+      if (car.carDayCount === 1) {
+        deleteReservedCar(car._id, false);
+        return;
+      }
+      const response = await axios.put("/api/reservedcars", {
+        userId,
+        carId: car._id,
+      });
+
+      fetchReservedCars();
+    } catch (error: any) {
+      console.error("Error decrementing car day count:", error);
     }
   };
 
@@ -168,11 +185,10 @@ export default function Page({ params }: { params: { brand: string } }) {
             </button>
             <div className="mt-12">
               <div className="bg-gray-200 h-px w-full"></div>
-              <div className="mt-4 flex flex-col gap-4">
-                {ReserveCars.map((item: CarsType, index: number) => {
+              <div className="py-4 flex flex-col gap-4">
+                {ReserveCars.map((item: CarsType) => {
                   const initialPrice = 1230;
-                  const carsNum = carsCount[index] || 1;
-
+                  const carsNum = item.carDayCount;
                   const handleTotalPrices = () => {
                     return initialPrice * carsNum;
                   };
@@ -195,19 +211,13 @@ export default function Page({ params }: { params: { brand: string } }) {
                               <p>Period: 8+ days</p>
                             </div>
                             <div className="flex gap-2 items-center">
-                              <button
-                                onClick={() =>
-                                  updateCarCount(index, carsNum + 1)
-                                }
-                              >
+                              <button onClick={() => addCarToReserve(item)}>
                                 <CiCirclePlus className="size-8  text-gray-600 hover:text-gray-700" />
                               </button>
-                              <div>{carsNum}</div>
+                              <div>{item.carDayCount}</div>
                               <button
                                 onClick={() => {
-                                  if (carsNum > 1) {
-                                    updateCarCount(index, carsNum - 1);
-                                  }
+                                  decrementCarDayCount(item);
                                 }}
                               >
                                 <CiCircleMinus className="size-8 text-gray-600 hover:text-gray-700" />
@@ -224,8 +234,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                           </div>
                         </div>
                       </div>
-
-                      <div className="bg-gray-200 h-px w-full"></div>
+                      <div className="bg-gray-200 mt-4 h-px w-full"></div>
                     </div>
                   );
                 })}
