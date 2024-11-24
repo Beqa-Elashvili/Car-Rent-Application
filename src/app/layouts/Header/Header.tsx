@@ -7,6 +7,7 @@ import { RiMenuFold2Fill } from "react-icons/ri";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { CiUser } from "react-icons/ci";
 import Image from "next/image";
 
 export function Header() {
@@ -78,8 +79,8 @@ export function Header() {
             LUXURY <span className="text-red-400">DRIVE</span>
           </p>
         </div>
-        <div className="w-2/6 m-auto hidden lg:inline">
-          <div className="flex justify-between">
+        <div className="hidden lg:inline">
+          <div className="flex gap-4 justify-between">
             <div className="hover:text-green-400 cursor-pointer">MAIN</div>
             <span className="border bg-gray-500"></span>
             <div className="hover:text-green-400 cursor-pointer">BEST</div>
@@ -97,9 +98,7 @@ export function Header() {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <UserProfile />
-        </div>
+        <UserProfile />
       </div>
     </div>
   );

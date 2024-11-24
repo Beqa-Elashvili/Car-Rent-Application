@@ -205,7 +205,6 @@ export async function DELETE(req: any) {
       );
     }
 
-    // If neither userId nor id is provided
     return NextResponse.json(
       { message: "Car ID or User ID is required" },
       { status: 400 }

@@ -82,11 +82,11 @@ export default function Page({ params }: { params: { brand: string } }) {
     [key: string]: number;
   }
   const calculateTotalPrice = () => {
-    const initialPrice = 1230; // Assuming this is the base price per car per day
+    const initialPrice = 1230; 
     return ReserveCars.reduce((total, item) => {
-      const pricePerDay = initialPrice; // Price per day for the car
-      const totalCarPrice = pricePerDay * item.carDayCount; // Total price for this car
-      return total + totalCarPrice; // Accumulate the total price
+      const pricePerDay = initialPrice; 
+      const totalCarPrice = pricePerDay * item.carDayCount; 
+      return total + totalCarPrice; 
     }, 0);
   };
 
