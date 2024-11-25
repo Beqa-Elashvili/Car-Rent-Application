@@ -8,39 +8,59 @@ export async function GET(req: any) {
   try {
     await ConnectDB();
     const userId = req.nextUrl.searchParams.get("userId");
-    if (!userId) {
-      return NextResponse.json(
-        { message: "User ID is required" },
-        { status: 400 }
-      );
+    const carId = req.nextUrl.searchParams.get("carId");
+
+    if (userId) {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return NextResponse.json(
+          { message: "Invalid User ID format" },
+          { status: 400 }
+        );
+      }
+      console.log("Looking for userId:", userId);
+
+      const ReservedCars = await reservedCars.find({ userId });
+
+      console.log("Found Reserved Cars:", ReservedCars);
+
+      if (ReservedCars.length === 0) {
+        return NextResponse.json(
+          { message: "No cars reserved by this user." },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json({ ReservedCars });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return NextResponse.json(
-        { message: "Invalid User ID format" },
-        { status: 400 }
-      );
+    if (carId) {
+      if (!mongoose.Types.ObjectId.isValid(carId)) {
+        return NextResponse.json(
+          { message: "Invalid Car ID format" },
+          { status: 400 }
+        );
+      }
+
+      console.log("Looking for carId:", carId);
+
+      const car = await reservedCars.findById(carId);
+
+      if (!car) {
+        return NextResponse.json({ message: "Car not found" }, { status: 404 });
+      }
+
+      return NextResponse.json({ car });
     }
-
-    console.log("Looking for userId:", userId);
-
-    const ReservedCars = await reservedCars.find({ userId });
-
-    console.log("Found Reserved Cars:", ReservedCars);
-
-    if (ReservedCars.length === 0) {
-      return NextResponse.json(
-        { message: "No cars reserved by this user." },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ ReservedCars });
-  } catch (error) {
-    console.error("Error fetching cars:", error);
 
     return NextResponse.json(
-      { message: "Error fetching cars data", error: error },
+      { message: "User ID or Car ID is required" },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error fetching car data:", error);
+
+    return NextResponse.json(
+      { message: "Error fetching car data", error: error },
       { status: 500 }
     );
   }

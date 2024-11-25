@@ -5,17 +5,20 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { createCarImage } from "@/app/CreateCarImage";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { Button } from "antd/es/radio";
-import { useSession } from "next-auth/react";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function ReserveCars() {
   const { ReserveCars } = useGlobalProvider();
+  const router = useRouter();
 
   return (
     <div className="bg-gray-900 h-screen w-full text-white p-12">
       {ReserveCars?.map((item: CarsType) => {
         return (
-          <div key={item._id}>
+          <div
+            onClick={() => router.push(`/pages/solocar/${item._id}`)}
+            key={item._id}
+          >
             <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-between">
               <div className="flex flex-col">
                 <img
