@@ -5,24 +5,21 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { createCarImage } from "@/app/CreateCarImage";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { Button } from "antd/es/radio";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 
 export default function ReserveCars() {
   const { ReserveCars } = useGlobalProvider();
-  console.log(ReserveCars);
+
   return (
-    <div className="bg-gray-900 h-full w-full text-white p-12">
+    <div className="bg-gray-900 h-screen w-full text-white p-12">
       {ReserveCars?.map((item: CarsType) => {
-        const initialPrice = 1230;
-        const carsNum = item.carDayCount;
-        const handleTotalPrices = () => {
-          return initialPrice * carsNum;
-        };
         return (
           <div key={item._id}>
             <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-between">
               <div className="flex flex-col">
                 <img
-                  className="w-40 flex w-full md:hidden "
+                  className="w-40 flex object-cover w-full md:hidden "
                   src={createCarImage(item)}
                   alt="Carimg"
                 />

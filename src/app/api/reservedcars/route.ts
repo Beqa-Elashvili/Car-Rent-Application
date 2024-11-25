@@ -45,6 +45,7 @@ export async function GET(req: any) {
     );
   }
 }
+
 export async function POST(req: any) {
   try {
     const { userId, car } = await req.json();

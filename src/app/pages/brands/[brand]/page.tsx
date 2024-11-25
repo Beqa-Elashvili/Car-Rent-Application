@@ -21,7 +21,6 @@ export default function Page({ params }: { params: { brand: string } }) {
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [carPrices, setCarPrices] = useState<number[]>([]);
-  const [carsCount, setCarsCount] = useState<CarsCount>({});
   const {
     collections,
     ReserveCars,
@@ -36,6 +35,8 @@ export default function Page({ params }: { params: { brand: string } }) {
   const initialPrice = 1230;
   const numb = 9;
   const pathname = window.location.pathname.split("/").pop();
+  const { data: session } = useSession();
+  const userId = session?.user.id;
 
   async function fetchCarData() {
     try {
@@ -82,11 +83,11 @@ export default function Page({ params }: { params: { brand: string } }) {
     [key: string]: number;
   }
   const calculateTotalPrice = () => {
-    const initialPrice = 1230; 
+    const initialPrice = 1230;
     return ReserveCars.reduce((total, item) => {
-      const pricePerDay = initialPrice; 
-      const totalCarPrice = pricePerDay * item.carDayCount; 
-      return total + totalCarPrice; 
+      const pricePerDay = initialPrice;
+      const totalCarPrice = pricePerDay * item.carDayCount;
+      return total + totalCarPrice;
     }, 0);
   };
 
@@ -95,8 +96,6 @@ export default function Page({ params }: { params: { brand: string } }) {
       setIsOpen(false);
     }
   }, [ReserveCars]);
-
-  const { data: session } = useSession();
 
   const addCarToReserve = async (car: CarsType) => {
     try {
@@ -142,10 +141,8 @@ export default function Page({ params }: { params: { brand: string } }) {
       console.error("Error deleting reserved car(s):", error);
     }
   };
-
   const decrementCarDayCount = async (car: CarsType) => {
     try {
-      const userId = session?.user.id;
       if (!userId) {
         console.error("User is not authenticated");
         return;
@@ -306,6 +303,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                   }
                   return angle;
                 };
+                console.log(car);
                 return (
                   <div
                     key={index}

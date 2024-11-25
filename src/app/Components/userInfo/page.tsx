@@ -11,7 +11,7 @@ import { FaCarTunnel } from "react-icons/fa6";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 const UserProfile = () => {
-  const rounter = useRouter();
+  const router = useRouter();
   const { data: session, status } = useSession();
 
   const { ReserveCars } = useGlobalProvider();
@@ -39,7 +39,7 @@ const UserProfile = () => {
     <div className="flex items-center">
       {!session ? (
         <button
-          onClick={() => rounter.push("/register")}
+          onClick={() => router.push("/register")}
           className="p-1 px-2 relative text-white border-none flex items-center"
         >
           <span className="absolute left-0 border  border-gray-400 h-full"></span>
@@ -57,7 +57,7 @@ const UserProfile = () => {
           <button className="hover:text-green-500 w-6">
             <MdFavoriteBorder className="size-8" />
           </button>
-          <button className="hover:text-green-500 relative p-2">
+          <button onClick={() => router.push("/pages/reserveCars")} className="hover:text-green-500 relative p-2">
             <FaCarTunnel className="size-8" />
             <div className="absolute top-0 right-0 bg-yellow-500 p-2 rounded-full h-6 w-6 flex items-center justify-center">
               {ReserveCars?.length}
