@@ -19,8 +19,8 @@ export default function Car({ params }: { params: { id: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars } = useGlobalProvider();
-
+  const { ReserveCars, ReserveTotalPrice } = useGlobalProvider();
+  console.log(ReserveTotalPrice);
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -103,21 +103,21 @@ export default function Car({ params }: { params: { id: string } }) {
 
   const getNextAngle = () => {
     setAngle((prevAngle) => {
-      const currentIndex = angles.indexOf(prevAngle); 
-      const nextIndex = (currentIndex + 1) % angles.length; 
-      return angles[nextIndex]; 
+      const currentIndex = angles.indexOf(prevAngle);
+      const nextIndex = (currentIndex + 1) % angles.length;
+      return angles[nextIndex];
     });
   };
   const getPrevAngle = () => {
     setAngle((prevAngle) => {
-      const currentIndex = angles.indexOf(prevAngle); 
-      const prevIndex = (currentIndex - 1 + angles.length) % angles.length; 
-      return angles[prevIndex]; 
+      const currentIndex = angles.indexOf(prevAngle);
+      const prevIndex = (currentIndex - 1 + angles.length) % angles.length;
+      return angles[prevIndex];
     });
   };
 
   return (
-    <div className="bg-gray-900 h-full flex flex-col justify-center p-12">
+    <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-12">
       {car && (
         <div className="bg-gray-900 h-screen w-full text-white flex justify-center items-center gap-12">
           <div className="text-start text-2xl flex flex-col gap-4">
@@ -183,12 +183,24 @@ export default function Car({ params }: { params: { id: string } }) {
           </Button>
         </div>
       )}
-      <Carousel slidesToShow={3} arrows dotPosition="bottom" infinite={true}>
-        {ReserveCars?.map((item) => (
-          <div className="text-center p-12">
-            <img src={createCarImage(item)} alt="" />
-            <h1>{item.make}</h1>
-            <h1>{item.model}</h1>
+      <Carousel
+        slidesToShow={3}
+        className="rounded-full bg-slate-800 p-12 "
+        arrows
+        dotPosition="bottom"
+        infinite={true}
+      >
+        {ReserveCars?.map((item: CarsType) => (
+          <div
+            key={item._id}
+            onClick={() => router.push(`/pages/solocar/${item._id}`)}
+            className="text-center p-12 hover:bg-slate-700 rounded-full cursor-pointer"
+          >
+            <img src={createCarImage(item)} alt="Carimg" />
+            <div className="text-xl text-white">
+              <h1>{item.make.toUpperCase()}</h1>
+              <h1>{item.model.toUpperCase()}</h1>
+            </div>
           </div>
         ))}
       </Carousel>

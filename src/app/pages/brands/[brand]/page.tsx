@@ -84,11 +84,13 @@ export default function Page({ params }: { params: { brand: string } }) {
   }
   const calculateTotalPrice = () => {
     const initialPrice = 1230;
-    return ReserveCars.reduce((total, item) => {
+    const total = ReserveCars.reduce((accumulatedTotal, item) => {
       const pricePerDay = initialPrice;
       const totalCarPrice = pricePerDay * item.carDayCount;
-      return total + totalCarPrice;
+      return accumulatedTotal + totalCarPrice;
     }, 0);
+    localStorage.setItem("reserveTotalPrice", total as unknown as string);
+    return total;
   };
 
   useEffect(() => {
@@ -237,7 +239,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                 })}
               </div>
               <h1 className="float-end font-medium text-xl">
-                TOTAL: ${calculateTotalPrice()}{" "}
+                TOTAL: ${calculateTotalPrice()}
               </h1>
               <Button
                 disabled={!session}

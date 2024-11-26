@@ -15,10 +15,7 @@ export default function ReserveCars() {
     <div className="bg-gray-900 h-screen w-full text-white p-12">
       {ReserveCars?.map((item: CarsType) => {
         return (
-          <div
-            onClick={() => router.push(`/pages/solocar/${item._id}`)}
-            key={item._id}
-          >
+          <div key={item._id}>
             <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-between">
               <div className="flex flex-col">
                 <img
@@ -32,7 +29,7 @@ export default function ReserveCars() {
                 </p>
                 <div className="text-md">
                   <p>
-                    Price per Day.Rental : <span>432432$</span>
+                    Price per Day.Rental : <span>1380$</span>
                   </p>
                   <p>Period: 8+ days</p>
                   <p>Day: {item.carDayCount}</p>
@@ -44,13 +41,19 @@ export default function ReserveCars() {
                 alt="Carimg"
               />
               <div>
-                <h1 className="hidden md:flex items-center text-xl hover:cursor-pointer h-full hover:text-green-500">
+                <button
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  className="hidden md:flex items-center text-xl hover:cursor-pointer h-full hover:text-green-500"
+                >
                   <p>Review</p>
                   <span>
                     <MdOutlineNavigateNext className="text-9xl" />
                   </span>
-                </h1>
-                <Button className="flex items-center justify-center md:hidden text-center w-full bg-green-400 text-white border-none mt-2 rounded text-lg">
+                </button>
+                <Button
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  className="flex items-center justify-center md:hidden text-center w-full bg-green-400 text-white border-none mt-2 rounded text-lg"
+                >
                   Review
                 </Button>
               </div>

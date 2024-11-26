@@ -56,10 +56,15 @@ interface GlobalContextProps {
   error: null;
   setError: Dispatch<SetStateAction<null>>;
 
+  ReserveTotalPrice: number | null;
+  setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
+
   fetchReservedCars: () => Promise<void>;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
+  ReserveTotalPrice: null,
+  setReserveTotalPrice: () => {},
   error: null,
   setError: () => {},
   loading: false,

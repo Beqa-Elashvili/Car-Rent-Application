@@ -92,6 +92,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [collections, setCollections] = useState<TCollecttion[]>(Brands);
   const [conditions, setConditions] = useState<TConditions[]>(ConditionsRules);
   const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);
+  const [ReserveTotalPrice, setReserveTotalPrice] = useState<number | null>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -133,6 +134,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         collections,
         setCollections,
         fetchReservedCars,
+        ReserveTotalPrice,
+        setReserveTotalPrice,
       }}
     >
       {children}
