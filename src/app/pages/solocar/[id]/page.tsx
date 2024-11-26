@@ -7,6 +7,8 @@ import { createCarImage } from "@/app/CreateCarImage";
 import { Button } from "antd";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { Carousel } from "antd";
+import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 export default function Car({ params }: { params: { id: string } }) {
   const [car, setCar] = useState<CarsType>();
@@ -17,6 +19,8 @@ export default function Car({ params }: { params: { id: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
+  const { ReserveCars } = useGlobalProvider();
+
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -38,9 +42,18 @@ export default function Car({ params }: { params: { id: string } }) {
             {...fadeInOut}
             className="flex text-xl text-gray-400 gap-12 justify-center items-center"
           >
-            <p>{car?.displacement}</p>
-            <p>{car?.cylinders}</p>
-            <p>{car?.transmission.toUpperCase()}</p>
+            <div>
+              <p className="text-sm">Displacement</p>
+              <p>{car?.displacement}</p>
+            </div>
+            <div>
+              <p className="text-sm">Cylinders</p>
+              <p>{car?.cylinders}</p>
+            </div>
+            <div>
+              <p className="text-sm">Transmission</p>
+              <p>{car?.transmission.toUpperCase()}</p>
+            </div>
           </motion.div>
         );
       case "Class":
@@ -49,9 +62,18 @@ export default function Car({ params }: { params: { id: string } }) {
             {...fadeInOut}
             className="flex text-xl text-gray-400 gap-12 justify-center items-center"
           >
-            <p>{car?.class.toUpperCase()}</p>
-            <p>{car?.fuel_type.toUpperCase()}</p>
-            <p>{car?.combination_mpg}</p>
+            <div>
+              <p className="text-sm">Class</p>
+              <p>{car?.class.toUpperCase()}</p>
+            </div>
+            <div>
+              <p className="text-sm">Fuel type</p>
+              <p>{car?.fuel_type.toUpperCase()}</p>
+            </div>
+            <div>
+              <p className="text-sm">Combination MPG</p>
+              <p>{car?.combination_mpg}</p>
+            </div>
           </motion.div>
         );
       default:
@@ -76,11 +98,28 @@ export default function Car({ params }: { params: { id: string } }) {
       ? "bg-blue-500 text-white"
       : "bg-gray-700 text-gray-300";
 
-  console.log(car);
+  const [angle, setAngle] = useState<string>("0");
+  const angles = ["29", "13", "0"];
+
+  const getNextAngle = () => {
+    setAngle((prevAngle) => {
+      const currentIndex = angles.indexOf(prevAngle); 
+      const nextIndex = (currentIndex + 1) % angles.length; 
+      return angles[nextIndex]; 
+    });
+  };
+  const getPrevAngle = () => {
+    setAngle((prevAngle) => {
+      const currentIndex = angles.indexOf(prevAngle); 
+      const prevIndex = (currentIndex - 1 + angles.length) % angles.length; 
+      return angles[prevIndex]; 
+    });
+  };
+
   return (
-    <>
+    <div className="bg-gray-900 h-full flex flex-col justify-center p-12">
       {car && (
-        <div className="bg-gray-900 h-screen w-full text-white p-12 flex justify-center items-center gap-12">
+        <div className="bg-gray-900 h-screen w-full text-white flex justify-center items-center gap-12">
           <div className="text-start text-2xl flex flex-col gap-4">
             <Button
               className={`rounded-full w-36 h-12 ${buttonStyle("Information")}`}
@@ -106,11 +145,25 @@ export default function Car({ params }: { params: { id: string } }) {
             <h1 className="text-3xl mb-4">
               {car.make.toUpperCase()} | {car.model.toUpperCase()}
             </h1>
-            <img
-              className="w-full h-96 object-contain"
-              src={createCarImage(car)}
-              alt="Car Image"
-            />{" "}
+            <div className="flex gap-4 items-center">
+              <p
+                onClick={() => getPrevAngle()}
+                className="text-3xl hover:text-gray-500 rounded-full cursor-pointer"
+              >
+                {"<"}
+              </p>
+              <img
+                className="w-full h-96 object-contain"
+                src={createCarImage(car, angle)}
+                alt="Car Image"
+              />
+              <p
+                onClick={() => getNextAngle()}
+                className=" text-3xl rounded-full p-2 hover:text-gray-500  cursor-pointer"
+              >
+                {">"}
+              </p>
+            </div>
             <motion.div
               key={selectedSection}
               initial={{ opacity: 0 }}
@@ -130,6 +183,15 @@ export default function Car({ params }: { params: { id: string } }) {
           </Button>
         </div>
       )}
-    </>
+      <Carousel slidesToShow={3} arrows dotPosition="bottom" infinite={true}>
+        {ReserveCars?.map((item) => (
+          <div className="text-center p-12">
+            <img src={createCarImage(item)} alt="" />
+            <h1>{item.make}</h1>
+            <h1>{item.model}</h1>
+          </div>
+        ))}
+      </Carousel>
+    </div>
   );
 }
