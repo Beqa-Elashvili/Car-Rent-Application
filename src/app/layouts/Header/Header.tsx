@@ -7,13 +7,11 @@ import { RiMenuFold2Fill } from "react-icons/ri";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CiUser } from "react-icons/ci";
 import Image from "next/image";
 
 export function Header() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  console.log(isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -81,11 +79,14 @@ export function Header() {
         </div>
         <div className="hidden lg:inline">
           <div className="flex gap-4 justify-between">
-            <div className="hover:text-green-400 cursor-pointer">MAIN</div>
+            <div onClick={() => router.push("/")} className="hover:text-green-400 cursor-pointer">MAIN</div>
             <span className="border bg-gray-500"></span>
             <div className="hover:text-green-400 cursor-pointer">BEST</div>
             <span className="border bg-gray-500"></span>
-            <div className="hover:text-green-400 cursor-pointer">
+            <div
+              onClick={() => router.push("/pages/conditions")}
+              className="hover:text-green-400 cursor-pointer"
+            >
               CONDITIONS
             </div>
             <span className="border bg-gray-500"></span>
