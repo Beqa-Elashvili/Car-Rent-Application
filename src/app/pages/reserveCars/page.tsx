@@ -11,7 +11,7 @@ export default function ReserveCars() {
   const { ReserveCars } = useGlobalProvider();
   const router = useRouter();
   const TotalPrice = localStorage.getItem("reserveTotalPrice");
-  // console.log(TotalPrice)
+
 
   const TotalDayCount = () => {
     const total = ReserveCars.reduce((accimulator, car) => {
@@ -85,7 +85,10 @@ export default function ReserveCars() {
             <h1 className="w-20">Total Price:</h1>
             <span>{TotalPrice} $</span>
           </div>
-          <button className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto">
+          <button
+            onClick={() => router.push("/pages/chackout")}
+            className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
+          >
             Go to Chackout
           </button>
         </div>
