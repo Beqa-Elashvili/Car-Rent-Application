@@ -143,7 +143,7 @@ export default function Chackout() {
   return (
     <div className="bg-slate-800 min-h-screen h-full p-20 px-40">
       <div className="bg-white flex gap-4 w-full p-12 rounded-xl">
-        {session?.user && location.city && location.street ? (
+        {session?.user && location.city ? (
           <Form<FieldType>
             form={form}
             initialValues={userValues}
@@ -187,10 +187,9 @@ export default function Chackout() {
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   City
                 </p>
-                <Input value={location?.city || ""} />
+                <Input value={location?.city} />
               </div>
             </Form.Item>
-
             <Form.Item
               name="street"
               rules={[{ required: true, message: "Please input your street!" }]}
@@ -199,7 +198,11 @@ export default function Chackout() {
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   Street
                 </p>
-                <Input value={location?.street || ""} />
+                {location?.street ? (
+                  <Input value={location?.street || "..."} />
+                ) : (
+                  <Input value={"..."} />
+                )}
               </div>
             </Form.Item>
             <Button className="mb-2" type="primary" onClick={showModal}>
