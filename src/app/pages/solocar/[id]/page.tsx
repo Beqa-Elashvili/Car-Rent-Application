@@ -20,7 +20,6 @@ export default function Car({ params }: { params: { id: string } }) {
     transition: { duration: 0.8 },
   };
   const { ReserveCars, ReserveTotalPrice } = useGlobalProvider();
-  console.log(ReserveTotalPrice);
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -187,6 +186,7 @@ export default function Car({ params }: { params: { id: string } }) {
         slidesToShow={3}
         className="rounded-full bg-slate-800 p-12 "
         arrows
+        autoplay
         dotPosition="bottom"
         infinite={true}
       >
