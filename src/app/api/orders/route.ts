@@ -2,6 +2,7 @@ import { Orders } from "models/orders";
 import { User } from "models/userModal";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
+import { ConnectDB } from "utils/connect";
 
 export async function POST(req: Request) {
   try {
@@ -73,6 +74,73 @@ export async function GET(req: Request) {
     console.error("Error fetching orders:", error);
     return NextResponse.json(
       { message: "Error fetching orders", error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: any) {
+  try {
+    const userId = req.nextUrl.searchParams.get("userId");
+    const orderId = req.nextUrl.searchParams.get("id");
+
+    if (userId) {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return NextResponse.json(
+          { message: "Invalid User ID format" },
+          { status: 400 }
+        );
+      }
+
+      await ConnectDB();
+
+      const deletedCars = await Orders.deleteMany({ userId });
+
+      if (deletedCars.deletedCount === 0) {
+        return NextResponse.json(
+          { message: "No order found to delete for this user" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { message: "All Orders deleted successfully" },
+        { status: 200 }
+      );
+    }
+
+    if (orderId) {
+      if (!mongoose.Types.ObjectId.isValid(orderId)) {
+        return NextResponse.json(
+          { message: "Invalid Car ID format" },
+          { status: 400 }
+        );
+      }
+
+      await ConnectDB();
+
+      const deletedCar = await Orders.findOneAndDelete({ _id: orderId });
+
+      if (!deletedCar) {
+        return NextResponse.json(
+          { message: "order not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { message: "order car deleted succesfuly" },
+        { status: 200 }
+      );
+    }
+    return NextResponse.json(
+      { message: "order id or User ID is required" },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error while Deleting order", error);
+    return NextResponse.json(
+      { message: "Failed to delete order", error },
       { status: 500 }
     );
   }

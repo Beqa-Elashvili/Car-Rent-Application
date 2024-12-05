@@ -1,4 +1,10 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import {
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { CarsType, GlobalContext } from "./GlobalContext";
 import { TLocation } from "./GlobalContext";
 import { TCollecttion } from "./GlobalContext";
@@ -10,7 +16,6 @@ import { FaCar } from "react-icons/fa";
 import { FaUniregistry } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { CgDanger } from "react-icons/cg";
-import { CardType } from "antd/es/card/Card";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
@@ -118,6 +123,36 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     fetchReservedCars();
   }, [userId]);
 
+  const deleteReservedCar = async (
+    id: string,
+    isUserId: boolean,
+    setIsOpen?: Dispatch<SetStateAction<boolean>>
+  ) => {
+    try {
+      let url = "/api/reservedcars";
+      if (isUserId) {
+        url += `?userId=${id}`;
+        setReserveCars([]);
+      } else {
+        url += `?id=${id}`;
+      }
+      const response = await axios.delete(url);
+      await fetchReservedCars();
+      if (response.status === 200) {
+        alert(
+          isUserId
+            ? "Deleted all cars successfully"
+            : "Car deleted successfully"
+        );
+        if (ReserveCars.length < 0 && setIsOpen) {
+          setIsOpen(false);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error deleting reserved car(s):", error);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -136,6 +171,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         fetchReservedCars,
         ReserveTotalPrice,
         setReserveTotalPrice,
+        deleteReservedCar,
+        userId,
       }}
     >
       {children}

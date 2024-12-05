@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useEffect, useState } from "react";
 import { GoogleMap } from "@/app/Components/GoogleMap";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import Cards, { Focused } from "react-credit-cards-2";
@@ -14,7 +15,7 @@ import "react-credit-cards-2/dist/es/styles-compiled.css";
 import axios from "axios";
 
 export default function Chackout() {
-  const { ReserveCars, location } = useGlobalProvider();
+  const { ReserveCars, location, deleteReservedCar } = useGlobalProvider();
   const { data: session, status } = useSession();
   const [SubTotal, setSubtotal] = useState<number>(0);
   const [value, setValue] = useState<number>();
@@ -24,6 +25,7 @@ export default function Chackout() {
   const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
   const userId = session?.user?.id;
   const [form] = Form.useForm();
+  const router = useRouter();
 
   const [state, setState] = useState({
     cardNumber: "",
@@ -158,6 +160,10 @@ export default function Chackout() {
           TotalDays: totalDays.toString(),
         },
       });
+      {
+        userId && deleteReservedCar(userId, true, () => {});
+      }
+      router.push("/pages/orders");
     } catch (error: unknown) {
       console.log("error while post order", error);
     }

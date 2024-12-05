@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import axios from "axios";
 import { createCarImage } from "@/app/CreateCarImage";
 import { Checkbox, Button } from "antd";
@@ -30,6 +30,7 @@ export default function Page({ params }: { params: { brand: string } }) {
     error,
     setError,
     fetchReservedCars,
+    deleteReservedCar,
   } = useGlobalProvider();
   const router = useRouter();
   const initialPrice = 1230;
@@ -79,9 +80,6 @@ export default function Page({ params }: { params: { brand: string } }) {
     });
   };
 
-  interface CarsCount {
-    [key: string]: number;
-  }
   const calculateTotalPrice = () => {
     const initialPrice = 1230;
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
@@ -118,31 +116,6 @@ export default function Page({ params }: { params: { brand: string } }) {
     }
   };
 
-  const deleteReservedCar = async (id: string, isUserId: boolean) => {
-    try {
-      let url = "/api/reservedcars";
-      if (isUserId) {
-        url += `?userId=${id}`;
-        setReserveCars([]);
-      } else {
-        url += `?id=${id}`;
-      }
-      const response = await axios.delete(url);
-      await fetchReservedCars();
-      if (response.status === 200) {
-        alert(
-          isUserId
-            ? "Deleted all cars successfully"
-            : "Car deleted successfully"
-        );
-        if (ReserveCars.length < 0) {
-          setIsOpen(false);
-        }
-      }
-    } catch (error: any) {
-      console.error("Error deleting reserved car(s):", error);
-    }
-  };
   const decrementCarDayCount = async (car: CarsType) => {
     try {
       if (!userId) {
@@ -150,7 +123,7 @@ export default function Page({ params }: { params: { brand: string } }) {
         return;
       }
       if (car.carDayCount === 1) {
-        deleteReservedCar(car._id, false);
+        deleteReservedCar(car._id, false, setIsOpen);
         return;
       }
       const response = await axios.put("/api/reservedcars", {
@@ -224,7 +197,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                               <div>${handleTotalPrices()}</div>
                               <button
                                 onClick={() =>
-                                  deleteReservedCar(item._id, false)
+                                  deleteReservedCar(item._id, false, setIsOpen)
                                 }
                               >
                                 <TiDeleteOutline className="size-8 text-gray-600 hover:text-gray-700" />
@@ -244,13 +217,17 @@ export default function Page({ params }: { params: { brand: string } }) {
               <Button
                 disabled={!session}
                 onClick={() =>
-                  session && deleteReservedCar(session?.user?.id, true)
+                  session &&
+                  deleteReservedCar(session?.user?.id, true, setIsOpen)
                 }
                 className="w-full mt-2 bg-red-500 border-none p-6 font-medium text-xl text-white"
               >
                 Delete All
               </Button>
-              <Button className="w-full mt-2 bg-green-500 border-none p-6 font-medium text-xl text-white">
+              <Button
+                onClick={() => router.push("/pages/reserveCars")}
+                className="w-full mt-2 bg-green-500 border-none p-6 font-medium text-xl text-white"
+              >
                 RESERVE
               </Button>
             </div>

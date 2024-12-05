@@ -59,10 +59,18 @@ interface GlobalContextProps {
   ReserveTotalPrice: number | null;
   setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
 
+  userId: string | undefined;
+
   fetchReservedCars: () => Promise<void>;
+  deleteReservedCar: (
+    id: string,
+    isUserId: boolean,
+    setIsOpen: Dispatch<SetStateAction<boolean>>
+  ) => Promise<void>;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
+  userId: "",
   ReserveTotalPrice: null,
   setReserveTotalPrice: () => {},
   error: null,
@@ -78,4 +86,5 @@ export const GlobalContext = createContext<GlobalContextProps>({
   conditions: [],
   setConditions: () => {},
   fetchReservedCars: async () => {},
+  deleteReservedCar: async () => {},
 });
