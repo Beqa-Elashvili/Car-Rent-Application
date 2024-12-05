@@ -21,6 +21,9 @@ export default function Chackout() {
   const [PromoCode, setPromoCode] = useState<number[]>([]);
   const [randomNumber, setRandomNumber] = useState<number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
+  const userId = session?.user?.id;
+  const [form] = Form.useForm();
 
   const [state, setState] = useState({
     cardNumber: "",
@@ -43,7 +46,6 @@ export default function Chackout() {
     cardName: state.cardName,
     cardunlock: state.cardunlock,
   };
-  const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
 
   const handlePromoCode = () => {
     if (value && value.toString().length === 4 && !PromoCode.includes(value)) {
@@ -74,8 +76,6 @@ export default function Chackout() {
     }, 0);
     return total;
   };
-
-  const [form] = Form.useForm();
 
   type FieldType = {
     username: string;
@@ -147,8 +147,6 @@ export default function Chackout() {
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   };
 
-  const userId = session?.user?.id;
-
   async function PostChackout(order: FieldType) {
     const totalDays = getSubTotal();
     try {
@@ -160,21 +158,20 @@ export default function Chackout() {
           TotalDays: totalDays.toString(),
         },
       });
-      console.log(resp.data);
     } catch (error: unknown) {
       console.log("error while post order", error);
     }
   }
 
   return (
-    <div className="bg-slate-800 min-h-screen h-full p-20 px-40">
-      <div className="bg-white flex gap-4 w-full p-12 rounded-xl">
+    <div className="bg-slate-800 min-h-screen h-full lg:p-20 p-2 lg:px-40">
+      <div className="bg-white lg:flex gap-4 w-full p-12 rounded-xl">
         {session?.user && location.city ? (
           <Form<FieldType>
             form={form}
             initialValues={userValues}
             autoComplete="on"
-            className="w-8/12"
+            className=" w-full lg:w-8/12"
             onFinish={onFinish}
           >
             <Form.Item
@@ -281,7 +278,7 @@ export default function Chackout() {
                   />
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="lg:flex gap-2">
                 <div className="my-2">
                   <Cards
                     number={state.cardNumber}
@@ -393,7 +390,7 @@ export default function Chackout() {
         ) : (
           "loading"
         )}
-        <div className="border-l w-2/6 p-4">
+        <div className="lg:border-l w-full lg:w-2/6 p-4">
           <div className="hidden">
             <GoogleMap />
           </div>
