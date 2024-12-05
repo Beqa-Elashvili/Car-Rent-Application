@@ -11,6 +11,7 @@ import Image from "next/image";
 
 import Cards, { Focused } from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
+import axios from "axios";
 
 export default function Chackout() {
   const { ReserveCars, location } = useGlobalProvider();
@@ -27,6 +28,7 @@ export default function Chackout() {
     cvc: "",
     cardName: "",
     focus: "",
+    cardunlock: "",
   });
 
   const userValues = {
@@ -39,6 +41,7 @@ export default function Chackout() {
     expiry: state.expiry,
     cvc: state.cvc,
     cardName: state.cardName,
+    cardunlock: state.cardunlock,
   };
   const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
 
@@ -79,18 +82,19 @@ export default function Chackout() {
     email: string;
     city: string;
     street: string;
-    drivinglicense: string;
-    cardNumber: number;
-    expiry: number;
-    cvc: number;
+    drivingLicense: string;
+    cardNumber: string;
+    expiry: string;
+    cvc: string;
     cardName: string;
+    cardunlock: string;
   };
 
   const onFinish = (values: FieldType) => {
-    if (values.drivinglicense.length !== 9) {
+    if (values.drivingLicense.length !== 9) {
       form.setFields([
         {
-          name: "drivinglicense",
+          name: "drivingLicense",
           errors: ["ნომერი უნდა შედგებოდეს 9 რიცხვისაგან"],
         },
       ]);
@@ -123,7 +127,11 @@ export default function Chackout() {
       ]);
       return;
     }
-    console.log(values);
+    try {
+      PostChackout(values);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showModal = () => {
@@ -132,13 +140,31 @@ export default function Chackout() {
 
   const handleInputChange = (evt: { target: { name: any; value: any } }) => {
     const { name, value } = evt.target;
-
     setState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleInputFocus = (evt: { target: { name: any } }) => {
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   };
+
+  const userId = session?.user?.id;
+
+  async function PostChackout(order: FieldType) {
+    const totalDays = getSubTotal();
+    try {
+      const resp = await axios.post("/api/orders", {
+        userId,
+        order: {
+          ...order,
+          TotalPrice: SubTotal.toString(),
+          TotalDays: totalDays.toString(),
+        },
+      });
+      console.log(resp.data);
+    } catch (error: unknown) {
+      console.log("error while post order", error);
+    }
+  }
 
   return (
     <div className="bg-slate-800 min-h-screen h-full p-20 px-40">
@@ -209,7 +235,7 @@ export default function Chackout() {
               Open Map
             </Button>
             <Form.Item
-              name="drivinglicense"
+              name="drivingLicense"
               rules={[
                 {
                   required: true,
@@ -334,6 +360,25 @@ export default function Chackout() {
                       value={state.cardName}
                       onChange={handleInputChange}
                       onFocus={handleInputFocus}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="cardunlock"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please enter card unlock code",
+                      },
+                    ]}
+                  >
+                    <Input
+                      type="text"
+                      name="cardunlock"
+                      value={state.cardunlock}
+                      onChange={handleInputChange}
+                      onFocus={handleInputFocus}
+                      maxLength={4}
+                      placeholder="cardunlock code that used to be see card information in order"
                     />
                   </Form.Item>
                 </div>

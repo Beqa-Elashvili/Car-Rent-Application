@@ -15,6 +15,7 @@ const ordersSchema = new mongoose.Schema(
     cardNumber: { type: String, required: true },
     expiry: { type: String, required: true },
     cvc: { type: String, required: true },
+    cardunlock: { type: String, required: true },
     cardName: { type: String, required: true },
     TotalPrice: { type: String, required: true },
     TotalDays: { type: String, required: true },

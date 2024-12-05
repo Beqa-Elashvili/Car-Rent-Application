@@ -1,4 +1,3 @@
-import { ConnectDB } from "utils/connect";
 import { Orders } from "models/orders";
 import { User } from "models/userModal";
 import { NextResponse } from "next/server";
@@ -6,8 +5,7 @@ import mongoose from "mongoose";
 
 export async function POST(req: Request) {
   try {
-    const { userId, order } = await req.json(); // Expecting order data to be sent in the request body
-
+    const { userId, order } = await req.json();
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid userId format" },
@@ -32,9 +30,9 @@ export async function POST(req: Request) {
       cardName: order.cardName,
       TotalPrice: order.TotalPrice,
       TotalDays: order.TotalDays,
+      cardunlock: order.cardunlock,
     });
 
-    // Save the new order to the database
     await newOrder.save();
 
     return NextResponse.json(
@@ -51,9 +49,9 @@ export async function POST(req: Request) {
 }
 export async function GET(req: Request) {
   try {
-    const url = new URL(req.url); // Parse the URL of the request
+    const url = new URL(req.url);
     const userId = url.searchParams.get("userId");
-    // Ensure userId is present and is a valid MongoDB ObjectId
+
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid or missing User ID" },
@@ -61,10 +59,8 @@ export async function GET(req: Request) {
       );
     }
 
-    // Find all orders for the given userId
     const orders = await Orders.find({ userId });
 
-    // If no orders are found, return a 404
     if (orders.length === 0) {
       return NextResponse.json(
         { message: "No orders found for this user." },
@@ -72,7 +68,6 @@ export async function GET(req: Request) {
       );
     }
 
-    // Return the found orders
     return NextResponse.json({ orders }, { status: 200 });
   } catch (error) {
     console.error("Error fetching orders:", error);
