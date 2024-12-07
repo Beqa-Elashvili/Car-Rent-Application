@@ -13,6 +13,7 @@ export async function POST(req: Request) {
       cylinders: car.cylinders,
       displacement: car.displacement,
       drive: car.drive,
+      horsepower: car.horsepower,
       fuel_type: car.fuel_type,
       highway_mpg: car.highway_mpg,
       make: car.make,

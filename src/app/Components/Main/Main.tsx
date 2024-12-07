@@ -10,9 +10,25 @@ import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export function Main() {
-  const { carData } = useGlobalProvider();
+  const [carData, setCarData] = useState<CarsType[]>([]);
+
+  async function GetCardata() {
+    try {
+      const resp = await axios.get("/api/cars");
+      setCarData(resp.data.cars);
+    } catch (error) {
+      alert(error);
+    }
+  }
+  console.log(carData);
+  useEffect(() => {
+    GetCardata();
+  }, []);
+  // const { carData } = useGlobalProvider();
   return (
     <div className="bg-cyan-800 h-full">
       <div className="relative">
@@ -43,27 +59,29 @@ export function Main() {
         dotPosition="bottom"
         infinite={true}
       >
-        {carData?.map((item: CarsType) => (
-          <div className="p-2 w-full" key={item.id}>
-            <div className="relative min-h-60 rounded-t-xl overflow-hidden shadow-t-xl">
-              <div
-                className="absolute inset-0 w-full h-full bg-cover bg-center"
-                style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
-              >
-                <img
-                  src={createCarImage(item)}
-                  alt="carImg"
-                  className="w-full h-full object-contain "
-                />
+        {carData?.map((item: CarsType) => {
+          return (
+            <div className="p-2 w-full" key={item.id}>
+              <div className="relative min-h-60 rounded-t-xl overflow-hidden shadow-t-xl">
+                <div
+                  className="absolute inset-0 w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
+                >
+                  <img
+                    src={item.img}
+                    alt="carImg"
+                    className="w-full h-full object-contain "
+                  />
+                </div>
+              </div>
+              <div className="p-2 bg-white rounded-b-xl shadow-xl">
+                <h1 className="text-xl font-semibold">{item.make}</h1>
+                <p>start with: {item.carDayCount}</p>
+                <p>combination mpg : {item.combination_mpg}</p>
               </div>
             </div>
-            <div className="p-2 bg-white rounded-b-xl shadow-xl">
-              <h1 className="text-xl font-semibold">{item.make}</h1>
-              <p>start with: 1280$ day</p>
-              <p>combination mpg : {item.combination_mpg}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </Carousel>
       <div className="text-white w-full">
         <div className="px-2 flex justify-between ">

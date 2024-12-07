@@ -22,6 +22,7 @@ export interface TConditions {
 export interface CarsType {
   carDayCount: number;
   _id: string;
+  img: string;
   id: string;
   city_mpg: number;
   class: string;
