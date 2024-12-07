@@ -100,9 +100,37 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [ReserveTotalPrice, setReserveTotalPrice] = useState<number | null>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [carData, setCarData] = useState<CarsType[]>([]);
 
   const { data: session } = useSession();
   const userId = session?.user.id;
+
+  async function fetchCarData() {
+    try {
+      const response = await axios.get(
+        "https://cars-by-api-ninjas.p.rapidapi.com/v1/cars",
+        {
+          params: { make: "bmw", limit: 12 },
+          headers: {
+            "x-rapidapi-key":
+              "3ab71f1fe5msh3809073701083acp1c1c13jsn96cf5f721c27",
+            "x-rapidapi-host": "cars-by-api-ninjas.p.rapidapi.com",
+          },
+        }
+      );
+      setCarData(response.data);
+      setLoading(false);
+    } catch (error: any) {
+      setError(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchCarData();
+  }, []);
 
   async function fetchReservedCars() {
     try {
@@ -173,6 +201,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         setReserveTotalPrice,
         deleteReservedCar,
         userId,
+        carData,
+        setCarData,
       }}
     >
       {children}

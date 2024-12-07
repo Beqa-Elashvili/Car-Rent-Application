@@ -26,7 +26,7 @@ export function Header() {
   }, [isOpen]);
 
   return (
-    <div className="bg-gray-900 w-full text-white h-full text-2xl">
+    <div className="w-full text-white relative h-full text-2xl">
       <div className="flex justify-between p-2 text-xl h-full items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -79,7 +79,12 @@ export function Header() {
         </div>
         <div className="hidden lg:inline">
           <div className="flex gap-4 justify-between">
-            <div onClick={() => router.push("/")} className="hover:text-green-400 cursor-pointer">MAIN</div>
+            <div
+              onClick={() => router.push("/")}
+              className="hover:text-green-400 cursor-pointer"
+            >
+              MAIN
+            </div>
             <span className="border bg-gray-500"></span>
             <div className="hover:text-green-400 cursor-pointer">BEST</div>
             <span className="border bg-gray-500"></span>

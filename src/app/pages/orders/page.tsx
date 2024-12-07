@@ -1,8 +1,8 @@
 "use client";
 
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 interface orderType {
   TotalDays: string;
@@ -27,6 +27,7 @@ export default function Orders() {
   const [orders, setOrders] = useState<orderType[]>([]);
   const { userId } = useGlobalProvider();
   console.log(orders);
+
   async function GetOrders() {
     try {
       if (userId) {
@@ -44,7 +45,7 @@ export default function Orders() {
   }, [userId]);
 
   return (
-    <div className="bg-slate-800 min-h-screen h-full  w-full p-20 grid grid-cols-4 jsutify-center ">
+    <div className="bg-slate-800 min-h-screen h-full  w-full p-20 grid grid-cols-4 gap-4 jsutify-center ">
       {orders?.map((item: orderType) => (
         <div
           key={item._id}

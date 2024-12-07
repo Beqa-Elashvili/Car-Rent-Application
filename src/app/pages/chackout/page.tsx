@@ -171,7 +171,7 @@ export default function Chackout() {
 
   return (
     <div className="bg-slate-800 min-h-screen h-full lg:p-20 p-2 lg:px-40">
-      <div className="bg-white lg:flex gap-4 w-full p-12 rounded-xl">
+      <div className="bg-white mt-14 lg:flex gap-4 w-full p-12 rounded-xl">
         {session?.user && location.city ? (
           <Form<FieldType>
             form={form}

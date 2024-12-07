@@ -35,7 +35,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <GlobalProvider>
-            <header>
+            <header className="absolute z-40 w-full">
               <Header />
             </header>
             {children}

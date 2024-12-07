@@ -56,6 +56,9 @@ interface GlobalContextProps {
   error: null;
   setError: Dispatch<SetStateAction<null>>;
 
+  carData: CarsType[];
+  setCarData: Dispatch<SetStateAction<CarsType[]>>;
+
   ReserveTotalPrice: number | null;
   setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
 
@@ -70,6 +73,8 @@ interface GlobalContextProps {
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
+  carData: [],
+  setCarData: () => {},
   userId: "",
   ReserveTotalPrice: null,
   setReserveTotalPrice: () => {},
