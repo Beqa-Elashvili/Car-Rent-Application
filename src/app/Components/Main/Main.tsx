@@ -37,9 +37,7 @@ export function Main() {
           quality={100}
           width={2000}
           height={2000}
-          objectFit="contain"
           unoptimized
-          layout="intrinsic"
           src="/porche1.jpg"
         />
         <div className="absolute flex items-center justify-between h-full p-20 inset-0">
@@ -61,7 +59,11 @@ export function Main() {
       >
         {carData?.map((item: CarsType) => {
           return (
-            <div className="p-2 w-full" key={item.id}>
+            <div
+              onClick={() => console.log(item._id)}
+              className="p-2 w-full"
+              key={item._id}
+            >
               <div className="relative min-h-60 rounded-t-xl overflow-hidden shadow-t-xl">
                 <div
                   className="absolute inset-0 w-full h-full bg-cover bg-center"

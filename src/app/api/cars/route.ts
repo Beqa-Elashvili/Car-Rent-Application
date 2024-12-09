@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Cars } from "models/cars";
 import { NextResponse } from "next/server";
+import { ConnectDB } from "utils/connect";
 
 export async function POST(req: NextResponse) {
   try {
@@ -58,6 +59,7 @@ export async function POST(req: NextResponse) {
 
 export async function GET(req: Request) {
   try {
+    await ConnectDB();
     const url = new URL(req.url);
     const brand = url.searchParams.get("brand");
 
@@ -75,6 +77,44 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { message: "Failed to fetch cars", error: error.message || error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: any) {
+  try {
+    const carId = req.nextUrl.searchParams.get("id");
+
+    await ConnectDB();
+
+    if (carId) {
+      if (!mongoose.Types.ObjectId.isValid(carId)) {
+        return NextResponse.json(
+          { message: "Invalid Car ID format" },
+          { status: 400 }
+        );
+      }
+
+      const deletedCar = await Cars.findOneAndDelete({ _id: carId });
+
+      if (!deletedCar) {
+        return NextResponse.json({ message: "Car not found" }, { status: 404 });
+      }
+
+      return NextResponse.json(
+        { message: "car deleted successfully" },
+        { status: 200 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Car ID is required" },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error while deleting car:", error);
+    return NextResponse.json(
+      { message: "Failed to delete car", error },
       { status: 500 }
     );
   }
