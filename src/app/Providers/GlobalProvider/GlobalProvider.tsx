@@ -20,17 +20,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
-  const Brands = [
-    { name: "Porsche", logo: "/porche-logo.png" },
-    { name: "Ferrari", logo: "/ferrari-logo.png" },
-    { name: "Lamborghini", logo: "/Lamborghini-Logo.wine.png" },
-    { name: "Bentley", logo: "/bentley_PNG20.png" },
-    { name: "Mercedes-Benz", logo: "/Mercedes-Benz-Logo.png" },
-    { name: "BMW", logo: "/bmw-m-logo.png" },
-    { name: "RollsRoyce", logo: "/rolls-royce.png" },
-    { name: "Bugatti", logo: "/Bugatti-Logo-PNG-Image.png" },
-  ];
-
   const ConditionsRules = [
     {
       title: "Driver requirements",
@@ -94,7 +83,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     city: null,
     street: null,
   });
-  const [collections, setCollections] = useState<TCollecttion[]>(Brands);
+  const [collections, setCollections] = useState<TCollecttion[]>([]);
   const [conditions, setConditions] = useState<TConditions[]>(ConditionsRules);
   const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);
   const [ReserveTotalPrice, setReserveTotalPrice] = useState<number | null>(0);
@@ -105,31 +94,16 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
-  async function fetchCarData() {
+  async function GetBrands() {
     try {
-      const response = await axios.get(
-        "https://cars-by-api-ninjas.p.rapidapi.com/v1/cars",
-        {
-          params: { make: "bmw", limit: 12 },
-          headers: {
-            "x-rapidapi-key":
-              "3ab71f1fe5msh3809073701083acp1c1c13jsn96cf5f721c27",
-            "x-rapidapi-host": "cars-by-api-ninjas.p.rapidapi.com",
-          },
-        }
-      );
-      setCarData(response.data);
-      setLoading(false);
-    } catch (error: any) {
-      setError(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
+      const resp = await axios.get("/api/brands");
+      setCollections(resp.data.brands);
+    } catch (error) {
+      console.log("error twhile fetching brands");
     }
   }
-
   useEffect(() => {
-    fetchCarData();
+    GetBrands();
   }, []);
 
   async function fetchReservedCars() {

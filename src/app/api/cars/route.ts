@@ -57,6 +57,49 @@ export async function POST(req: NextResponse) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    await ConnectDB();
+
+    const { carId, carData } = await req.json();
+
+    if (!carId || !mongoose.Types.ObjectId.isValid(carId)) {
+      return NextResponse.json(
+        { message: "Invalid or missing car ID" },
+        { status: 400 }
+      );
+    }
+
+    if (!carData || typeof carData !== "object") {
+      return NextResponse.json(
+        { message: "Car data is required and should be an object" },
+        { status: 400 }
+      );
+    }
+
+    const updatedCar = await Cars.findByIdAndUpdate(
+      carId,
+      { $set: carData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCar) {
+      return NextResponse.json({ message: "Car not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { message: "Car updated successfully", car: updatedCar },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating car:", error);
+    return NextResponse.json(
+      { message: "Failed to update car", error },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(req: Request) {
   try {
     await ConnectDB();

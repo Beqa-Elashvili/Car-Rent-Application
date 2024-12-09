@@ -8,7 +8,7 @@ export interface TLocation {
 }
 export interface TCollecttion {
   name: string | undefined;
-  logo: string | undefined;
+  img: string | undefined;
 }
 export interface TConditions {
   title: string;
@@ -20,22 +20,26 @@ export interface TConditions {
   rules?: string[];
 }
 export interface CarsType {
-  carDayCount: number;
   _id: string;
-  img: string;
-  id: string;
+  brand: string;
+  make: string;
+  model: string;
+  year: number;
+  carDayCount: number;
+  dayPrice: number;
   city_mpg: number;
-  class: string;
+  highway_mpg: number;
   combination_mpg: number;
   cylinders: number;
   displacement: number;
   drive: string;
   fuel_type: string;
-  highway_mpg: number;
-  make: string;
-  model: string;
   transmission: string;
-  year: number;
+  class: string;
+  img: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 interface GlobalContextProps {

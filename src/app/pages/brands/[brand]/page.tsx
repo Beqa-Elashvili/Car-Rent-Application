@@ -34,58 +34,29 @@ export default function Page({ params }: { params: { brand: string } }) {
     deleteReservedCar,
   } = useGlobalProvider();
   const router = useRouter();
-  const initialPrice = 1230;
   const numb = 9;
   const pathname = window.location.pathname.split("/").pop();
   const { data: session } = useSession();
   const userId = session?.user.id;
 
-  async function fetchCarData() {
+  async function GetCarData(brand: string) {
     try {
-      const response = await axios.get(
-        "https://cars-by-api-ninjas.p.rapidapi.com/v1/cars",
-        {
-          params: { make: params.brand, limit: 12 },
-          headers: {
-            "x-rapidapi-key":
-              "3ab71f1fe5msh3809073701083acp1c1c13jsn96cf5f721c27",
-            "x-rapidapi-host": "cars-by-api-ninjas.p.rapidapi.com",
-          },
-        }
-      );
-      setCarData(response.data);
-      setCarPrices(new Array(response.data.length).fill(initialPrice));
+      setLoading(true);
+      const resp = await axios.get(`/api/cars?brand=${params.brand}`);
+      setCarData(resp.data.cars);
       setLoading(false);
-    } catch (error: any) {
-      setError(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.log("error thile fatch brand data");
     }
   }
 
   useEffect(() => {
-    fetchCarData();
+    GetCarData(params.brand);
   }, []);
 
-  const handlePriceChange = (index: number, days: number) => {
-    setCarPrices((prevPrices) => {
-      const newPrices = [...prevPrices];
-      newPrices[index] = initialPrice - days * 100;
-      return newPrices;
-    });
-    setSelectedDays((_prevSelectedDays) => {
-      const newSelectedDays = Array(carData.length).fill(0);
-      newSelectedDays[index] = days;
-      return newSelectedDays;
-    });
-  };
-
   const calculateTotalPrice = () => {
-    const initialPrice = 1230;
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
-      const pricePerDay = initialPrice;
-      const totalCarPrice = pricePerDay * item.carDayCount;
+      const totalCarPrice = item.dayPrice * item.carDayCount;
       return accumulatedTotal + totalCarPrice;
     }, 0);
     localStorage.setItem("reserveTotalPrice", total as unknown as string);
@@ -137,6 +108,7 @@ export default function Page({ params }: { params: { brand: string } }) {
       console.error("Error decrementing car day count:", error);
     }
   };
+  console.log(ReserveCars);
 
   return (
     <div className="bg-gray-800 relative p-2 h-full">
@@ -161,10 +133,8 @@ export default function Page({ params }: { params: { brand: string } }) {
                 <div className="bg-gray-200 h-px w-full"></div>
                 <div className="py-4 flex flex-col gap-4">
                   {ReserveCars.map((item: CarsType) => {
-                    const initialPrice = 1230;
-                    const carsNum = item.carDayCount;
                     const handleTotalPrices = () => {
-                      return initialPrice * carsNum;
+                      return item.dayPrice * item.carDayCount;
                     };
                     return (
                       <div key={item._id}>
@@ -181,7 +151,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                             </p>
                             <div className="flex justify-between w-full">
                               <div className="text-sm">
-                                <p>Price per Day.Rental</p>
+                                <p>Price per Day.{item.dayPrice}</p>
                                 <p>Period: 8+ days</p>
                               </div>
                               <div className="flex gap-2 items-center">
@@ -241,7 +211,7 @@ export default function Page({ params }: { params: { brand: string } }) {
           )}
         </AnimatePresence>
         <div className="flex justify-between text-white h-full">
-          <div className="bg-gray-700 z-30 rounded p-2 w-60">
+          <div className="bg-gray-700 z-40 rounded p-2 w-60">
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
@@ -252,7 +222,7 @@ export default function Page({ params }: { params: { brand: string } }) {
               >
                 <img
                   className="w-12 h-12 object-contain"
-                  src={item.logo}
+                  src={item.img}
                   alt="logo"
                 />
                 <p>{item.name}</p>
@@ -279,26 +249,19 @@ export default function Page({ params }: { params: { brand: string } }) {
             </div>
           ) : (
             <>
-              <div className="bg-gray-700 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
-                {carData.map((car, index) => {
-                  const handleimg = () => {
-                    let angle = "";
-                    if (index % 2 !== 0) {
-                      angle = "29";
-                    }
-                    return angle;
-                  };
-                  console.log(car);
+              <div className="bg-gray-700 rounded-xl grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
+                {carData?.map((car, index) => {
                   return (
                     <div
-                      key={index}
+                      key={car._id}
                       className="bg-gray-300 text-white rounded-xl"
                     >
                       <img
-                        src={createCarImage(car, handleimg())}
+                        className="h-40 text-center w-full object-contain"
+                        src={car.img}
                         alt="carimg"
                       />
-                      <div className="bg-gray-900 h-max p-2 rounded-b-xl">
+                      <div className="bg-gray-900 p-2 rounded-b-xl">
                         <h1 className="text-2xl min-h-16">
                           {car.make.toUpperCase()} {car.model.toUpperCase()}
                         </h1>
@@ -307,12 +270,11 @@ export default function Page({ params }: { params: { brand: string } }) {
                           {car.fuel_type}
                         </h1>
                         <h1 className="mt-2 text-xl text-green-500">
-                          ${carPrices[index]}
+                          ${car.dayPrice}
                         </h1>
                         <div className="flex gap-2 mt-2">
                           <Checkbox
                             checked={selectedDays[index] === 2}
-                            onChange={() => handlePriceChange(index, 2)}
                             type="checkbox"
                           />
                           <p>2 days</p>
@@ -320,7 +282,6 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 4}
-                            onChange={() => handlePriceChange(index, 4)}
                             type="checkbox"
                           />
                           <p>4 days</p>
@@ -328,7 +289,6 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 6}
-                            onChange={() => handlePriceChange(index, 6)}
                             type="checkbox"
                           />
                           <p>6 days</p>
@@ -336,7 +296,6 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 8}
-                            onChange={() => handlePriceChange(index, 8)}
                             type="checkbox"
                           />
                           <p>8+ days</p>

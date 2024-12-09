@@ -65,11 +65,12 @@ export async function GET(req: any) {
     );
   }
 }
-
 export async function POST(req: any) {
   try {
+    // Parse userId and car data from request body
     const { userId, car } = await req.json();
 
+    // 1️⃣ Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid userId format" },
@@ -77,11 +78,24 @@ export async function POST(req: any) {
       );
     }
 
+    // 2️⃣ Check if user exists
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
+    // 3️⃣ Check if car is valid and contains all required fields
+    if (!car || !car.model || !car.dayPrice) {
+      return NextResponse.json(
+        {
+          message:
+            "Car data is incomplete. Ensure model and dayPrice are provided.",
+        },
+        { status: 400 }
+      );
+    }
+
+    // 4️⃣ Check if the car is already reserved by this user
     const existingReservation = await reservedCars.findOne({
       userId,
       model: car.model,
@@ -89,15 +103,21 @@ export async function POST(req: any) {
 
     if (existingReservation) {
       existingReservation.carDayCount += 1;
+      existingReservation.dayPrice = car.dayPrice; // Update dayPrice
       await existingReservation.save();
 
       return NextResponse.json(
-        { message: "Car reservation updated. Day count increased." },
+        {
+          message: "Car reservation updated. Day count increased.",
+          reservedCar: existingReservation,
+        },
         { status: 200 }
       );
     } else {
+      // 5️⃣ Create a new reservation
       const newReservation = new reservedCars({
         city_mpg: car.city_mpg,
+        brand: car.brand,
         class: car.class,
         combination_mpg: car.combination_mpg,
         cylinders: car.cylinders,
@@ -105,16 +125,23 @@ export async function POST(req: any) {
         drive: car.drive,
         fuel_type: car.fuel_type,
         highway_mpg: car.highway_mpg,
+        horsepower: car.horsepower,
         make: car.make,
         model: car.model,
         transmission: car.transmission,
         year: car.year,
         carDayCount: 1,
-        userId,
+        dayPrice: car.dayPrice, // ✅ Ensure dayPrice is set correctly
+        img: car.img,
+        userId, // User reference
       });
 
       await newReservation.save();
-      return NextResponse.json({ message: "Car Reserved" }, { status: 201 });
+
+      return NextResponse.json(
+        { message: "Car Reserved", reservedCar: newReservation },
+        { status: 201 }
+      );
     }
   } catch (error) {
     console.error("Error:", error);

@@ -5,30 +5,33 @@ import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
 import { Input, Button } from "antd";
-import { createCarImage } from "@/app/CreateCarImage";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export function Main() {
-  const [carData, setCarData] = useState<CarsType[]>([]);
+  const { carData, setCarData, setLoading, setError } = useGlobalProvider();
 
   async function GetCardata() {
     try {
       const resp = await axios.get("/api/cars");
       setCarData(resp.data.cars);
-    } catch (error) {
-      alert(error);
+      setLoading(false);
+    } catch (error: any) {
+      setError(error);
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
-  console.log(carData);
   useEffect(() => {
     GetCardata();
   }, []);
-  // const { carData } = useGlobalProvider();
+  console.log(carData);
+
   return (
     <div className="bg-cyan-800 h-full">
       <div className="relative">
@@ -52,7 +55,7 @@ export function Main() {
       <Carousel
         slidesToShow={5}
         arrows
-        // autoplay
+        autoplay
         className="p-20"
         dotPosition="bottom"
         infinite={true}
@@ -78,8 +81,8 @@ export function Main() {
               </div>
               <div className="p-2 bg-white rounded-b-xl shadow-xl">
                 <h1 className="text-xl font-semibold">{item.make}</h1>
-                <p>start with: {item.carDayCount}</p>
-                <p>combination mpg : {item.combination_mpg}</p>
+                <p>start with: $ {item.dayPrice}</p>
+                <p>combination mpg : {item.combination_mpg}L</p>
               </div>
             </div>
           );

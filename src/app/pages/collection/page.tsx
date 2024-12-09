@@ -7,7 +7,7 @@ export default function Page() {
   const { collections } = useGlobalProvider();
   const router = useRouter();
   return (
-    <div className="bg-gray-800 h-full lg:h-screen flex items-center justify-center flex-wrap gap-2 ">
+    <div className="bg-gray-800 min-h-screen h-full flex items-center justify-center flex-wrap gap-2 ">
       {collections?.map((item: TCollecttion, index: number) => (
         <div
           onClick={() => router.push(`/pages/brands/${item.name}`)}
@@ -16,7 +16,7 @@ export default function Page() {
           <img
             key={index}
             className="h-60 w-60 object-contain"
-            src={item.logo}
+            src={item.img}
             alt="brand-logo"
           />
           <h1 className="text-3xl font-medium text-white">

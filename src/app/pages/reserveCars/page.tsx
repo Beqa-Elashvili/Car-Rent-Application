@@ -29,7 +29,7 @@ export default function ReserveCars() {
               <div className="flex md:text-start flex-col">
                 <img
                   className="w-40 flex object-cover w-full md:hidden "
-                  src={createCarImage(item)}
+                  src={item.img}
                   alt="Carimg"
                 />
 
@@ -38,7 +38,7 @@ export default function ReserveCars() {
                 </p>
                 <div className="text-md">
                   <p>
-                    Price per Day.Rental : <span>1280$</span>
+                    Price per Day.Rental : <span>$ {item.dayPrice}</span>
                   </p>
                   <p>Period: 8+ days</p>
                   <p>Day: {item.carDayCount}</p>
@@ -46,7 +46,7 @@ export default function ReserveCars() {
               </div>
               <img
                 className="hidden md:block w-60"
-                src={createCarImage(item)}
+                src={item.img}
                 alt="Carimg"
               />
               <div>
