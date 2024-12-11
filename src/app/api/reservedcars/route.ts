@@ -93,12 +93,12 @@ export async function POST(req: any) {
 
     const existingReservation = await reservedCars.findOne({
       userId,
-      model: car.model,
+      img: car.img,
     });
 
     if (existingReservation) {
       existingReservation.carDayCount += 1;
-      existingReservation.dayPrice = car.dayPrice; 
+      existingReservation.dayPrice = car.dayPrice;
       await existingReservation.save();
 
       return NextResponse.json(
@@ -127,7 +127,7 @@ export async function POST(req: any) {
         carDayCount: 1,
         dayPrice: car.dayPrice,
         img: car.img,
-        userId, 
+        userId,
       });
 
       await newReservation.save();

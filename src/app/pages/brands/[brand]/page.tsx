@@ -179,7 +179,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
                           <img
                             className="w-40"
-                            src={createCarImage(item)}
+                            src={item.img}
                             alt="Carimg"
                           />
                           <div className="flex flex-col w-full">
