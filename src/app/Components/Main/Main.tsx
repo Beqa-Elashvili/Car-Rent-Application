@@ -106,7 +106,7 @@ export function Main() {
             height={300}
             className="object-contain w-full"
             src="/porche.jpg"
-            alt=""
+            alt="carImg"
           />
           <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>

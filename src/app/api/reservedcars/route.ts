@@ -67,10 +67,8 @@ export async function GET(req: any) {
 }
 export async function POST(req: any) {
   try {
-    // Parse userId and car data from request body
     const { userId, car } = await req.json();
 
-    // 1️⃣ Validate userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid userId format" },
@@ -78,13 +76,11 @@ export async function POST(req: any) {
       );
     }
 
-    // 2️⃣ Check if user exists
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    // 3️⃣ Check if car is valid and contains all required fields
     if (!car || !car.model || !car.dayPrice) {
       return NextResponse.json(
         {
@@ -95,7 +91,6 @@ export async function POST(req: any) {
       );
     }
 
-    // 4️⃣ Check if the car is already reserved by this user
     const existingReservation = await reservedCars.findOne({
       userId,
       model: car.model,
@@ -103,7 +98,7 @@ export async function POST(req: any) {
 
     if (existingReservation) {
       existingReservation.carDayCount += 1;
-      existingReservation.dayPrice = car.dayPrice; // Update dayPrice
+      existingReservation.dayPrice = car.dayPrice; 
       await existingReservation.save();
 
       return NextResponse.json(
@@ -114,7 +109,6 @@ export async function POST(req: any) {
         { status: 200 }
       );
     } else {
-      // 5️⃣ Create a new reservation
       const newReservation = new reservedCars({
         city_mpg: car.city_mpg,
         brand: car.brand,
@@ -131,9 +125,9 @@ export async function POST(req: any) {
         transmission: car.transmission,
         year: car.year,
         carDayCount: 1,
-        dayPrice: car.dayPrice, // ✅ Ensure dayPrice is set correctly
+        dayPrice: car.dayPrice,
         img: car.img,
-        userId, // User reference
+        userId, 
       });
 
       await newReservation.save();

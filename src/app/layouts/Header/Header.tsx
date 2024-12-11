@@ -7,6 +7,8 @@ import { RiMenuFold2Fill } from "react-icons/ri";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+
 import Image from "next/image";
 
 export function Header() {
@@ -95,13 +97,13 @@ export function Header() {
               CONDITIONS
             </div>
             <span className="border bg-gray-500"></span>
-            <div
-              onClick={() => router.push("/pages/collection")}
+            <Link
+              href="/pages/collection"
               className="flex items-center gap-2 text-xl hover:text-green-400 cursor-pointer "
             >
               <GiCarKey />
               <p>Collection</p>
-            </div>
+            </Link>
           </div>
         </div>
         <UserProfile />
