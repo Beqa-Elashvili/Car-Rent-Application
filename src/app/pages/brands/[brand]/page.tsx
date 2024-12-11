@@ -1,6 +1,12 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { createCarImage } from "@/app/CreateCarImage";
 import { Checkbox, Button } from "antd";
@@ -15,9 +21,9 @@ import {
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
+import { fetchData } from "next-auth/client/_utils";
 
 export default function Page({ params }: { params: { brand: string } }) {
-  const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [carPrices, setCarPrices] = useState<number[]>([]);
   const {
@@ -39,11 +45,20 @@ export default function Page({ params }: { params: { brand: string } }) {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
+  const [selectedDays, setSelectedDays] = useState<number[]>(
+    Array(carData.length).fill(0)
+  );
+  const [prices, setPrices] = useState<number[]>(
+    carData.map((car) => car.dayPrice)
+  );
+
   async function GetCarData(brand: string) {
     try {
       setLoading(true);
       const resp = await axios.get(`/api/cars?brand=${params.brand}`);
       setCarData(resp.data.cars);
+      setPrices([]);
+      setSelectedDays([]);
       setLoading(false);
     } catch (error) {
       console.log("error thile fatch brand data");
@@ -108,8 +123,31 @@ export default function Page({ params }: { params: { brand: string } }) {
       console.error("Error decrementing car day count:", error);
     }
   };
-  console.log(ReserveCars);
 
+  const handleDaySelection = async (index: number, days: number) => {
+    setSelectedDays((prevDays) => {
+      const updatedDays = [...prevDays];
+      updatedDays[index] = days;
+      return updatedDays;
+    });
+
+    const basePrice = carData[index].dayPrice;
+    const newPrice = getUpdatedPrice(basePrice, days);
+
+    setPrices((prevPrices) => {
+      const updatedPrices = [...prevPrices];
+      updatedPrices[index] = newPrice;
+      return updatedPrices;
+    });
+  };
+
+  const getUpdatedPrice = (dayPrice: number, days: number) => {
+    if (days === 2) return dayPrice * 0.9; // 10% discount for 2 days
+    if (days === 4) return dayPrice * 0.8; // 20% discount for 4 days
+    if (days === 6) return dayPrice * 0.7; // 30% discount for 6 days
+    if (days === 8) return dayPrice * 0.6; // 40% discount for 8+ days
+    return dayPrice; // Default price if no days are selected
+  };
   return (
     <div className="bg-gray-800 relative p-2 h-full">
       <div className="mt-14">
@@ -270,11 +308,12 @@ export default function Page({ params }: { params: { brand: string } }) {
                           {car.fuel_type}
                         </h1>
                         <h1 className="mt-2 text-xl text-green-500">
-                          ${car.dayPrice}
+                          $ {prices[index] ? prices[index] : car.dayPrice}
                         </h1>
                         <div className="flex gap-2 mt-2">
                           <Checkbox
                             checked={selectedDays[index] === 2}
+                            onChange={() => handleDaySelection(index, 2)}
                             type="checkbox"
                           />
                           <p>2 days</p>
@@ -282,6 +321,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 4}
+                            onChange={() => handleDaySelection(index, 4)}
                             type="checkbox"
                           />
                           <p>4 days</p>
@@ -289,6 +329,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 6}
+                            onChange={() => handleDaySelection(index, 6)}
                             type="checkbox"
                           />
                           <p>6 days</p>
@@ -296,6 +337,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                         <div className="flex gap-2">
                           <Checkbox
                             checked={selectedDays[index] === 8}
+                            onChange={() => handleDaySelection(index, 8)}
                             type="checkbox"
                           />
                           <p>8+ days</p>
