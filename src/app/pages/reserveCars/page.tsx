@@ -12,7 +12,6 @@ export default function ReserveCars() {
   const router = useRouter();
   const TotalPrice = localStorage.getItem("reserveTotalPrice");
 
-
   const TotalDayCount = () => {
     const total = ReserveCars.reduce((accimulator, car) => {
       return accimulator + car.carDayCount;
@@ -51,7 +50,9 @@ export default function ReserveCars() {
               />
               <div>
                 <button
-                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  onClick={() =>
+                    router.push(`/pages/solocar/${undefined}/${item._id}}`)
+                  }
                   className="hidden md:flex items-center text-xl hover:cursor-pointer h-full hover:text-green-500"
                 >
                   <p>Review</p>

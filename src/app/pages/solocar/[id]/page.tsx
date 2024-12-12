@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
-export default function Car({ params }: { params: { id: string } }) {
+export default function Car({ params }: { params: { id?: string } }) {
   const [car, setCar] = useState<CarsType>();
   const [selectedSection, setSelectedSection] = useState<string>("Information");
   const fadeInOut = {
@@ -19,7 +19,7 @@ export default function Car({ params }: { params: { id: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars, ReserveTotalPrice } = useGlobalProvider();
+  const { ReserveCars } = useGlobalProvider();
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -80,16 +80,22 @@ export default function Car({ params }: { params: { id: string } }) {
     }
   };
 
-  const GetOneCar = async (id: string) => {
+  const GetOneCar = async (id?: string) => {
     try {
-      const resp = await axios.get(`/api/reservedcars?carId=${id}`);
-      setCar(resp.data.car);
+      if (id) {
+        const resp = await axios.get(`/api/cars?id=${id}`);
+        setCar(resp.data.car);
+        return;
+      }
     } catch (error) {
       alert("error while fetch one car");
     }
   };
+
   useEffect(() => {
-    GetOneCar(params.id);
+    if (params.id) {
+      GetOneCar(params.id);
+    }
   }, [params.id]);
 
   const buttonStyle = (section: string) =>

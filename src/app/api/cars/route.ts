@@ -102,12 +102,24 @@ export async function PUT(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    await ConnectDB();
     const url = new URL(req.url);
     const brand = url.searchParams.get("brand");
+    const id = url.searchParams.get("id"); 
+
+    await ConnectDB();
+
+    if (id) {
+      const car = await Cars.findById(id);
+      if (!car) {
+        return NextResponse.json(
+          { message: "Car not found." },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({ car }, { status: 200 });
+    }
 
     const query = brand ? { brand } : {};
-
     const cars = await Cars.find(query);
 
     if (cars.length === 0) {
@@ -117,7 +129,6 @@ export async function GET(req: Request) {
     return NextResponse.json({ cars }, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching cars:", error);
-
     return NextResponse.json(
       { message: "Failed to fetch cars", error: error.message || error },
       { status: 500 }
