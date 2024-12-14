@@ -12,14 +12,13 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ConnectDB } from "utils/connect";
 
 export function Main() {
   const { carData, setCarData, setLoading, setError } = useGlobalProvider();
   const router = useRouter();
+
   async function GetCardata() {
     try {
-      await ConnectDB();
       const resp = await axios.get("/api/cars");
       setCarData(resp.data.cars);
       setLoading(false);
@@ -65,7 +64,9 @@ export function Main() {
         {carData?.map((item: CarsType) => {
           return (
             <div
-              onClick={() => router.push(`/pages/solocar/${item._id}`)}
+              onClick={() =>
+                router.push(`/pages/solocar/${item._id}`)
+              }
               className="p-2 w-full cursor-pointer"
               key={item._id}
             >

@@ -61,7 +61,9 @@ export default function ReserveCars() {
                   </span>
                 </button>
                 <Button
-                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  onClick={() =>
+                    router.push(`/pages/solocar/${item._id}`)
+                  }
                   className="flex items-center justify-center md:hidden text-center w-full bg-green-400 text-white border-none mt-2 rounded text-lg"
                 >
                   Review
