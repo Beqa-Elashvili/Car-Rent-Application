@@ -28,7 +28,7 @@ export function Header() {
   }, [isOpen]);
 
   return (
-    <div className="w-full text-white relative h-full text-2xl">
+    <div className="w-full bg-slate-800 text-white relative h-full text-2xl">
       <div className="flex justify-between p-2 text-xl h-full items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}

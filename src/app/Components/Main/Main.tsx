@@ -64,13 +64,11 @@ export function Main() {
         {carData?.map((item: CarsType) => {
           return (
             <div
-              onClick={() =>
-                router.push(`/pages/solocar/${item._id}`)
-              }
-              className="p-2 w-full cursor-pointer"
+              onClick={() => router.push(`/pages/solocar/${item._id}`)}
+              className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
               key={item._id}
             >
-              <div className="relative min-h-60 rounded-t-xl overflow-hidden shadow-t-xl">
+              <div className="relative min-h-60 rounded-t-xl overflow-hidden">
                 <div
                   className="absolute inset-0 w-full h-full bg-cover bg-center"
                   style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
@@ -82,7 +80,7 @@ export function Main() {
                   />
                 </div>
               </div>
-              <div className="p-2 bg-white rounded-b-xl shadow-xl">
+              <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
                 <h1 className="text-xl font-semibold">{item.make}</h1>
                 <p>start with: $ {item.dayPrice}</p>
                 <p>combination mpg : {item.combination_mpg}L</p>
@@ -92,7 +90,7 @@ export function Main() {
         })}
       </Carousel>
       <div className="text-white w-full">
-        <div className="px-2 flex justify-between ">
+        <div className="p-4 flex justify-between ">
           <div className="flex flex-col gap-20">
             <h1>RENTAL CARS</h1>
             <p className="w-3/4 text-6xl ">Experience is everything</p>
@@ -122,9 +120,8 @@ export function Main() {
               transition={{ duration: 1 }}
               className="text-[220px] absolute"
             >
-              <SiLamborghini className="opacity-40 " />
+              <SiLamborghini className="opacity-40" />
             </motion.div>
-
             <motion.h1
               whileInView={{ opacity: 1, x: 0 }}
               initial={{ opacity: 0, x: 100 }}

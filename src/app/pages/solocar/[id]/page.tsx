@@ -206,9 +206,13 @@ export default function Car({ params }: { params: { id?: string } }) {
           <div
             key={item._id}
             onClick={() => router.push(`/pages/solocar/${item._id}`)}
-            className="text-center p-12 hover:bg-slate-700 rounded-full cursor-pointer"
+            className="text-center p-2 hover:bg-slate-700 rounded-full cursor-pointer"
           >
-            <img src={createCarImage(item)} alt="Carimg" />
+            <img
+              className="h-60 w-96 m-auto object-contain"
+              src={item.img}
+              alt="Carimg"
+            />
             <div className="text-xl text-white">
               <h1>{item.make.toUpperCase()}</h1>
               <h1>{item.model.toUpperCase()}</h1>

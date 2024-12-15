@@ -18,7 +18,7 @@ export default function Conditions() {
 
   return (
     <div className="bg-gray-900 h-full w-full text-white">
-      <div className="relative bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-20 items-center py-28">
+      <div className="relative bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-16 items-center py-28">
         <h1 className="text-[200px] lg:text-9xl flex flex-col bg-gradient-to-r from-green-700 to-transparent text-transparent bg-clip-text text-balance absolute">
           LUXURY <span>DRIVE</span>
         </h1>

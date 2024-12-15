@@ -1,14 +1,7 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import {
-  useState,
-  useEffect,
-  Dispatch,
-  SetStateAction,
-  useCallback,
-} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { createCarImage } from "@/app/CreateCarImage";
 import { Checkbox, Button } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
@@ -21,11 +14,9 @@ import {
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
-import { fetchData } from "next-auth/client/_utils";
 
 export default function Page({ params }: { params: { brand: string } }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [carPrices, setCarPrices] = useState<number[]>([]);
   const {
     collections,
     ReserveCars,
@@ -148,7 +139,7 @@ export default function Page({ params }: { params: { brand: string } }) {
   };
   return (
     <div className="bg-gray-800 relative p-2 h-full">
-      <div className="mt-14">
+      <div>
         <AnimatePresence>
           {isOpen && (
             <motion.div

@@ -11,7 +11,7 @@ export default function Page() {
       {collections?.map((item: TCollecttion, index: number) => (
         <div
           onClick={() => router.push(`/pages/brands/${item.name}`)}
-          className=" mt-14 p-2 flex flex-col items-center border object-contain rounded-xl transition duration-300 hover:bg-gray-500  hover:cursor-pointer"
+          className="p-2 flex flex-col items-center border object-contain rounded-xl transition duration-300 hover:bg-gray-500  hover:cursor-pointer"
         >
           <img
             key={index}
