@@ -1,8 +1,8 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Checkbox, Button } from "antd";
+import { Checkbox, Button, Input, Slider } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
@@ -34,6 +34,15 @@ export default function Page({ params }: { params: { brand: string } }) {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
+  const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
+
+  const sortByPrices = (values: number[]) => {
+    setMaxMinPrices({
+      min: values[0],
+      max: values[1],
+    });
+  };
+
   const [selectedDays, setSelectedDays] = useState<number[]>(
     Array(carData.length).fill(0)
   );
@@ -46,6 +55,7 @@ export default function Page({ params }: { params: { brand: string } }) {
       setLoading(true);
       const resp = await axios.get(`/api/cars?brand=${params.brand}`);
       setCarData(resp.data.cars);
+      setSortedCarData(resp.data.cars);
       setPrices([]);
       setSelectedDays([]);
       setLoading(false);
@@ -129,6 +139,23 @@ export default function Page({ params }: { params: { brand: string } }) {
       return updatedPrices;
     });
   };
+
+  const [sortedCarData, setSortedCarData] = useState<CarsType[]>([]);
+
+  const sortByprices = useCallback(() => {
+    const cardata = carData.filter(
+      (item: CarsType) =>
+        item.dayPrice >= maxMinprices.min && item.dayPrice <= maxMinprices.max
+    );
+    setSortedCarData(cardata);
+  }, [maxMinprices]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      sortByprices();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [maxMinprices]);
 
   const getUpdatedPrice = (dayPrice: number, days: number) => {
     if (days === 2) return dayPrice * 0.9;
@@ -258,6 +285,24 @@ export default function Page({ params }: { params: { brand: string } }) {
             >
               Reserved
             </Button>
+            <div className="border text-center p-2 mt-2 rounded">
+              <h1 className="font-medium">PRICES SORT</h1>
+              <Slider
+                onChange={(e: number[]) => sortByPrices(e)}
+                range
+                max={1500}
+                min={0}
+                defaultValue={[maxMinprices.min, maxMinprices.max]}
+              />
+              <div className="flex w-full gap-2">
+                <div className="border w-full border-orange-500 rounded  p-2">
+                  $ {maxMinprices.min}
+                </div>
+                <div className="border w-full border-orange-500 rounded  p-2">
+                  $ {maxMinprices.max}
+                </div>
+              </div>
+            </div>
           </div>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2 text-center">
@@ -273,70 +318,76 @@ export default function Page({ params }: { params: { brand: string } }) {
           ) : (
             <>
               <div className="bg-gray-700 rounded-xl grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
-                {carData?.map((car, index) => {
-                  return (
-                    <div
-                      key={car._id}
-                      className="bg-gray-300 text-white rounded-xl"
-                    >
-                      <img
-                        className="h-40 text-center w-full object-contain"
-                        src={car.img}
-                        alt="carimg"
-                      />
-                      <div className="bg-gray-900 p-2 rounded-b-xl">
-                        <h1 className="text-2xl min-h-16">
-                          {car.make.toUpperCase()} {car.model.toUpperCase()}
-                        </h1>
-                        <h1 className="mt-2 text-lg">
-                          {car.displacement} | {car.transmission} |{" "}
-                          {car.fuel_type}
-                        </h1>
-                        <h1 className="mt-2 text-xl text-green-500">
-                          $ {prices[index] ? prices[index] : car.dayPrice}
-                        </h1>
-                        <div className="flex gap-2 mt-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 2}
-                            onChange={() => handleDaySelection(index, 2)}
-                            type="checkbox"
-                          />
-                          <p>2 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 4}
-                            onChange={() => handleDaySelection(index, 4)}
-                            type="checkbox"
-                          />
-                          <p>4 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 6}
-                            onChange={() => handleDaySelection(index, 6)}
-                            type="checkbox"
-                          />
-                          <p>6 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 8}
-                            onChange={() => handleDaySelection(index, 8)}
-                            type="checkbox"
-                          />
-                          <p>8+ days</p>
-                        </div>
-                        <Button
-                          onClick={() => addCarToReserve(car)}
-                          className="w-full mt-2 bg-green-500 border-none"
+                {sortedCarData.length === 0 ? (
+                  <h1 className="text-gray-500">Sorry there is no cars</h1>
+                ) : (
+                  <>
+                    {sortedCarData?.map((car: CarsType, index: number) => {
+                      return (
+                        <div
+                          key={car._id}
+                          className="bg-gray-300 text-white rounded-xl"
                         >
-                          RESERVE
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
+                          <img
+                            className="h-40 text-center w-full object-contain"
+                            src={car.img}
+                            alt="carimg"
+                          />
+                          <div className="bg-gray-900 p-2 rounded-b-xl">
+                            <h1 className="text-2xl min-h-16">
+                              {car.make.toUpperCase()} {car.model.toUpperCase()}
+                            </h1>
+                            <h1 className="mt-2 text-lg">
+                              {car.displacement} | {car.transmission} |{" "}
+                              {car.fuel_type}
+                            </h1>
+                            <h1 className="mt-2 text-xl text-green-500">
+                              $ {prices[index] ? prices[index] : car.dayPrice}
+                            </h1>
+                            <div className="flex gap-2 mt-2">
+                              <Checkbox
+                                checked={selectedDays[index] === 2}
+                                onChange={() => handleDaySelection(index, 2)}
+                                type="checkbox"
+                              />
+                              <p>2 days</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Checkbox
+                                checked={selectedDays[index] === 4}
+                                onChange={() => handleDaySelection(index, 4)}
+                                type="checkbox"
+                              />
+                              <p>4 days</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Checkbox
+                                checked={selectedDays[index] === 6}
+                                onChange={() => handleDaySelection(index, 6)}
+                                type="checkbox"
+                              />
+                              <p>6 days</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Checkbox
+                                checked={selectedDays[index] === 8}
+                                onChange={() => handleDaySelection(index, 8)}
+                                type="checkbox"
+                              />
+                              <p>8+ days</p>
+                            </div>
+                            <Button
+                              onClick={() => addCarToReserve(car)}
+                              className="w-full mt-2 bg-green-500 border-none"
+                            >
+                              RESERVE
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
                 {error && <div>{error}</div>}
                 <img src="/" alt="" />
               </div>

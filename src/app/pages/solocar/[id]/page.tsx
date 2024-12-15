@@ -4,22 +4,24 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { createCarImage } from "@/app/CreateCarImage";
-import { Button } from "antd";
+import { Button, Skeleton } from "antd";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Carousel } from "antd";
+import Image from "next/image";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 export default function Car({ params }: { params: { id?: string } }) {
   const [car, setCar] = useState<CarsType>();
   const [selectedSection, setSelectedSection] = useState<string>("Information");
+  const [otherImgs, setOtherImgs] = useState<boolean>(false);
   const fadeInOut = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars, setError } = useGlobalProvider();
+  const { ReserveCars, setError, setLoading, loading } = useGlobalProvider();
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -82,8 +84,12 @@ export default function Car({ params }: { params: { id?: string } }) {
 
   const GetOneCar = async (id?: string) => {
     try {
+      setLoading(true);
       const resp = await axios.get(`/api/cars?id=${id}`);
       setCar(resp.data.car);
+      if (resp.data.car) {
+        setLoading(false);
+      }
       return;
     } catch (error) {
       console.log("Cars fetch error");
@@ -95,6 +101,8 @@ export default function Car({ params }: { params: { id?: string } }) {
       setCar(reservedCarResponse.data.car);
     } catch (error) {
       console.error("Error while fetching car from both APIs");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,97 +137,125 @@ export default function Car({ params }: { params: { id?: string } }) {
 
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-12">
-      {car && (
-        <div className="bg-gray-900 h-screen w-full text-white flex justify-center items-center gap-12">
-          <div className="text-start text-2xl flex flex-col gap-4">
-            <Button
-              className={`rounded-full w-36 h-12 ${buttonStyle("Information")}`}
-              onClick={() => setSelectedSection("Information")}
-            >
-              Information
-            </Button>
-            <Button
-              className={`rounded-full w-36 h-12 ${buttonStyle("Engine")}`}
-              onClick={() => setSelectedSection("Engine")}
-            >
-              Engine
-            </Button>
-            <Button
-              className={`rounded-full w-36 h-12 ${buttonStyle("Class")}`}
-              onClick={() => setSelectedSection("Class")}
-            >
-              Class
-            </Button>
-          </div>
+      {loading ? (
+        <img className="w-2/4 m-auto" src="/Animation.gif" alt="" />
+      ) : (
+        <>
+          {car && (
+            <div className="bg-gray-900 h-screen w-full text-white flex justify-center items-center gap-12">
+              <div className="text-start text-2xl flex flex-col gap-4">
+                <Button
+                  className={`rounded-full w-36 h-12 ${buttonStyle(
+                    "Information"
+                  )}`}
+                  onClick={() => setSelectedSection("Information")}
+                >
+                  Information
+                </Button>
+                <Button
+                  className={`rounded-full w-36 h-12 ${buttonStyle("Engine")}`}
+                  onClick={() => setSelectedSection("Engine")}
+                >
+                  Engine
+                </Button>
+                <Button
+                  className={`rounded-full w-36 h-12 ${buttonStyle("Class")}`}
+                  onClick={() => setSelectedSection("Class")}
+                >
+                  Class
+                </Button>
+              </div>
+              <div className="text-center">
+                <h1 className="text-3xl mb-4">
+                  {car.make.toUpperCase()} | {car.model.toUpperCase()}
+                </h1>
+                <Button
+                  onClick={() => setOtherImgs(!otherImgs)}
+                  className="rounded p-2 bg-slate-800 text-white font-medium hover:bg-slate-800"
+                >
+                  MORE PHOTOS
+                </Button>
+                <div className="flex gap-4 items-center">
+                  {otherImgs ? (
+                    <>
+                      <p
+                        onClick={() => getPrevAngle()}
+                        className="text-3xl hover:text-gray-500 rounded-full cursor-pointer"
+                      >
+                        {"<"}
+                      </p>
+                      <img
+                        className="w-full h-96 object-contain"
+                        src={createCarImage(car, angle)}
+                        alt="Car Image"
+                      />
+                      <p
+                        onClick={() => getNextAngle()}
+                        className="text-3xl rounded-full p-2 hover:text-gray-500  cursor-pointer"
+                      >
+                        {">"}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        width={500}
+                        height={1000}
+                        className="w-full h-96 object-contain"
+                        src={car.img}
+                        alt="carImg"
+                      />
+                    </>
+                  )}
+                </div>
+                <motion.div
+                  key={selectedSection}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  className="mt-6 gap-2"
+                >
+                  {renderSectionContent()}
+                </motion.div>
+              </div>
+              <Button
+                onClick={() => router.push("/pages/reserveCars")}
+                className="p-12 w-20 h-20 rounded-full"
+              >
+                Return
+              </Button>
+            </div>
+          )}
 
-          <div className="text-center">
-            <h1 className="text-3xl mb-4">
-              {car.make.toUpperCase()} | {car.model.toUpperCase()}
-            </h1>
-            <div className="flex gap-4 items-center">
-              <p
-                onClick={() => getPrevAngle()}
-                className="text-3xl hover:text-gray-500 rounded-full cursor-pointer"
-              >
-                {"<"}
-              </p>
-              <img
-                className="w-full h-96 object-contain"
-                src={createCarImage(car, angle)}
-                alt="Car Image"
-              />
-              <p
-                onClick={() => getNextAngle()}
-                className=" text-3xl rounded-full p-2 hover:text-gray-500  cursor-pointer"
-              >
-                {">"}
-              </p>
-            </div>
-            <motion.div
-              key={selectedSection}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-              className="mt-6 gap-2"
-            >
-              {renderSectionContent()}
-            </motion.div>
-          </div>
-          <Button
-            onClick={() => router.push("/pages/reserveCars")}
-            className="p-12 w-20 h-20 rounded-full"
+          <Carousel
+            slidesToShow={3}
+            className="rounded-full bg-slate-800 p-12 "
+            arrows
+            autoplay
+            dotPosition="bottom"
+            infinite={true}
           >
-            Return
-          </Button>
-        </div>
+            {ReserveCars?.map((item: CarsType) => (
+              <div
+                key={item._id}
+                onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                className="text-center p-2 hover:bg-slate-700 rounded-full cursor-pointer"
+              >
+                <img
+                  className="h-60 w-96 m-auto object-contain"
+                  src={item.img}
+                  alt="Carimg"
+                />
+                <div className="text-xl text-white">
+                  <h1>{item.make.toUpperCase()}</h1>
+                  <h1>{item.model.toUpperCase()}</h1>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </>
       )}
-      <Carousel
-        slidesToShow={3}
-        className="rounded-full bg-slate-800 p-12 "
-        arrows
-        autoplay
-        dotPosition="bottom"
-        infinite={true}
-      >
-        {ReserveCars?.map((item: CarsType) => (
-          <div
-            key={item._id}
-            onClick={() => router.push(`/pages/solocar/${item._id}`)}
-            className="text-center p-2 hover:bg-slate-700 rounded-full cursor-pointer"
-          >
-            <img
-              className="h-60 w-96 m-auto object-contain"
-              src={item.img}
-              alt="Carimg"
-            />
-            <div className="text-xl text-white">
-              <h1>{item.make.toUpperCase()}</h1>
-              <h1>{item.model.toUpperCase()}</h1>
-            </div>
-          </div>
-        ))}
-      </Carousel>
     </div>
   );
 }
