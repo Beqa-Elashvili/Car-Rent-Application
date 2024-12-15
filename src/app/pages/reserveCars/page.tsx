@@ -20,7 +20,7 @@ export default function ReserveCars() {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen h-full w-full text-center text-white p-12">
+    <div className="bg-gray-900 min-h-screen h-full w-full text-center text-white p-14">
       {ReserveCars?.map((item: CarsType) => {
         return (
           <div key={item._id}>
@@ -50,9 +50,7 @@ export default function ReserveCars() {
               />
               <div>
                 <button
-                  onClick={() =>
-                    router.push(`/pages/solocar/${undefined}/${item._id}}`)
-                  }
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
                   className="hidden md:flex items-center text-xl hover:cursor-pointer h-full hover:text-green-500"
                 >
                   <p>Review</p>
@@ -61,9 +59,7 @@ export default function ReserveCars() {
                   </span>
                 </button>
                 <Button
-                  onClick={() =>
-                    router.push(`/pages/solocar/${item._id}`)
-                  }
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
                   className="flex items-center justify-center md:hidden text-center w-full bg-green-400 text-white border-none mt-2 rounded text-lg"
                 >
                   Review

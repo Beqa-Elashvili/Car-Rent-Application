@@ -19,7 +19,7 @@ export default function Car({ params }: { params: { id?: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars } = useGlobalProvider();
+  const { ReserveCars, setError } = useGlobalProvider();
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -82,19 +82,25 @@ export default function Car({ params }: { params: { id?: string } }) {
 
   const GetOneCar = async (id?: string) => {
     try {
-      if (id) {
-        const resp = await axios.get(`/api/cars?id=${id}`);
-        setCar(resp.data.car);
-        return;
-      }
+      const resp = await axios.get(`/api/cars?id=${id}`);
+      setCar(resp.data.car);
+      return;
     } catch (error) {
-      alert("error while fetch one car");
+      console.log("Cars fetch error");
+    }
+    try {
+      const reservedCarResponse = await axios.get(
+        `/api/reservedcars?carId=${id}`
+      );
+      setCar(reservedCarResponse.data.car);
+    } catch (error) {
+      console.error("Error while fetching car from both APIs");
     }
   };
 
   useEffect(() => {
     if (params.id) {
-      GetOneCar(params.id);
+      GetOneCar(params.id as string);
     }
   }, [params.id]);
 

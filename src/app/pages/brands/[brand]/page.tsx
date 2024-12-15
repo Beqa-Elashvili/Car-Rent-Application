@@ -29,13 +29,11 @@ export default function Page({ params }: { params: { brand: string } }) {
   const {
     collections,
     ReserveCars,
-    setReserveCars,
     carData,
     setCarData,
     loading,
     setLoading,
     error,
-    setError,
     fetchReservedCars,
     deleteReservedCar,
   } = useGlobalProvider();
@@ -142,11 +140,11 @@ export default function Page({ params }: { params: { brand: string } }) {
   };
 
   const getUpdatedPrice = (dayPrice: number, days: number) => {
-    if (days === 2) return dayPrice * 0.9; // 10% discount for 2 days
-    if (days === 4) return dayPrice * 0.8; // 20% discount for 4 days
-    if (days === 6) return dayPrice * 0.7; // 30% discount for 6 days
-    if (days === 8) return dayPrice * 0.6; // 40% discount for 8+ days
-    return dayPrice; // Default price if no days are selected
+    if (days === 2) return dayPrice * 0.9;
+    if (days === 4) return dayPrice * 0.8;
+    if (days === 6) return dayPrice * 0.7;
+    if (days === 8) return dayPrice * 0.6;
+    return dayPrice;
   };
   return (
     <div className="bg-gray-800 relative p-2 h-full">
@@ -177,11 +175,7 @@ export default function Page({ params }: { params: { brand: string } }) {
                     return (
                       <div key={item._id}>
                         <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
-                          <img
-                            className="w-40"
-                            src={item.img}
-                            alt="Carimg"
-                          />
+                          <img className="w-40" src={item.img} alt="Carimg" />
                           <div className="flex flex-col w-full">
                             <p className="font-medium text-lg">
                               {item.make.toUpperCase()} |{" "}
