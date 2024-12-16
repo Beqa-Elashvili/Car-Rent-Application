@@ -108,7 +108,10 @@ export default function Car({ params }: { params: { id?: string } }) {
 
   useEffect(() => {
     if (params.id) {
-      GetOneCar(params.id as string);
+      const timeout = setTimeout(() => {
+        GetOneCar(params.id as string);
+      }, 10);
+      return () => clearTimeout(timeout);
     }
   }, [params.id]);
 

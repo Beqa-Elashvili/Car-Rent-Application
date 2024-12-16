@@ -103,7 +103,10 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     }
   }
   useEffect(() => {
-    GetBrands();
+    const timeout = setTimeout(() => {
+      GetBrands();
+    }, 10);
+    return () => clearTimeout(timeout);
   }, []);
 
   async function fetchReservedCars() {

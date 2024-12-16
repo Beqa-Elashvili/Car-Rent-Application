@@ -30,7 +30,10 @@ export function Main() {
     }
   }
   useEffect(() => {
-    GetCardata();
+    const timeout = setTimeout(() => {
+      GetCardata();
+    }, 10);
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
