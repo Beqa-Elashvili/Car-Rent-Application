@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { Popover, Avatar } from "antd";
+import { Popover, Avatar, Button } from "antd";
 import { useRouter } from "next/navigation";
 import { UserOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
@@ -25,13 +25,19 @@ const UserProfile = () => {
   }
 
   const content = (
-    <div>
-      <button
+    <div className="flex flex-col gap-2">
+      <Button
         className="font-medium p-2 rounded hover:text-red-500"
+        onClick={() => router.push("/pages/orders")}
+      >
+        orders
+      </Button>
+      <Button
+        className="font-medium text-red-600 p-2 rounded hover:text-red-500"
         onClick={() => signOut()}
       >
         Log Out
-      </button>
+      </Button>
     </div>
   );
 
@@ -57,7 +63,10 @@ const UserProfile = () => {
           <button className="hover:text-green-500 w-6">
             <MdFavoriteBorder className="size-8" />
           </button>
-          <button onClick={() => router.push("/pages/reserveCars")} className="hover:text-green-500 relative p-2">
+          <button
+            onClick={() => router.push("/pages/reserveCars")}
+            className="hover:text-green-500 relative p-2"
+          >
             <FaCarTunnel className="size-8" />
             <div className="absolute top-0 right-0 bg-yellow-500 p-2 rounded-full h-6 w-6 flex items-center justify-center">
               {ReserveCars?.length}

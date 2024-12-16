@@ -50,12 +50,18 @@ export default function Page({ params }: { params: { brand: string } }) {
     carData.map((car) => car.dayPrice)
   );
 
-  async function GetCarData(brand: string) {
+  async function GetCarData(brand: string, min: number, max: number) {
     try {
+      let url = "/api/cars";
       setLoading(true);
-      const resp = await axios.get(`/api/cars?brand=${params.brand}`);
+      if (brand) {
+        url += `?brand=${brand}`;
+      }
+      if (min || max) {
+        url += `&minDayPrice=${min}&maxDayPrice=${max}`;
+      }
+      const resp = await axios.get(url);
       setCarData(resp.data.cars);
-      setSortedCarData(resp.data.cars);
       setPrices([]);
       setSelectedDays([]);
       setLoading(false);
@@ -65,8 +71,11 @@ export default function Page({ params }: { params: { brand: string } }) {
   }
 
   useEffect(() => {
-    GetCarData(params.brand);
-  }, []);
+    const timeoutId = setTimeout(() => {
+      GetCarData(params.brand, maxMinprices.min, maxMinprices.max);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [maxMinprices, params.brand]);
 
   const calculateTotalPrice = () => {
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
@@ -139,23 +148,6 @@ export default function Page({ params }: { params: { brand: string } }) {
       return updatedPrices;
     });
   };
-
-  const [sortedCarData, setSortedCarData] = useState<CarsType[]>([]);
-
-  const sortByprices = useCallback(() => {
-    const cardata = carData.filter(
-      (item: CarsType) =>
-        item.dayPrice >= maxMinprices.min && item.dayPrice <= maxMinprices.max
-    );
-    setSortedCarData(cardata);
-  }, [maxMinprices]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      sortByprices();
-    }, 500);
-    return () => clearTimeout(timeoutId);
-  }, [maxMinprices]);
 
   const getUpdatedPrice = (dayPrice: number, days: number) => {
     if (days === 2) return dayPrice * 0.9;
@@ -318,11 +310,11 @@ export default function Page({ params }: { params: { brand: string } }) {
           ) : (
             <>
               <div className="bg-gray-700 rounded-xl grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
-                {sortedCarData.length === 0 ? (
+                {carData.length === 0 ? (
                   <h1 className="text-gray-500">Sorry there is no cars</h1>
                 ) : (
                   <>
-                    {sortedCarData?.map((car: CarsType, index: number) => {
+                    {carData?.map((car: CarsType, index: number) => {
                       return (
                         <div
                           key={car._id}

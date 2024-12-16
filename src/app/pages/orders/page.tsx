@@ -56,7 +56,7 @@ export default function Orders() {
   }, [userId]);
 
   return (
-    <div className="bg-slate-800 min-h-screen h-full  w-full p-20 grid grid-cols-4 gap-4">
+    <div className="bg-slate-800 min-h-screen h-full  w-full items-start p-20 grid grid-cols-4 gap-4">
       {orders?.map((item: orderType) => {
         const inputCode = code[item._id] || "";
         return (

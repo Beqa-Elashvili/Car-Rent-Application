@@ -104,10 +104,13 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const brand = url.searchParams.get("brand");
-    const id = url.searchParams.get("id"); 
+    const id = url.searchParams.get("id");
+    const minDayPrice = url.searchParams.get("minDayPrice");
+    const maxDayPrice = url.searchParams.get("maxDayPrice");
 
     await ConnectDB();
 
+    // If 'id' is provided, fetch a single car by its ID
     if (id) {
       const car = await Cars.findById(id);
       if (!car) {
@@ -119,7 +122,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ car }, { status: 200 });
     }
 
-    const query = brand ? { brand } : {};
+    const query: any = {};
+    if (brand) query.brand = brand;
+
+    if (minDayPrice || maxDayPrice) {
+      query.dayPrice = {};
+      if (minDayPrice) query.dayPrice.$gte = Number(minDayPrice);
+      if (maxDayPrice) query.dayPrice.$lte = Number(maxDayPrice);
+    }
+
     const cars = await Cars.find(query);
 
     if (cars.length === 0) {
