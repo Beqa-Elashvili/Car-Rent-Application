@@ -80,7 +80,7 @@ export default function Conditions() {
             </div>
           </div>
           <div className="w-full">
-            <GoogleMap />
+            {/* <GoogleMap /> */}
           </div>
         </div>
         <div className="flex flex-col gap-8 mt-8">

@@ -107,10 +107,10 @@ export async function GET(req: Request) {
     const id = url.searchParams.get("id");
     const minDayPrice = url.searchParams.get("minDayPrice");
     const maxDayPrice = url.searchParams.get("maxDayPrice");
+    const model = url.searchParams.get("model");
 
     await ConnectDB();
 
-    // If 'id' is provided, fetch a single car by its ID
     if (id) {
       const car = await Cars.findById(id);
       if (!car) {
@@ -123,7 +123,15 @@ export async function GET(req: Request) {
     }
 
     const query: any = {};
-    if (brand) query.brand = brand;
+
+    if (brand && model) {
+      query.brand = brand;
+      query.model = { $regex: new RegExp(model, "i") };
+    } else if (brand) {
+      query.brand = brand;
+    } else if (model) {
+      query.model = { $regex: new RegExp(model, "i") };
+    }
 
     if (minDayPrice || maxDayPrice) {
       query.dayPrice = {};

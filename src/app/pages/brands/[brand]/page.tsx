@@ -1,8 +1,8 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Checkbox, Button, Input, Slider } from "antd";
+import { Checkbox, Button, Slider } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
