@@ -9,7 +9,6 @@ export async function POST(req: Request) {
 
     const { brand, brands } = await req.json();
 
-    // Handle single brand creation
     if (brand) {
       if (!brand?.name || !brand?.img) {
         return NextResponse.json(
@@ -80,6 +79,40 @@ export async function GET(req: Request) {
     console.error("Error fetching brands:", error);
     return NextResponse.json(
       { message: "Failed to fetch brands" },
+      { status: 500 }
+    );
+  }
+}
+export async function PUT(req: Request) {
+  try {
+    await ConnectDB();
+
+    const { id, brand } = await req.json();
+
+    if (!id || !brand) {
+      return NextResponse.json(
+        { message: "Brand ID and updated brand data are required" },
+        { status: 400 }
+      );
+    }
+    const existingBrand = await Brands.findById(id);
+
+    if (!existingBrand) {
+      return NextResponse.json({ message: "Brand not found" }, { status: 404 });
+    }
+    if (brand.name) existingBrand.name = brand.name;
+    if (brand.img) existingBrand.img = brand.img;
+
+    await existingBrand.save();
+
+    return NextResponse.json(
+      { message: "Brand updated successfully", brand: existingBrand },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating brand:", error);
+    return NextResponse.json(
+      { message: "Failed to update brand" },
       { status: 500 }
     );
   }

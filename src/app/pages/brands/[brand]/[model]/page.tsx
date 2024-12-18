@@ -15,7 +15,11 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
 
-export default function Page({ params }: { params: { brand: string } }) {
+export default function Page({
+  params,
+}: {
+  params: { brand?: string | undefined; model?: string | undefined };
+}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
     collections,
@@ -50,16 +54,21 @@ export default function Page({ params }: { params: { brand: string } }) {
     carData.map((car) => car.dayPrice)
   );
 
-  async function GetCarData(brand: string, min: number, max: number) {
+  async function GetCarData(
+    min?: number,
+    max?: number,
+    brand?: string,
+    model?: string
+  ) {
     try {
-      let url = "/api/cars";
       setLoading(true);
-      if (brand) {
-        url += `?brand=${brand}`;
-      }
-      if (min || max) {
-        url += `&minDayPrice=${min}&maxDayPrice=${max}`;
-      }
+      const params = new URLSearchParams();
+      if (brand && brand !== "All") params.append("brand", brand);
+      if (model && model !== "All") params.append("model", model);
+      if (min) params.append("minDayPrice", String(min));
+      if (max) params.append("maxDayPrice", String(max));
+
+      const url = `/api/cars?${params}`;
       const resp = await axios.get(url);
       setCarData(resp.data.cars);
       setPrices([]);
@@ -72,10 +81,15 @@ export default function Page({ params }: { params: { brand: string } }) {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      GetCarData(params.brand, maxMinprices.min, maxMinprices.max);
+      GetCarData(
+        maxMinprices.min,
+        maxMinprices.max,
+        params.brand,
+        params.model
+      );
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [maxMinprices, params.brand]);
+  }, [maxMinprices, params.brand, params.model]);
 
   const calculateTotalPrice = () => {
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
@@ -156,6 +170,7 @@ export default function Page({ params }: { params: { brand: string } }) {
     if (days === 8) return dayPrice * 0.6;
     return dayPrice;
   };
+  console.log(collections);
   return (
     <div className="bg-gray-800 relative p-2 h-full">
       <div>
@@ -257,7 +272,7 @@ export default function Page({ params }: { params: { brand: string } }) {
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
-                onClick={() => router.push(`/pages/brands/${item.name}`)}
+                onClick={() => router.push(`/pages/brands/${item.name}/All`)}
                 className={`flex items-center cursor-pointer hover:bg-gray-700 h-14 overflow-hidden rounded-xl p-2 gap-2 ${
                   pathname === item.name && "bg-gray-800"
                 }`}

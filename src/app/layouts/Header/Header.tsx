@@ -27,22 +27,18 @@ export function Header() {
   const [searchResults, setSearchResults] = useState<CarsType[]>([]);
   const { collections } = useGlobalProvider();
 
-  console.log(brand);
-
   const getSearchResults = useCallback(async () => {
     try {
-      let url = "/api/cars";
+      const params = new URLSearchParams();
       if (!value) {
         setSearchResults([]);
         return;
       }
-      if (!brand && value) {
-        url += `?model=${value}`;
-      } else if (brand === "All") {
-        url += `?model=${value}`;
-      } else if (brand !== "All" && value) {
-        url += `?brand=${brand}&model=${value}`;
+      params.append("model", value);
+      if (brand && brand !== "All") {
+        params.append("brand", brand);
       }
+      const url = `/api/cars?${params.toString()}`;
       const resp = await axios.get(url);
       setSearchResults(resp.data.cars);
     } catch (error) {
@@ -69,6 +65,22 @@ export function Header() {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  const handleCar = (id: string) => {
+    setValue("");
+    setSearchResults([]);
+    router.push(`/pages/solocar/${id}`);
+  };
+
+  const handleSearchResults = (brand: string, model: string) => {
+    setValue("");
+    if (!value) {
+      alert("input the model");
+      return;
+    } else {
+      router.push(`/pages/brands/${brand}/${model}`);
+    }
+  };
 
   return (
     <div className="w-full bg-slate-800 text-white relative h-full text-2xl">
@@ -144,7 +156,7 @@ export function Header() {
             }`}
           />
           <button
-            onClick={getSearchResults}
+            onClick={() => handleSearchResults(brand, value)}
             className={`z-40 hover:bg-cyan-600 absolute right-0 border-none border-l h-full ${
               searchResults.length !== 0 ? "rounded-tr" : "rounded-r"
             } hover:border-none bg-cyan-500 px-4 `}
@@ -155,14 +167,18 @@ export function Header() {
             <div className="bg-white w-full max-h-96 overflow-y-scroll p-2 flex flex-col gap-2 rounded-b absolute top-8 z-30">
               <div className="flex flex-col gap-2">
                 {searchResults?.map((item: CarsType) => (
-                  <div className="bg-cyan-700 rounded w-full p-2 flex items-center gap-12">
+                  <div
+                    key={item._id}
+                    onClick={() => handleCar(item._id)}
+                    className="bg-cyan-700 rounded w-full hover:bg-cyan-800 cursor-pointer p-2 flex items-center gap-12"
+                  >
                     <Image
                       src={item.img}
                       alt="img"
                       width={500}
                       height={1000}
                       className="w-40 h-20 object-contain"
-                    ></Image>
+                    />
                     <div className="text-white">
                       <p>{item.make}</p>
                       <p>{item.model}</p>
