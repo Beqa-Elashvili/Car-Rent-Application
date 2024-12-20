@@ -37,6 +37,7 @@ export interface CarsType {
   transmission: string;
   class: string;
   img: string;
+  horsepower: number;
   createdAt: string;
   updatedAt: string;
   __v: number;

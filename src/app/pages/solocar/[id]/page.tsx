@@ -4,7 +4,7 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { createCarImage } from "@/app/CreateCarImage";
-import { Button, Skeleton } from "antd";
+import { Button } from "antd";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Carousel } from "antd";
@@ -48,12 +48,16 @@ export default function Car({ params }: { params: { id?: string } }) {
               <p>{car?.displacement}</p>
             </div>
             <div>
+              <p className="text-sm">Transmission</p>
+              <p>{car?.transmission.toUpperCase()}</p>
+            </div>
+            <div>
               <p className="text-sm">Cylinders</p>
               <p>{car?.cylinders}</p>
             </div>
             <div>
-              <p className="text-sm">Transmission</p>
-              <p>{car?.transmission.toUpperCase()}</p>
+              <p className="text-sm">HorsePower</p>
+              <p>{car?.horsepower}HP</p>
             </div>
           </motion.div>
         );
@@ -61,19 +65,31 @@ export default function Car({ params }: { params: { id?: string } }) {
         return (
           <motion.div
             {...fadeInOut}
-            className="flex text-xl text-gray-400 gap-12 justify-center items-center"
+            className="grid grid-cols-4 text-xl text-gray-400 gap-12 justify-center items-center"
           >
             <div>
               <p className="text-sm">Class</p>
               <p>{car?.class.toUpperCase()}</p>
             </div>
             <div>
+              <p className="text-sm">Combination MPG</p>
+              <p>{car?.combination_mpg}</p>
+            </div>
+            <div>
               <p className="text-sm">Fuel type</p>
               <p>{car?.fuel_type.toUpperCase()}</p>
             </div>
             <div>
-              <p className="text-sm">Combination MPG</p>
-              <p>{car?.combination_mpg}</p>
+              <p className="text-sm">Drive</p>
+              <p>{car?.drive}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-sm">Highway Mpg</p>
+              <p>{car?.highway_mpg}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-sm">City Mpg</p>
+              <p>{car?.city_mpg}</p>
             </div>
           </motion.div>
         );
@@ -137,7 +153,6 @@ export default function Car({ params }: { params: { id?: string } }) {
       return angles[prevIndex];
     });
   };
-
 
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-12">
