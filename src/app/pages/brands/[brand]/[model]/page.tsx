@@ -1,7 +1,7 @@
 "use client";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Checkbox, Button, Slider } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
@@ -29,16 +29,17 @@ export default function Page({
     loading,
     setLoading,
     error,
+    setError,
     fetchReservedCars,
     deleteReservedCar,
   } = useGlobalProvider();
-  const router = useRouter();
-  const numb = 9;
+
+  const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
   const pathname = window.location.pathname.split("/").pop();
   const { data: session } = useSession();
   const userId = session?.user.id;
-
-  const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
+  const router = useRouter();
+  const numb = 9;
 
   const sortByPrices = (values: number[]) => {
     setMaxMinPrices({
@@ -63,8 +64,10 @@ export default function Page({
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (brand && brand !== "All") params.append("brand", brand);
-      if (model && model !== "All") params.append("model", model);
+      if (brand && brand !== "All")
+        params.append("brand", decodeURIComponent(brand));
+      if (model && model !== "All")
+        params.append("model", decodeURIComponent(model));
       if (min) params.append("minDayPrice", String(min));
       if (max) params.append("maxDayPrice", String(max));
 
@@ -74,8 +77,15 @@ export default function Page({
       setPrices([]);
       setSelectedDays([]);
       setLoading(false);
-    } catch (error) {
-      console.log("error thile fatch brand data");
+      setError(null);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        setError(error.response?.data?.message);
+        setCarData([]);
+        console.log("error thile fatch brand data");
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -93,10 +103,15 @@ export default function Page({
 
   const calculateTotalPrice = () => {
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
-      const totalCarPrice = item.dayPrice * item.carDayCount;
+      const discountedDayPrice = getUpdatedPrice(
+        item.dayPrice,
+        item.carDayCount
+      );
+      const totalCarPrice = discountedDayPrice * item.carDayCount;
       return accumulatedTotal + totalCarPrice;
     }, 0);
-    localStorage.setItem("reserveTotalPrice", total as unknown as string);
+
+    localStorage.setItem("reserveTotalPrice", total.toString());
     return total;
   };
 
@@ -106,6 +121,32 @@ export default function Page({
     }
   }, [ReserveCars]);
 
+  const ChangeCarDayCount = async (
+    car: CarsType,
+    AddCar: boolean,
+    IncreseOrDecrese?: string
+  ) => {
+    try {
+      if (!userId) {
+        console.error("User is not authenticated");
+        return;
+      }
+      if (IncreseOrDecrese === "decrease" && car.carDayCount === 1) {
+        deleteReservedCar(car._id, false, setIsOpen);
+        return;
+      }
+      let key = AddCar ? { carImg: car.img } : { carId: car._id };
+      const response = await axios.put("/api/reservedcars", {
+        userId,
+        ...key,
+        action: IncreseOrDecrese,
+      });
+      fetchReservedCars();
+    } catch (error: any) {
+      console.error("Error decrementing car day count:", error);
+    }
+  };
+
   const addCarToReserve = async (car: CarsType) => {
     try {
       const userId = session?.user.id;
@@ -113,36 +154,24 @@ export default function Page({
         console.error("User is not authenticated");
         return;
       }
-      const response = await axios.post("/api/reservedcars", {
-        userId,
-        car,
-      });
+      const Existeditem = ReserveCars.find(
+        (item: CarsType) => item.img === car.img
+      );
 
+      if (Existeditem) {
+        await ChangeCarDayCount(car, true, "increase");
+        setIsOpen(true);
+        return;
+      } else {
+        const response = await axios.post("/api/reservedcars", {
+          userId,
+          car,
+        });
+      }
       fetchReservedCars();
       setIsOpen(true);
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
-    }
-  };
-
-  const decrementCarDayCount = async (car: CarsType) => {
-    try {
-      if (!userId) {
-        console.error("User is not authenticated");
-        return;
-      }
-      if (car.carDayCount === 1) {
-        deleteReservedCar(car._id, false, setIsOpen);
-        return;
-      }
-      const response = await axios.put("/api/reservedcars", {
-        userId,
-        carId: car._id,
-      });
-
-      fetchReservedCars();
-    } catch (error: any) {
-      console.error("Error decrementing car day count:", error);
     }
   };
 
@@ -164,13 +193,12 @@ export default function Page({
   };
 
   const getUpdatedPrice = (dayPrice: number, days: number) => {
-    if (days === 2) return dayPrice * 0.9;
-    if (days === 4) return dayPrice * 0.8;
-    if (days === 6) return dayPrice * 0.7;
-    if (days === 8) return dayPrice * 0.6;
+    if (days >= 8) return dayPrice * 0.6; // 40% discount for 8+ days
+    if (days >= 6) return dayPrice * 0.7; // 30% discount for 6-7 days
+    if (days >= 4) return dayPrice * 0.8; // 20% discount for 4-5 days
+    if (days >= 2) return dayPrice * 0.9;
     return dayPrice;
   };
-  console.log(collections);
   return (
     <div className="bg-gray-800 relative p-2 h-full">
       <div>
@@ -195,8 +223,13 @@ export default function Page({
                 <div className="py-4 flex flex-col gap-4">
                   {ReserveCars.map((item: CarsType) => {
                     const handleTotalPrices = () => {
-                      return item.dayPrice * item.carDayCount;
+                      const discountedDayPrice = getUpdatedPrice(
+                        item.dayPrice,
+                        item.carDayCount
+                      );
+                      return discountedDayPrice * item.carDayCount;
                     };
+
                     return (
                       <div key={item._id}>
                         <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
@@ -208,17 +241,21 @@ export default function Page({
                             </p>
                             <div className="flex justify-between w-full">
                               <div className="text-sm">
-                                <p>Price per Day.{item.dayPrice}</p>
+                                <p>Price per Day: ${item.dayPrice}</p>
                                 <p>Period: 8+ days</p>
                               </div>
                               <div className="flex gap-2 items-center">
-                                <button onClick={() => addCarToReserve(item)}>
+                                <button
+                                  onClick={() =>
+                                    ChangeCarDayCount(item, false, "increase")
+                                  }
+                                >
                                   <CiCirclePlus className="size-8  text-gray-600 hover:text-gray-700" />
                                 </button>
                                 <div>{item.carDayCount}</div>
                                 <button
                                   onClick={() => {
-                                    decrementCarDayCount(item);
+                                    ChangeCarDayCount(item, false, "decrease");
                                   }}
                                 >
                                   <CiCircleMinus className="size-8 text-gray-600 hover:text-gray-700" />
@@ -323,82 +360,75 @@ export default function Page({
               ))}
             </div>
           ) : (
-            <>
-              <div className="bg-gray-700 rounded-xl grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2">
-                {carData.length === 0 ? (
-                  <h1 className="text-gray-500">Sorry there is no cars</h1>
-                ) : (
-                  <>
-                    {carData?.map((car: CarsType, index: number) => {
-                      return (
-                        <div
-                          key={car._id}
-                          className="bg-gray-300 text-white rounded-xl"
-                        >
-                          <img
-                            className="h-40 text-center w-full object-contain"
-                            src={car.img}
-                            alt="carimg"
+            <div className="bg-gray-700 w-10/12 rounded-xl">
+              {error && <div className="text-center mt-12">{error}</div>}
+              <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
+                {carData?.map((car: CarsType, index: number) => {
+                  return (
+                    <div
+                      key={car._id}
+                      className="bg-gray-300 text-white rounded-xl"
+                    >
+                      <img
+                        className="h-40 text-center w-full object-contain"
+                        src={car.img}
+                        alt="carimg"
+                      />
+                      <div className="bg-gray-900 p-2 rounded-b-xl">
+                        <h1 className="text-2xl min-h-16">
+                          {car.make.toUpperCase()} {car.model.toUpperCase()}
+                        </h1>
+                        <h1 className="mt-2 text-lg">
+                          {car.displacement} | {car.transmission} |{" "}
+                          {car.fuel_type}
+                        </h1>
+                        <h1 className="mt-2 text-xl text-green-500">
+                          $ {prices[index] ? prices[index] : car.dayPrice}
+                        </h1>
+                        <div className="flex gap-2 mt-2">
+                          <Checkbox
+                            checked={selectedDays[index] === 2}
+                            onChange={() => handleDaySelection(index, 2)}
+                            type="checkbox"
                           />
-                          <div className="bg-gray-900 p-2 rounded-b-xl">
-                            <h1 className="text-2xl min-h-16">
-                              {car.make.toUpperCase()} {car.model.toUpperCase()}
-                            </h1>
-                            <h1 className="mt-2 text-lg">
-                              {car.displacement} | {car.transmission} |{" "}
-                              {car.fuel_type}
-                            </h1>
-                            <h1 className="mt-2 text-xl text-green-500">
-                              $ {prices[index] ? prices[index] : car.dayPrice}
-                            </h1>
-                            <div className="flex gap-2 mt-2">
-                              <Checkbox
-                                checked={selectedDays[index] === 2}
-                                onChange={() => handleDaySelection(index, 2)}
-                                type="checkbox"
-                              />
-                              <p>2 days</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Checkbox
-                                checked={selectedDays[index] === 4}
-                                onChange={() => handleDaySelection(index, 4)}
-                                type="checkbox"
-                              />
-                              <p>4 days</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Checkbox
-                                checked={selectedDays[index] === 6}
-                                onChange={() => handleDaySelection(index, 6)}
-                                type="checkbox"
-                              />
-                              <p>6 days</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Checkbox
-                                checked={selectedDays[index] === 8}
-                                onChange={() => handleDaySelection(index, 8)}
-                                type="checkbox"
-                              />
-                              <p>8+ days</p>
-                            </div>
-                            <Button
-                              onClick={() => addCarToReserve(car)}
-                              className="w-full mt-2 bg-green-500 border-none"
-                            >
-                              RESERVE
-                            </Button>
-                          </div>
+                          <p>2 days</p>
                         </div>
-                      );
-                    })}
-                  </>
-                )}
-                {error && <div>{error}</div>}
-                <img src="/" alt="" />
+                        <div className="flex gap-2">
+                          <Checkbox
+                            checked={selectedDays[index] === 4}
+                            onChange={() => handleDaySelection(index, 4)}
+                            type="checkbox"
+                          />
+                          <p>4 days</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Checkbox
+                            checked={selectedDays[index] === 6}
+                            onChange={() => handleDaySelection(index, 6)}
+                            type="checkbox"
+                          />
+                          <p>6 days</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Checkbox
+                            checked={selectedDays[index] === 8}
+                            onChange={() => handleDaySelection(index, 8)}
+                            type="checkbox"
+                          />
+                          <p>8+ days</p>
+                        </div>
+                        <Button
+                          onClick={() => addCarToReserve(car)}
+                          className="w-full mt-2 bg-green-500 border-none"
+                        >
+                          RESERVE
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

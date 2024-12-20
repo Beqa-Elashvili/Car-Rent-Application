@@ -91,52 +91,33 @@ export async function POST(req: any) {
       );
     }
 
-    const existingReservation = await reservedCars.findOne({
-      userId,
+    const newReservation = new reservedCars({
+      city_mpg: car.city_mpg,
+      brand: car.brand,
+      class: car.class,
+      combination_mpg: car.combination_mpg,
+      cylinders: car.cylinders,
+      displacement: car.displacement,
+      drive: car.drive,
+      fuel_type: car.fuel_type,
+      highway_mpg: car.highway_mpg,
+      horsepower: car.horsepower,
+      make: car.make,
+      model: car.model,
+      transmission: car.transmission,
+      year: car.year,
+      carDayCount: 1,
+      dayPrice: car.dayPrice,
       img: car.img,
+      userId,
     });
 
-    if (existingReservation) {
-      existingReservation.carDayCount += 1;
-      existingReservation.dayPrice = car.dayPrice;
-      await existingReservation.save();
+    await newReservation.save();
 
-      return NextResponse.json(
-        {
-          message: "Car reservation updated. Day count increased.",
-          reservedCar: existingReservation,
-        },
-        { status: 200 }
-      );
-    } else {
-      const newReservation = new reservedCars({
-        city_mpg: car.city_mpg,
-        brand: car.brand,
-        class: car.class,
-        combination_mpg: car.combination_mpg,
-        cylinders: car.cylinders,
-        displacement: car.displacement,
-        drive: car.drive,
-        fuel_type: car.fuel_type,
-        highway_mpg: car.highway_mpg,
-        horsepower: car.horsepower,
-        make: car.make,
-        model: car.model,
-        transmission: car.transmission,
-        year: car.year,
-        carDayCount: 1,
-        dayPrice: car.dayPrice,
-        img: car.img,
-        userId,
-      });
-
-      await newReservation.save();
-
-      return NextResponse.json(
-        { message: "Car Reserved", reservedCar: newReservation },
-        { status: 201 }
-      );
-    }
+    return NextResponse.json(
+      { message: "Car Reserved", reservedCar: newReservation },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
@@ -147,7 +128,7 @@ export async function POST(req: any) {
 }
 export async function PUT(req: any) {
   try {
-    const { userId, carId } = await req.json();
+    const { userId, carId, carImg, action } = await req.json();
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
@@ -156,15 +137,26 @@ export async function PUT(req: any) {
       );
     }
 
-    if (!mongoose.Types.ObjectId.isValid(carId)) {
+    if (carId && !mongoose.Types.ObjectId.isValid(carId)) {
       return NextResponse.json(
         { message: "Invalid Car ID format" },
         { status: 400 }
       );
     }
 
+    if (!carId && !carImg) {
+      return NextResponse.json(
+        { message: "Either carId or carImg must be provided" },
+        { status: 400 }
+      );
+    }
+
     await ConnectDB();
-    const reservation = await reservedCars.findOne({ _id: carId, userId });
+
+    const reservation = await reservedCars.findOne({
+      userId,
+      $or: [{ _id: carId }, { img: carImg }],
+    });
 
     if (!reservation) {
       return NextResponse.json(
@@ -173,23 +165,34 @@ export async function PUT(req: any) {
       );
     }
 
-    if (reservation.carDayCount > 1) {
-      reservation.carDayCount -= 1;
-      await reservation.save();
-      return NextResponse.json(
-        { message: "Car day count decremented successfully" },
-        { status: 200 }
-      );
+    if (action === "increase") {
+      reservation.carDayCount += 1;
+    } else if (action === "decrease") {
+      if (reservation.carDayCount > 1) {
+        reservation.carDayCount -= 1;
+      } else {
+        return NextResponse.json(
+          { message: "Car day count cannot be less than 1" },
+          { status: 400 }
+        );
+      }
     } else {
-      return NextResponse.json(
-        { message: "Car day count cannot be less than 1" },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Invalid action" }, { status: 400 });
     }
-  } catch (error) {
-    console.error("Error while decrementing car day count:", error);
+    await reservation.save();
+
     return NextResponse.json(
-      { message: "Failed to decrement car day count", error },
+      {
+        message: `Car day count ${
+          action === "increase" ? "incremented" : "decremented"
+        } successfully`,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error while updating car day count:", error);
+    return NextResponse.json(
+      { message: "Failed to update car day count", error },
       { status: 500 }
     );
   }
