@@ -1,4 +1,6 @@
-export const createCarImage = (car: any , angle?: string) => {
+import { CarsType } from "../Providers/GlobalProvider/GlobalContext";
+
+export const createCarImage = (car: CarsType, angle?: string) => {
   const url = new URL("https://cdn.imagin.studio/getimage");
   const { make, year, model } = car;
   url.searchParams.append("customer", "hrjavascript-mastery");

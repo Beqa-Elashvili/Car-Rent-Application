@@ -21,7 +21,7 @@ export default function Car({ params }: { params: { id?: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars, setError, setLoading, loading } = useGlobalProvider();
+  const { ReserveCars, setLoading, loading } = useGlobalProvider();
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -137,6 +137,7 @@ export default function Car({ params }: { params: { id?: string } }) {
       return angles[prevIndex];
     });
   };
+
 
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-12">

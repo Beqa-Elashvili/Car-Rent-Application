@@ -11,7 +11,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import Link from "next/link";
 
 import Image from "next/image";
-import { Input, Select } from "antd";
+import { Input, Select, Spin } from "antd";
 import axios from "axios";
 import {
   CarsType,
@@ -20,15 +20,17 @@ import {
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
 export function Header() {
-  const router = useRouter();
+  const [searchResults, setSearchResults] = useState<CarsType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
   const [brand, setBrand] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<CarsType[]>([]);
   const { collections } = useGlobalProvider();
+  const router = useRouter();
 
   const getSearchResults = useCallback(async () => {
     try {
+      setLoading(true);
       const params = new URLSearchParams();
       if (!value) {
         setSearchResults([]);
@@ -41,16 +43,19 @@ export function Header() {
       const url = `/api/cars?${params.toString()}`;
       const resp = await axios.get(url);
       setSearchResults(resp.data.cars);
+      setLoading(false);
     } catch (error) {
       setSearchResults([]);
       console.log("error while fetch SearchResult", error);
+    } finally {
+      setLoading(false);
     }
   }, [brand, value]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       getSearchResults();
-    }, 500);
+    }, 300);
     return () => clearTimeout(timeout);
   }, [brand, value]);
 
@@ -95,11 +100,13 @@ export function Header() {
             <RiMenuFold2Fill className="size-8" />
           )}
         </button>
-        <motion.div
-          initial={{ opacity: 0, x: -100 }}
-          animate={{ opacity: isOpen ? 1 : 0, x: isOpen ? 0 : -100 }}
-          transition={{ duration: 0.5 }}
-          className={`absolute z-30 top-14 flex flex-col items-start p-4 gap-2 left-0 w-64 h-full bg-gray-700
+        <div
+          style={{
+            opacity: isOpen ? 1 : 0,
+            transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+            transition: "opacity 0.5s ease, transform 0.5s ease",
+          }}
+          className={`absolute z-10 top-16 flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
            }`}
         >
           <button className="hover:text-yellow-300 cursor-pointer bg-green-600 rounded p-2 w-full">
@@ -118,7 +125,7 @@ export function Header() {
             <GiCarKey />
             <p>Collection</p>
           </button>
-        </motion.div>
+        </div>
         <div
           onClick={() => router.push("/")}
           className="flex justify-center hover:cursor-pointer lg:justify-start"
@@ -144,7 +151,9 @@ export function Header() {
           >
             <Select.Option value="All">All</Select.Option>
             {collections?.map((item: TCollecttion) => (
-              <Select.Option value={item.name}>{item.name}</Select.Option>
+              <Select.Option key={item.img} value={item.name}>
+                {item.name}
+              </Select.Option>
             ))}
           </Select>
           <Input
@@ -155,6 +164,7 @@ export function Header() {
               searchResults.length !== 0 && "rounded-b-none"
             }`}
           />
+          {loading && <Spin className="z-40 absolute right-14" />}
           <button
             onClick={() => handleSearchResults(brand, value)}
             className={`z-40 hover:bg-cyan-600 absolute right-0 border-none border-l h-full ${

@@ -2,7 +2,7 @@
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
-import { Checkbox, Button, Slider } from "antd";
+import { Checkbox, Button, Slider, Spin } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
@@ -36,6 +36,7 @@ export default function Page({
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
   const pathname = window.location.pathname.split("/").pop();
+  const [dayCountLoading, setDayCountLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const userId = session?.user.id;
   const router = useRouter();
@@ -127,6 +128,7 @@ export default function Page({
     IncreseOrDecrese?: string
   ) => {
     try {
+      setDayCountLoading(true);
       if (!userId) {
         console.error("User is not authenticated");
         return;
@@ -142,8 +144,11 @@ export default function Page({
         action: IncreseOrDecrese,
       });
       fetchReservedCars();
+      setDayCountLoading(false);
     } catch (error: any) {
       console.error("Error decrementing car day count:", error);
+    } finally {
+      setDayCountLoading(false);
     }
   };
 
@@ -193,12 +198,13 @@ export default function Page({
   };
 
   const getUpdatedPrice = (dayPrice: number, days: number) => {
-    if (days >= 8) return dayPrice * 0.6; // 40% discount for 8+ days
-    if (days >= 6) return dayPrice * 0.7; // 30% discount for 6-7 days
-    if (days >= 4) return dayPrice * 0.8; // 20% discount for 4-5 days
+    if (days >= 8) return dayPrice * 0.6;
+    if (days >= 6) return dayPrice * 0.7;
+    if (days >= 4) return dayPrice * 0.8;
     if (days >= 2) return dayPrice * 0.9;
     return dayPrice;
   };
+
   return (
     <div className="bg-gray-800 relative p-2 h-full">
       <div>
@@ -210,7 +216,7 @@ export default function Page({
               initial={{ opacity: 0, x: 100 }}
               exit={{ opacity: 0, x: 100 }}
               transition={{ duration: 0.5 }}
-              className="fixed overflow-y-auto  top-0 right-0 w-1/2 h-screen bg-white z-10 p-2"
+              className="fixed overflow-y-auto top-0 right-0 w-1/2 h-screen bg-white z-50 p-2"
             >
               <button
                 onClick={() => setIsOpen(false)}
@@ -252,7 +258,11 @@ export default function Page({
                                 >
                                   <CiCirclePlus className="size-8  text-gray-600 hover:text-gray-700" />
                                 </button>
-                                <div>{item.carDayCount}</div>
+                                {dayCountLoading ? (
+                                  <Spin />
+                                ) : (
+                                  <div>{item.carDayCount}</div>
+                                )}
                                 <button
                                   onClick={() => {
                                     ChangeCarDayCount(item, false, "decrease");
