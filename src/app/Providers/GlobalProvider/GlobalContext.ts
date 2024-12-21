@@ -6,6 +6,10 @@ export interface TLocation {
   city: string | null;
   street: string | null;
 }
+export interface TcarsModels {
+  name: string;
+  img: IconType;
+}
 export interface TCollecttion {
   name: string | undefined;
   img: string | undefined;
@@ -65,6 +69,8 @@ interface GlobalContextProps {
   carData: CarsType[];
   setCarData: Dispatch<SetStateAction<CarsType[]>>;
 
+  carsModels: TcarsModels[];
+
   ReserveTotalPrice: number | null;
   setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
 
@@ -82,6 +88,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   carData: [],
   setCarData: () => {},
   userId: "",
+  carsModels: [],
   ReserveTotalPrice: null,
   setReserveTotalPrice: () => {},
   error: null,

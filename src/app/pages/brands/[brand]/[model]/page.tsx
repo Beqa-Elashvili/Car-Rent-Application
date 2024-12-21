@@ -32,7 +32,7 @@ export default function Page({
     deleteReservedCar,
   } = useGlobalProvider();
 
-  const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
+  const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
   const pathname = window.location.pathname.split("/").pop();
   const [dayCountLoading, setDayCountLoading] = useState<boolean>(false);
   const [brand, setBrandData] = useState<CarsType[]>([]);

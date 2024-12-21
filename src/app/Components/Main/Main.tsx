@@ -1,22 +1,26 @@
 import { motion } from "framer-motion";
-import { SiLamborghini } from "react-icons/si";
-import { SiAstonmartin } from "react-icons/si";
-import { SiFerrari } from "react-icons/si";
-import { SiPorsche } from "react-icons/si";
-import { SiBugatti } from "react-icons/si";
 import { Input, Button, Spin } from "antd";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
+import {
+  CarsType,
+  TcarsModels,
+} from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function Main() {
-  const { carData, setCarData, loading, setLoading, setError } =
+  const { carData, setCarData, loading, setLoading, setError, carsModels } =
     useGlobalProvider();
   const router = useRouter();
+  const [Bmw, setBwm] = useState<CarsType[]>([]);
+
+  useEffect(() => {
+    const filtered = carData.filter((item: CarsType) => item.brand === "Bmw");
+    setBwm(filtered);
+  }, [carData]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -29,6 +33,10 @@ export function Main() {
     }, 100);
     return () => clearTimeout(timeout);
   }, []);
+
+  const GetCarModel = (model: string) => {
+    router.push(`/pages/brands/All/${model}`);
+  };
 
   return (
     <div className="bg-cyan-800 h-full">
@@ -94,6 +102,44 @@ export function Main() {
           );
         })}
       </Carousel>
+      <div className="bg-gray-500 h-px w-full my-8"></div>
+      <h1 className="px-20 text-white text-3xl">Explore the BMW comfort</h1>
+      <Carousel
+        slidesToShow={5}
+        arrows
+        autoplay
+        className="p-20"
+        dotPosition="bottom"
+        infinite={true}
+      >
+        {Bmw?.map((item: CarsType) => {
+          return (
+            <div
+              onClick={() => router.push(`/pages/solocar/${item._id}`)}
+              className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
+              key={item._id}
+            >
+              <div className="relative min-h-60 rounded-t-xl overflow-hidden">
+                <div
+                  className="absolute inset-0 w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
+                >
+                  <img
+                    src={item.img}
+                    alt="carImg"
+                    className="w-full h-full object-contain "
+                  />
+                </div>
+              </div>
+              <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
+                <h1 className="text-xl font-semibold">{item.make}</h1>
+                <p>start with: $ {item.dayPrice}</p>
+                <p>combination mpg : {item.combination_mpg}L</p>
+              </div>
+            </div>
+          );
+        })}
+      </Carousel>
       <div className="text-white w-full">
         <div className="p-4 flex justify-between ">
           <div className="flex flex-col gap-20">
@@ -118,101 +164,29 @@ export function Main() {
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
         </div>
         <div className="text-9xl font-medium ">
-          <div className="relative h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
-            <motion.div
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: -100 }}
-              transition={{ duration: 1 }}
-              className="text-[220px] absolute"
-            >
-              <SiLamborghini className="opacity-40" />
-            </motion.div>
-            <motion.h1
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: 100 }}
-              transition={{ duration: 1 }}
-              className="ml-36"
-            >
-              HURACAN COUPE
-            </motion.h1>
-          </div>
-          <div className="h-px bg-gray-900 w-full"></div>
-          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <motion.div
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: -100 }}
-              transition={{ duration: 1 }}
-              className="text-[220px] absolute"
-            >
-              <SiAstonmartin className="opacity-40  -rotate-12" />
-            </motion.div>
-            <motion.h1
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: 100 }}
-              transition={{ duration: 1 }}
-              className="ml-36"
-            >
-              DB12 V8
-            </motion.h1>
-          </div>
-          <div className="h-px bg-gray-900 w-full"></div>
-          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <motion.div
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: -100 }}
-              transition={{ duration: 1 }}
-              className="absolute text-[220px]"
-            >
-              <SiFerrari className="opacity-40  -top-3" />
-            </motion.div>
-            <motion.h1
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: 100 }}
-              transition={{ duration: 1 }}
-              className="ml-36"
-            >
-              SF90 SPIDER
-            </motion.h1>
-          </div>
-          <div className="h-px bg-gray-900 w-full"></div>
-          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <motion.div
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: -100 }}
-              transition={{ duration: 1 }}
-              className="text-[220px] absolute"
-            >
-              <SiPorsche className="opacity-40  top-2 -rotate-12" />
-            </motion.div>
-            <motion.h1
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: 100 }}
-              transition={{ duration: 1 }}
-              className="ml-36"
-            >
-              911 GT3
-            </motion.h1>
-          </div>
-          <div className="h-px bg-gray-900 w-full"></div>
-          <div className="w-10/12 relative h-44 flex flex-col overflow-hidden justify-center m-auto">
-            <motion.div
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: -100 }}
-              transition={{ duration: 1 }}
-              className="text-[220px] absolute"
-            >
-              <SiBugatti className="opacity-40  top-2" />
-            </motion.div>
-            <motion.h1
-              whileInView={{ opacity: 1, x: 0 }}
-              initial={{ opacity: 0, x: 100 }}
-              transition={{ duration: 1 }}
-              className="ml-36"
-            >
-              BUGATTI CHIRON
-            </motion.h1>
-          </div>
-          <div className="h-px bg-gray-900 w-full"></div>
+          {carsModels.map((item: TcarsModels) => (
+            <div onClick={() => GetCarModel(item.name)}>
+              <div className="relative h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
+                <motion.div
+                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 1 }}
+                  className="text-[220px] absolute"
+                >
+                  <item.img className="opacity-40" />
+                </motion.div>
+                <motion.h1
+                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, x: 100 }}
+                  transition={{ duration: 1 }}
+                  className="ml-36"
+                >
+                  {item.name}
+                </motion.h1>
+              </div>
+              <div className="h-px bg-gray-700 w-full"></div>
+            </div>
+          ))}
         </div>
         <div className="h-40"></div>
         <div className="h-px bg-gray-900 w-full"></div>

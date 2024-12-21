@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { CarsType, GlobalContext } from "./GlobalContext";
+import { CarsType, GlobalContext, TcarsModels } from "./GlobalContext";
 import { TLocation } from "./GlobalContext";
 import { TCollecttion } from "./GlobalContext";
 import { TConditions } from "./GlobalContext";
@@ -18,6 +18,11 @@ import { LuBox } from "react-icons/lu";
 import { CgDanger } from "react-icons/cg";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { SiLamborghini } from "react-icons/si";
+import { SiAstonmartin } from "react-icons/si";
+import { SiFerrari } from "react-icons/si";
+import { SiPorsche } from "react-icons/si";
+import { SiBugatti } from "react-icons/si";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
   const ConditionsRules = [
@@ -78,7 +83,28 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       ],
     },
   ];
-
+  const CarsModels = [
+    {
+      name: "HURACAN COUPE",
+      img: SiLamborghini,
+    },
+    {
+      name: "DB12 V8",
+      img: SiAstonmartin,
+    },
+    {
+      name: "SF90 SPIDER",
+      img: SiFerrari,
+    },
+    {
+      name: "911 GT3",
+      img: SiPorsche,
+    },
+    {
+      name: "CHIRON",
+      img: SiBugatti,
+    },
+  ];
   const [location, setLocation] = useState<TLocation>({
     city: null,
     street: null,
@@ -89,6 +115,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [ReserveTotalPrice, setReserveTotalPrice] = useState<number | null>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [carsModels, setCarsModels] = useState<TcarsModels[]>(CarsModels);
   const [carData, setCarData] = useState<CarsType[]>([]);
 
   const { data: session } = useSession();
@@ -165,6 +192,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         setLoading,
         error,
         setError,
+        carsModels,
         conditions,
         ReserveCars,
         setReserveCars,

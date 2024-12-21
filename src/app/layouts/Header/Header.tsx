@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { RiMenuFold2Fill } from "react-icons/ri";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { IoSearchSharp } from "react-icons/io5";
 import Link from "next/link";
 
