@@ -85,11 +85,16 @@ export default function Car({ params }: { params: { id?: string } }) {
             </div>
             <div className="col-span-2">
               <p className="text-sm">Highway Mpg</p>
-              <p>{car?.highway_mpg}</p>
+              <p>
+                {car?.highway_mpg}{" "}
+                <span className="text-gray-500">l/100km</span>
+              </p>
             </div>
             <div className="col-span-2">
               <p className="text-sm">City Mpg</p>
-              <p>{car?.city_mpg}</p>
+              <p>
+                {car?.city_mpg} <span className="text-gray-500">l/100km</span>
+              </p>
             </div>
           </motion.div>
         );
@@ -154,6 +159,17 @@ export default function Car({ params }: { params: { id?: string } }) {
     });
   };
 
+  const handleCarImg = (car: CarsType, angle: string) => {
+    try {
+      setLoading(true);
+      const image = createCarImage(car, angle);
+      setLoading(false);
+      return image;
+    } catch (error) {
+      return "/gfhf";
+    }
+  };
+
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-12">
       {loading ? (
@@ -205,7 +221,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                       </p>
                       <img
                         className="w-full h-96 object-contain"
-                        src={createCarImage(car, angle)}
+                        src={handleCarImg(car, angle)}
                         alt="Car Image"
                       />
                       <p

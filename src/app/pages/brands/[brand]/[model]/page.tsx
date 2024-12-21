@@ -24,8 +24,6 @@ export default function Page({
   const {
     collections,
     ReserveCars,
-    carData,
-    setCarData,
     loading,
     setLoading,
     error,
@@ -37,6 +35,7 @@ export default function Page({
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 1500 });
   const pathname = window.location.pathname.split("/").pop();
   const [dayCountLoading, setDayCountLoading] = useState<boolean>(false);
+  const [brand, setBrandData] = useState<CarsType[]>([]);
   const { data: session } = useSession();
   const userId = session?.user.id;
   const router = useRouter();
@@ -50,10 +49,10 @@ export default function Page({
   };
 
   const [selectedDays, setSelectedDays] = useState<number[]>(
-    Array(carData.length).fill(0)
+    Array(brand.length).fill(0)
   );
   const [prices, setPrices] = useState<number[]>(
-    carData.map((car) => car.dayPrice)
+    brand.map((car) => car.dayPrice)
   );
 
   async function GetCarData(
@@ -74,7 +73,7 @@ export default function Page({
 
       const url = `/api/cars?${params}`;
       const resp = await axios.get(url);
-      setCarData(resp.data.cars);
+      setBrandData(resp.data.cars);
       setPrices([]);
       setSelectedDays([]);
       setLoading(false);
@@ -82,7 +81,7 @@ export default function Page({
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         setError(error.response?.data?.message);
-        setCarData([]);
+        setBrandData([]);
         console.log("error thile fatch brand data");
       }
     } finally {
@@ -187,7 +186,7 @@ export default function Page({
       return updatedDays;
     });
 
-    const basePrice = carData[index].dayPrice;
+    const basePrice = brand[index].dayPrice;
     const newPrice = getUpdatedPrice(basePrice, days);
 
     setPrices((prevPrices) => {
@@ -373,7 +372,7 @@ export default function Page({
             <div className="bg-gray-700 w-10/12 rounded-xl">
               {error && <div className="text-center mt-12">{error}</div>}
               <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
-                {carData?.map((car: CarsType, index: number) => {
+                {brand?.map((car: CarsType, index: number) => {
                   return (
                     <div
                       key={car._id}

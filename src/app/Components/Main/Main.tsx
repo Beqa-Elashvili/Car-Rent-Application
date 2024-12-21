@@ -17,22 +17,14 @@ export function Main() {
   const { carData, setCarData, setLoading, setError } = useGlobalProvider();
   const router = useRouter();
 
-  async function GetCardata() {
-    try {
-      const resp = await axios.get("/api/cars");
-      setCarData(resp.data.cars);
-      setLoading(false);
-    } catch (error: any) {
-      setError(error);
-      setLoading(false);
-    } finally {
-      setLoading(false);
-    }
-  }
   useEffect(() => {
     const timeout = setTimeout(() => {
-      GetCardata();
-    }, 10);
+      axios
+        .get("/api/cars")
+        .then((response) => setCarData(response.data.cars))
+        .catch((err) => setError(err))
+        .finally(() => setLoading(false));
+    }, 100);
     return () => clearTimeout(timeout);
   }, []);
 
