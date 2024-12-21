@@ -4,7 +4,7 @@ import { SiAstonmartin } from "react-icons/si";
 import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
-import { Input, Button } from "antd";
+import { Input, Button, Spin } from "antd";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
@@ -14,11 +14,13 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function Main() {
-  const { carData, setCarData, setLoading, setError } = useGlobalProvider();
+  const { carData, setCarData, loading, setLoading, setError } =
+    useGlobalProvider();
   const router = useRouter();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
+      setLoading(true);
       axios
         .get("/api/cars")
         .then((response) => setCarData(response.data.cars))
@@ -43,11 +45,19 @@ export function Main() {
           <h1 className="text-8xl w-1/2 font-medium text-white ">
             Luxury Cars For your Confort
           </h1>
-          <Button className="p-20 text-white text-xl rounded-full bg-cyan-500 h-20 w-20">
+          <Button
+            onClick={() => router.push("/pages/brands/Porsche/All")}
+            className="p-20 text-white text-xl rounded-full bg-cyan-500 h-20 w-20"
+          >
             EXPLORE
           </Button>
         </div>
       </div>
+      {loading && (
+        <h1 className="text-center w-full text-white text-3xl mt-4">
+          please wait <Spin />
+        </h1>
+      )}
       <Carousel
         slidesToShow={5}
         arrows
