@@ -165,8 +165,11 @@ export function Main() {
         </div>
         <div className="text-9xl font-medium ">
           {carsModels.map((item: TcarsModels) => (
-            <div onClick={() => GetCarModel(item.name)}>
-              <div className="relative h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
+            <div
+              className="cursor-pointer"
+              onClick={() => GetCarModel(item.name)}
+            >
+              <div className="relative hover:text-gray-400 h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
                 <motion.div
                   whileInView={{ opacity: 1, x: 0 }}
                   initial={{ opacity: 0, x: -100 }}

@@ -21,7 +21,6 @@ export async function GET(req: any) {
 
       const ReservedCars = await reservedCars.find({ userId });
 
-      console.log("Found Reserved Cars:", ReservedCars);
 
       if (ReservedCars.length === 0) {
         return NextResponse.json(

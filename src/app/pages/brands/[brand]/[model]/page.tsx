@@ -34,12 +34,14 @@ export default function Page({
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
   const pathname = window.location.pathname.split("/").pop();
-  const [dayCountLoading, setDayCountLoading] = useState<boolean>(false);
   const [brand, setBrandData] = useState<CarsType[]>([]);
   const { data: session } = useSession();
   const userId = session?.user.id;
   const router = useRouter();
   const numb = 9;
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
 
   const sortByPrices = (values: number[]) => {
     setMaxMinPrices({
@@ -103,11 +105,8 @@ export default function Page({
 
   const calculateTotalPrice = () => {
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
-      const discountedDayPrice = getUpdatedPrice(
-        item.dayPrice,
-        item.carDayCount
-      );
-      const totalCarPrice = discountedDayPrice * item.carDayCount;
+      const { updatedPrice } = getUpdatedPrice(item.dayPrice, item.carDayCount);
+      const totalCarPrice = updatedPrice * item.carDayCount;
       return accumulatedTotal + totalCarPrice;
     }, 0);
 
@@ -127,13 +126,17 @@ export default function Page({
     IncreseOrDecrese?: string
   ) => {
     try {
-      setDayCountLoading(true);
+      setLoadingStates((prev) => ({
+        ...prev,
+        [car._id]: true,
+      }));
+
       if (!userId) {
         console.error("User is not authenticated");
         return;
       }
       if (IncreseOrDecrese === "decrease" && car.carDayCount === 1) {
-        deleteReservedCar(car._id, false, setIsOpen);
+        await deleteReservedCar(car._id, false, setIsOpen);
         return;
       }
       let key = AddCar ? { carImg: car.img } : { carId: car._id };
@@ -142,12 +145,14 @@ export default function Page({
         ...key,
         action: IncreseOrDecrese,
       });
-      fetchReservedCars();
-      setDayCountLoading(false);
+      await fetchReservedCars();
     } catch (error: any) {
       console.error("Error decrementing car day count:", error);
     } finally {
-      setDayCountLoading(false);
+      setLoadingStates((prev) => ({
+        ...prev,
+        [car._id]: false,
+      }));
     }
   };
 
@@ -172,7 +177,7 @@ export default function Page({
           car,
         });
       }
-      fetchReservedCars();
+      await fetchReservedCars();
       setIsOpen(true);
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
@@ -187,25 +192,49 @@ export default function Page({
     });
 
     const basePrice = brand[index].dayPrice;
-    const newPrice = getUpdatedPrice(basePrice, days);
+    const { updatedPrice } = getUpdatedPrice(basePrice, days);
 
     setPrices((prevPrices) => {
       const updatedPrices = [...prevPrices];
-      updatedPrices[index] = newPrice;
+      updatedPrices[index] = updatedPrice;
       return updatedPrices;
     });
   };
-
   const getUpdatedPrice = (dayPrice: number, days: number) => {
-    if (days >= 8) return dayPrice * 0.6;
-    if (days >= 6) return dayPrice * 0.7;
-    if (days >= 4) return dayPrice * 0.8;
-    if (days >= 2) return dayPrice * 0.9;
-    return dayPrice;
+    let discount = 0;
+    let updatedPrice = dayPrice;
+
+    switch (true) {
+      case days >= 8:
+        discount = dayPrice * 0.4;
+        updatedPrice = dayPrice * 0.6;
+        break;
+
+      case days >= 6:
+        discount = dayPrice * 0.3;
+        updatedPrice = dayPrice * 0.7;
+        break;
+
+      case days >= 4:
+        discount = dayPrice * 0.2;
+        updatedPrice = dayPrice * 0.8;
+        break;
+
+      case days >= 2:
+        discount = dayPrice * 0.1;
+        updatedPrice = dayPrice * 0.9;
+        break;
+
+      default:
+        discount = 0;
+        updatedPrice = dayPrice;
+    }
+    const discountPercentage = discount ? (discount / dayPrice) * 100 : 0;
+    return { updatedPrice, discountPercentage };
   };
 
   return (
-    <div className="bg-gray-800 relative p-2 h-full">
+    <div className="bg-gray-800 min-h-screen relative p-2 h-full">
       <div>
         <AnimatePresence>
           {isOpen && (
@@ -228,12 +257,13 @@ export default function Page({
                 <div className="py-4 flex flex-col gap-4">
                   {ReserveCars.map((item: CarsType) => {
                     const handleTotalPrices = () => {
-                      const discountedDayPrice = getUpdatedPrice(
-                        item.dayPrice,
-                        item.carDayCount
-                      );
-                      return discountedDayPrice * item.carDayCount;
+                      let updated = 0;
+                      const { updatedPrice, discountPercentage } =
+                        getUpdatedPrice(item.dayPrice, item.carDayCount);
+                      updated += updatedPrice * item.carDayCount;
+                      return { updated, discountPercentage };
                     };
+                    const { discountPercentage, updated } = handleTotalPrices();
 
                     return (
                       <div key={item._id}>
@@ -257,7 +287,7 @@ export default function Page({
                                 >
                                   <CiCirclePlus className="size-8  text-gray-600 hover:text-gray-700" />
                                 </button>
-                                {dayCountLoading ? (
+                                {loadingStates[item._id] ? (
                                   <Spin />
                                 ) : (
                                   <div>{item.carDayCount}</div>
@@ -269,7 +299,12 @@ export default function Page({
                                 >
                                   <CiCircleMinus className="size-8 text-gray-600 hover:text-gray-700" />
                                 </button>
-                                <div>${handleTotalPrices()}</div>
+                                <div>${updated}</div>
+                                {discountPercentage !== 0 && (
+                                  <span className="text-red-500">
+                                    -{discountPercentage} %
+                                  </span>
+                                )}
                                 <button
                                   onClick={() =>
                                     deleteReservedCar(
@@ -314,7 +349,7 @@ export default function Page({
           )}
         </AnimatePresence>
         <div className="flex justify-between text-white h-full">
-          <div className="bg-gray-700 z-40 rounded p-2 w-60">
+          <div className="bg-gray-700 min-h-screen z-40 rounded p-2 w-60">
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
