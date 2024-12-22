@@ -8,19 +8,13 @@ import {
   TcarsModels,
 } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export function Main() {
   const { carData, setCarData, loading, setLoading, setError, carsModels } =
     useGlobalProvider();
   const router = useRouter();
-  const [Bmw, setBwm] = useState<CarsType[]>([]);
-
-  useEffect(() => {
-    const filtered = carData.filter((item: CarsType) => item.brand === "Bmw");
-    setBwm(filtered);
-  }, [carData]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -39,7 +33,7 @@ export function Main() {
   };
 
   return (
-    <div className="bg-cyan-800 h-full">
+    <div className="bg-orange-900 h-full">
       <div className="relative">
         <Image
           alt="porche"
@@ -50,9 +44,14 @@ export function Main() {
           src="/porche1.jpg"
         />
         <div className="absolute flex items-center justify-between h-full p-20 inset-0">
-          <h1 className="text-8xl w-1/2 font-medium text-white ">
+          <motion.h1
+            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -100 }}
+            transition={{ duration: 1 }}
+            className="text-8xl w-1/2 font-medium text-white "
+          >
             Luxury Cars For your Confort
-          </h1>
+          </motion.h1>
           <Button
             onClick={() => router.push("/pages/brands/Porsche/All")}
             className="p-20 text-white text-xl rounded-full bg-cyan-500 h-20 w-20"
@@ -105,40 +104,48 @@ export function Main() {
       <div className="bg-gray-500 h-px w-full my-8"></div>
       <h1 className="px-20 text-white text-3xl">Explore the BMW comfort</h1>
       <Carousel
-        slidesToShow={5}
+        slidesToShow={3}
         arrows
         autoplay
         className="p-20"
         dotPosition="bottom"
         infinite={true}
       >
-        {Bmw?.map((item: CarsType) => {
-          return (
-            <div
-              onClick={() => router.push(`/pages/solocar/${item._id}`)}
-              className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
-              key={item._id}
-            >
-              <div className="relative min-h-60 rounded-t-xl overflow-hidden">
-                <div
-                  className="absolute inset-0 w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
-                >
-                  <img
-                    src={item.img}
-                    alt="carImg"
-                    className="w-full h-full object-contain "
-                  />
+        {carData
+          .filter((item: CarsType) => item.brand === "Bmw")
+          .map((item) => {
+            return (
+              <div
+                onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
+                key={item._id}
+              >
+                <div className="relative min-h-60 rounded-t-xl overflow-hidden">
+                  <div
+                    className="absolute inset-0 w-full h-full bg-cover bg-center"
+                    style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
+                  >
+                    <img
+                      src={item.img}
+                      alt="carImg"
+                      className="w-full h-full object-contain "
+                    />
+                  </div>
+                </div>
+                <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
+                  <div className="flex gap-2">
+                    <h1 className="text-xl font-semibold">{item.make}</h1>
+                    <h1 className="text-xl font-semibold">{item.model}</h1>
+                  </div>
+                  <div className="mt-2 flex text-xl text-cyan-200 justify-between">
+                    <p>{item.horsepower} HP</p>
+                    <p>{item.combination_mpg}L</p>
+                    <p>$ {item.dayPrice}/Day</p>
+                  </div>
                 </div>
               </div>
-              <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
-                <h1 className="text-xl font-semibold">{item.make}</h1>
-                <p>start with: $ {item.dayPrice}</p>
-                <p>combination mpg : {item.combination_mpg}L</p>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </Carousel>
       <div className="text-white w-full">
         <div className="p-4 flex justify-between ">
@@ -164,8 +171,9 @@ export function Main() {
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
         </div>
         <div className="text-9xl font-medium ">
-          {carsModels.map((item: TcarsModels) => (
+          {carsModels.map((item: TcarsModels, index: number) => (
             <div
+              key={index}
               className="cursor-pointer"
               onClick={() => GetCarModel(item.name)}
             >
