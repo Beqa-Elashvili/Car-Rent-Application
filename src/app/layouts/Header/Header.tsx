@@ -179,19 +179,22 @@ export function Header() {
                   <div
                     key={item._id}
                     onClick={() => handleCar(item._id)}
-                    className="bg-cyan-700 rounded w-full hover:bg-cyan-800 cursor-pointer p-2 flex items-center gap-12"
+                    className="bg-orange-600 rounded w-full hover:bg-orange-800 cursor-pointer p-2 flex justify-between items-center gap-12"
                   >
-                    <Image
-                      src={item.img}
-                      alt="img"
-                      width={500}
-                      height={1000}
-                      className="w-40 h-20 object-contain"
-                    />
-                    <div className="text-white">
-                      <p>{item.make}</p>
-                      <p>{item.model}</p>
+                    <div className="flex items-center">
+                      <Image
+                        src={item.img}
+                        alt="img"
+                        width={500}
+                        height={1000}
+                        className="w-40 h-20 object-contain"
+                      />
+                      <div className="text-white">
+                        <p>{item.make}</p>
+                        <p>{item.model}</p>
+                      </div>
                     </div>
+                    <h1 className="text-orange-200 font-serif">$ {item.dayPrice}/Day</h1>
                   </div>
                 ))}
               </div>

@@ -33,7 +33,6 @@ export default function Page({
   } = useGlobalProvider();
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
-  const pathname = window.location.pathname.split("/").pop();
   const [brand, setBrandData] = useState<CarsType[]>([]);
   const { data: session } = useSession();
   const userId = session?.user.id;
@@ -234,7 +233,7 @@ export default function Page({
   };
 
   return (
-    <div className="bg-gray-800 min-h-screen relative p-2 h-full">
+    <div className="bg-orange-500 min-h-screen relative p-2 h-full">
       <div>
         <AnimatePresence>
           {isOpen && (
@@ -349,13 +348,13 @@ export default function Page({
           )}
         </AnimatePresence>
         <div className="flex justify-between text-white h-full">
-          <div className="bg-gray-700 min-h-screen z-40 rounded p-2 w-60">
+          <div className="bg-orange-900 flex flex-col gap-2 min-h-screen z-40 rounded p-2 w-60">
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
                 onClick={() => router.push(`/pages/brands/${item.name}/All`)}
                 className={`flex items-center cursor-pointer hover:bg-gray-700 h-14 overflow-hidden rounded-xl p-2 gap-2 ${
-                  pathname === item.name && "bg-gray-800"
+                  params.brand === item.name && "bg-gray-800"
                 }`}
               >
                 <img
@@ -404,29 +403,30 @@ export default function Page({
               ))}
             </div>
           ) : (
-            <div className="bg-gray-700 w-10/12 rounded-xl">
+            <div className="bg-orange-900 w-10/12 rounded-xl">
               {error && <div className="text-center mt-12">{error}</div>}
               <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
                 {brand?.map((car: CarsType, index: number) => {
                   return (
                     <div
                       key={car._id}
-                      className="bg-gray-300 text-white rounded-xl"
+                      className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
                     >
                       <img
                         className="h-40 text-center w-full object-contain"
                         src={car.img}
                         alt="carimg"
+                        onClick={() => router.push(`/pages/solocar/${car._id}`)}
                       />
-                      <div className="bg-gray-900 p-2 rounded-b-xl">
-                        <h1 className="text-2xl min-h-16">
+                      <div className="bg-orange-700 text-orange-200 font-serif p-2 rounded-b-xl">
+                        <h1 className="text-2xl font-mono min-h-16">
                           {car.make.toUpperCase()} {car.model.toUpperCase()}
                         </h1>
                         <h1 className="mt-2 text-lg">
                           {car.displacement} | {car.transmission} |{" "}
                           {car.fuel_type}
                         </h1>
-                        <h1 className="mt-2 text-xl text-green-500">
+                        <h1 className="mt-2 text-2xl text-yellow-400">
                           $ {prices[index] ? prices[index] : car.dayPrice}
                         </h1>
                         <div className="flex gap-2 mt-2">
@@ -463,7 +463,7 @@ export default function Page({
                         </div>
                         <Button
                           onClick={() => addCarToReserve(car)}
-                          className="w-full mt-2 bg-green-500 border-none"
+                          className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
                         >
                           RESERVE
                         </Button>

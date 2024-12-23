@@ -33,7 +33,7 @@ export function Main() {
   };
 
   return (
-    <div className="bg-orange-900 h-full">
+    <div className="bg-orange-500 h-full">
       <div className="relative">
         <Image
           alt="porche"
@@ -77,7 +77,7 @@ export function Main() {
           return (
             <div
               onClick={() => router.push(`/pages/solocar/${item._id}`)}
-              className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
+              className="p-2 w-full cursor-pointer rounded-xl hover:bg-orange-300"
               key={item._id}
             >
               <div className="relative min-h-60 rounded-t-xl overflow-hidden">
@@ -92,17 +92,27 @@ export function Main() {
                   />
                 </div>
               </div>
-              <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
-                <h1 className="text-xl font-semibold">{item.make}</h1>
-                <p>start with: $ {item.dayPrice}</p>
-                <p>combination mpg : {item.combination_mpg}L</p>
+              <div className="p-2 bg-orange-900 text-orange-200 rounded-b-xl">
+                <div className="flex justify-center font-mono text-balance gap-2">
+                  <h1 className="text-xl font-semibold">{item.make}</h1>
+                  <h1 className="text-xl font-semibold">{item.model}</h1>
+                </div>
+                <div className="mt-4 flex font-serif text-xl justify-between">
+                  <p>{item.horsepower} HP</p>
+                  {"|"}
+                  <p>{item.combination_mpg}L</p>
+                  {"|"}
+                  <p>$ {item.dayPrice}/Day</p>
+                </div>
               </div>
             </div>
           );
         })}
       </Carousel>
       <div className="bg-gray-500 h-px w-full my-8"></div>
-      <h1 className="px-20 text-white text-3xl">Explore the BMW comfort</h1>
+      <h1 className="px-20 text-orange-900 text-3xl">
+        Explore the BMW comfort
+      </h1>
       <Carousel
         slidesToShow={3}
         arrows
@@ -117,7 +127,7 @@ export function Main() {
             return (
               <div
                 onClick={() => router.push(`/pages/solocar/${item._id}`)}
-                className="p-2 w-full cursor-pointer shadow rounded-xl hover:bg-cyan-900"
+                className="p-2 w-full cursor-pointer rounded-xl hover:bg-orange-300"
                 key={item._id}
               >
                 <div className="relative min-h-60 rounded-t-xl overflow-hidden">
@@ -132,14 +142,16 @@ export function Main() {
                     />
                   </div>
                 </div>
-                <div className="p-2 bg-cyan-600 text-white rounded-b-xl">
-                  <div className="flex gap-2">
+                <div className="p-2 bg-orange-900 text-orange-200 rounded-b-xl">
+                  <div className="flex justify-center font-mono text-balance gap-2">
                     <h1 className="text-xl font-semibold">{item.make}</h1>
                     <h1 className="text-xl font-semibold">{item.model}</h1>
                   </div>
-                  <div className="mt-2 flex text-xl text-cyan-200 justify-between">
+                  <div className="mt-4 flex text-xl font-serif justify-between">
                     <p>{item.horsepower} HP</p>
+                    {"|"}
                     <p>{item.combination_mpg}L</p>
+                    {"|"}
                     <p>$ {item.dayPrice}/Day</p>
                   </div>
                 </div>
