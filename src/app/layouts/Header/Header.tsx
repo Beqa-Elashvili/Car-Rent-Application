@@ -27,6 +27,7 @@ export function Header() {
   const { collections } = useGlobalProvider();
   const router = useRouter();
 
+
   const getSearchResults = useCallback(async () => {
     try {
       setLoading(true);
@@ -127,14 +128,14 @@ export function Header() {
         </div>
         <div
           onClick={() => router.push("/")}
-          className="flex justify-center hover:cursor-pointer lg:justify-start"
+          className="flex items-center gap-2 justify-center hover:cursor-pointer lg:justify-start"
         >
           <Image
             height={500}
             width={1000}
-            className="w-24"
-            src="/car-stainless-logo-png.webp"
-            alt=""
+            className="w-16 object-contain rounded-full"
+            src="/websiteLogo.webp"
+            alt="logo"
           />
           <p className="flex flex-col text-sm font-medium">
             LUXURY <span className="text-red-400">DRIVE</span>
@@ -194,7 +195,9 @@ export function Header() {
                         <p>{item.model}</p>
                       </div>
                     </div>
-                    <h1 className="text-orange-200 font-serif">$ {item.dayPrice}/Day</h1>
+                    <h1 className="text-orange-200 font-serif">
+                      $ {item.dayPrice}/Day
+                    </h1>
                   </div>
                 ))}
               </div>

@@ -14,11 +14,16 @@ import {
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
+import { query } from "express";
 
 export default function Page({
   params,
 }: {
-  params: { brand?: string | undefined; model?: string | undefined };
+  params: {
+    brand?: string | undefined;
+    model?: string | undefined;
+    class: string | undefined;
+  };
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const {
@@ -60,7 +65,8 @@ export default function Page({
     min?: number,
     max?: number,
     brand?: string,
-    model?: string
+    model?: string,
+    carClass?: string
   ) {
     try {
       setLoading(true);
@@ -71,6 +77,8 @@ export default function Page({
         params.append("model", decodeURIComponent(model));
       if (min) params.append("minDayPrice", String(min));
       if (max) params.append("maxDayPrice", String(max));
+      if (carClass && carClass !== "All")
+        params.append("class", String(carClass));
 
       const url = `/api/cars?${params}`;
       const resp = await axios.get(url);
@@ -91,13 +99,9 @@ export default function Page({
   }
 
   useEffect(() => {
+    const { brand, model, class: carClass } = params;
     const timeoutId = setTimeout(() => {
-      GetCarData(
-        maxMinprices.min,
-        maxMinprices.max,
-        params.brand,
-        params.model
-      );
+      GetCarData(maxMinprices.min, maxMinprices.max, brand, model, carClass);
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [maxMinprices, params.brand, params.model]);
@@ -352,7 +356,7 @@ export default function Page({
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
-                onClick={() => router.push(`/pages/brands/${item.name}/All`)}
+                onClick={() => router.push(`/pages/brands/${item.name}/All/All`)}
                 className={`flex items-center cursor-pointer hover:bg-gray-700 h-14 overflow-hidden rounded-xl p-2 gap-2 ${
                   params.brand === item.name && "bg-gray-800"
                 }`}

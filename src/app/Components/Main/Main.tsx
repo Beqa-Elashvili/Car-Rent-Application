@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Input, Button, Spin } from "antd";
+import { Input, Button, Spin, Form, Checkbox, Radio, Select } from "antd";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
@@ -10,26 +10,51 @@ import {
 import axios from "axios";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Brands } from "models/brands";
 
 export function Main() {
-  const { carData, setCarData, loading, setLoading, setError, carsModels } =
-    useGlobalProvider();
+  const {
+    carData,
+    setCarData,
+    collections,
+    loading,
+    setLoading,
+    setError,
+    carsModels,
+  } = useGlobalProvider();
   const router = useRouter();
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(true);
-      axios
-        .get("/api/cars")
-        .then((response) => setCarData(response.data.cars))
-        .catch((err) => setError(err))
-        .finally(() => setLoading(false));
+    const timeout = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const resp = await axios.get("/api/cars");
+        setCarData(resp.data.cars);
+      } catch (error: unknown) {
+        setError(null);
+      } finally {
+        setLoading(false);
+      }
     }, 100);
     return () => clearTimeout(timeout);
   }, []);
 
   const GetCarModel = (model: string) => {
-    router.push(`/pages/brands/All/${model}`);
+    router.push(`/pages/brands/All/${model}/All`);
+  };
+
+  const onFinish = (values: string[]) => {
+    console.log("Form values:", values);
+  };
+
+  const FilteredModels = (brand: string) => {
+    const CarsModels = carData?.filter(
+      (item: CarsType, index, self) =>
+        item.brand === brand &&
+        self.findIndex((car) => car.model === item.model) === index
+    );
+
+    return CarsModels;
   };
 
   return (
@@ -159,19 +184,50 @@ export function Main() {
             );
           })}
       </Carousel>
+      <div className="py-2 relative ">
+        <Image
+          alt="image"
+          width={2000}
+          height={2000}
+          className="w-full"
+          src={"/mph_club.png"}
+        />
+        <div className="font-serif absolute inset-0 flex flex-col items-center justify-center">
+          <motion.h1
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: -200 }}
+            transition={{ duration: 1 }}
+            className="text-orange-300 text-8xl"
+          >
+            Find Your Best
+          </motion.h1>
+          <motion.button
+            onClick={() => router.push(`/pages/collection`)}
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 200 }}
+            transition={{ duration: 1 }}
+            className="text-3xl hover:bg-orange-600  p-2 px-6 rounded-full bg-orange-500"
+          >
+            EXPLORE
+          </motion.button>
+        </div>
+      </div>
       <div className="text-white w-full">
-        <div className="p-4 flex justify-between ">
+        <div className="p-4 py-20 flex justify-between ">
           <div className="flex flex-col gap-20">
-            <h1>RENTAL CARS</h1>
-            <p className="w-3/4 text-6xl ">Experience is everything</p>
+            <h1 className="text-orange-900">RENTAL CARS</h1>
+            <p className="w-3/4 text-6xl text-orange-900 ">
+              Experience is everything
+            </p>
           </div>
-          <p className="w-2/6  flex items-end">
+          <p className="w-2/6 text-orange-900 flex items-end">
             Whether you're looking to elevate your business transportation,
             seeking a wedding getaway car, or are just ready to have an
             exhilarating experience, there is no better answer than Rental Cars.
           </p>
         </div>
-        <div className="inline relative">
+
+        <div className="inline font-serif relative">
           <Image
             width={1000}
             height={300}
@@ -179,8 +235,85 @@ export function Main() {
             src="/porche.jpg"
             alt="carImg"
           />
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <motion.h1
+              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: -200 }}
+              transition={{ duration: 1 }}
+              className="text-8xl text-orange-300"
+            >
+              Rest with Porsche
+            </motion.h1>
+            <motion.button
+              onClick={() => router.push("/pages/brands/Porsche/All/All")}
+              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 200 }}
+              transition={{ duration: 1 }}
+              className="text-3xl text-black hover:bg-orange-600  p-2 px-6 rounded-full bg-orange-500"
+            >
+              EXPLORE
+            </motion.button>
+          </div>
           <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
           <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black to-transparent opacity-90 "></div>
+        </div>
+        <div className="relative ">
+          <Image
+            width={2000}
+            height={2000}
+            className="w-full"
+            alt="image"
+            src={"/carcollections.jpeg"}
+          />
+          <div className="absolute backdrop-blur-md rounded-xl w-1/2 h-1/2 m-auto bg-cyan-200 bg-opacity-10 inset-0 flex items-center justify-center">
+            <Form layout="horizontal" onFinish={onFinish}>
+              <Form.Item
+                name="textField"
+                rules={[{ required: true, message: "Please input a value!" }]}
+              >
+                <Select placeholder="Select an option">
+                  {carData?.map((item: CarsType) => (
+                    <Select.Option key={item._id} value="demo">
+                      {item.brand}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                name="selectField"
+                rules={[
+                  { required: true, message: "Please select an option!" },
+                ]}
+              >
+                <Select placeholder="Select an option">
+                  {carData?.map((item: CarsType) => (
+                    <Select.Option key={item._id} value="demo">
+                      {item.model}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="selectField"
+                rules={[
+                  { required: true, message: "Please select an option!" },
+                ]}
+              >
+                <Select placeholder="Select an option">
+                  {carData?.map((item: CarsType) => (
+                    <Select.Option value="demo">{item.class}</Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
         </div>
         <div className="text-9xl font-medium ">
           {carsModels.map((item: TcarsModels, index: number) => (

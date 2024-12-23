@@ -13,7 +13,7 @@ export default function Page() {
       {collections?.map((item: TCollecttion, index: number) => (
         <div
           key={index}
-          onClick={() => router.push(`/pages/brands/${item.name}/All`)}
+          onClick={() => router.push(`/pages/brands/${item.name}/All/All`)}
           className="p-2 overflow-hidden flex flex-col items-center border object-contain rounded-xl transition duration-300 hover:bg-gray-500  hover:cursor-pointer"
         >
           <motion.div

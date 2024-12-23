@@ -108,6 +108,7 @@ export async function GET(req: Request) {
     const minDayPrice = url.searchParams.get("minDayPrice");
     const maxDayPrice = url.searchParams.get("maxDayPrice");
     const model = url.searchParams.get("model");
+    const carClass = url.searchParams.get("class")
 
     await ConnectDB();
 
@@ -131,6 +132,9 @@ export async function GET(req: Request) {
       query.brand = brand;
     } else if (model) {
       query.model = { $regex: new RegExp(model, "i") };
+    }
+    if (carClass) {
+      query.class = carClass;
     }
 
     if (minDayPrice || maxDayPrice) {
