@@ -162,7 +162,7 @@ export function Main() {
                   >
                     <img
                       src={item.img}
-                      alt="carImg"
+                      alt="Img"
                       className="w-full h-full object-contain "
                     />
                   </div>
