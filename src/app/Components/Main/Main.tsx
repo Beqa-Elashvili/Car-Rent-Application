@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Input, Button, Spin, Form, Checkbox, Radio, Select } from "antd";
+import { Input, Button, Spin, Form, Select } from "antd";
 import Image from "next/image";
 import { Carousel } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
@@ -46,36 +46,27 @@ export function Main() {
   const onFinish = (values: string[]) => {
     console.log("Form values:", values);
   };
+  const [brand, setBrand] = useState<string>("");
 
-  const FilteredModels = (brand: string, model: string, carClass: string) => {
-    const CarsModels = carData.filter(
+  const FilteredModels = (brand: string) => {
+    const CarsModels = carData?.filter(
       (item, index, self) =>
         item.brand === brand &&
         self.findIndex((car) => car.model === item.model) === index
     );
-
-    // Filter classes by brand and model
-    const CarsClass = carData.filter(
-      (item, index, self) =>
-        item.brand === brand &&
-        item.model === model &&
-        self.findIndex((car) => car.class === item.class) === index
-    );
-
     setChosenModels(CarsModels);
-    setChosenClass(CarsClass);
   };
+
+
+  useEffect(() => {
+    FilteredModels(brand);
+  }, [brand]);
 
   const [chosenModels, setChosenModels] = useState<CarsType[]>([]);
   const [chosenClass, setChosenClass] = useState<CarsType[]>([]);
 
-  const [brand, setBrand] = useState<string>("");
   const [model, setModel] = useState<string>("");
   const [carClass, setCarClass] = useState<string>("");
-
-  useEffect(() => {
-    FilteredModels(brand, model,carClass);
-  }, [brand, model, carClass]);
 
   return (
     <div className="bg-orange-500 h-full">
@@ -288,12 +279,12 @@ export function Main() {
           <div className="absolute backdrop-blur-md rounded-xl w-1/2 h-1/2 m-auto bg-cyan-200 bg-opacity-10 inset-0 flex items-center justify-center">
             <Form layout="horizontal" onFinish={onFinish}>
               <Form.Item
-                name="textField"
+                name="brand"
                 rules={[{ required: true, message: "Please input a value!" }]}
               >
                 <Select
                   onChange={(e) => setBrand(e)}
-                  placeholder="Select an option"
+                  placeholder="Select an brand"
                 >
                   {collections?.map((item: TCollecttion, index: number) => (
                     <Select.Option key={index} value={item.name}>
@@ -304,14 +295,14 @@ export function Main() {
               </Form.Item>
 
               <Form.Item
-                name="selectField"
+                name="model"
                 rules={[
                   { required: true, message: "Please select an option!" },
                 ]}
               >
                 <Select
                   onChange={(e) => setModel(e)}
-                  placeholder="Select an option"
+                  placeholder="Select an model"
                 >
                   {chosenModels?.map((item: CarsType) => (
                     <Select.Option key={item._id} value={item.model}>
@@ -321,17 +312,17 @@ export function Main() {
                 </Select>
               </Form.Item>
               <Form.Item
-                name="selectField"
+                name="class"
                 rules={[
                   { required: true, message: "Please select an option!" },
                 ]}
               >
                 <Select
                   onChange={(e) => setCarClass(e)}
-                  placeholder="Select an option"
+                  placeholder="Select an class"
                 >
                   {chosenClass?.map((item: CarsType) => (
-                    <Select.Option value={item.class}>
+                    <Select.Option key={item._id} value={item.class}>
                       {item.class}
                     </Select.Option>
                   ))}
