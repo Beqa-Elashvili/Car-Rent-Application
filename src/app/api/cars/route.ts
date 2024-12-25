@@ -59,8 +59,6 @@ export async function POST(req: NextResponse) {
 
 export async function PUT(req: Request) {
   try {
-    await ConnectDB();
-
     const { carId, carData } = await req.json();
 
     if (!carId || !mongoose.Types.ObjectId.isValid(carId)) {
@@ -108,9 +106,7 @@ export async function GET(req: Request) {
     const minDayPrice = url.searchParams.get("minDayPrice");
     const maxDayPrice = url.searchParams.get("maxDayPrice");
     const model = url.searchParams.get("model");
-    const carClass = url.searchParams.get("class")
-
-    await ConnectDB();
+    const carClass = url.searchParams.get("class");
 
     if (id) {
       const car = await Cars.findById(id);
@@ -162,8 +158,6 @@ export async function GET(req: Request) {
 export async function DELETE(req: any) {
   try {
     const carId = req.nextUrl.searchParams.get("id");
-
-    await ConnectDB();
 
     if (carId) {
       if (!mongoose.Types.ObjectId.isValid(carId)) {

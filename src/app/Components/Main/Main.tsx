@@ -6,11 +6,11 @@ import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import {
   CarsType,
   TcarsModels,
+  TCollecttion,
 } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Brands } from "models/brands";
 
 export function Main() {
   const {
@@ -47,15 +47,35 @@ export function Main() {
     console.log("Form values:", values);
   };
 
-  const FilteredModels = (brand: string) => {
-    const CarsModels = carData?.filter(
-      (item: CarsType, index, self) =>
+  const FilteredModels = (brand: string, model: string, carClass: string) => {
+    const CarsModels = carData.filter(
+      (item, index, self) =>
         item.brand === brand &&
         self.findIndex((car) => car.model === item.model) === index
     );
 
-    return CarsModels;
+    // Filter classes by brand and model
+    const CarsClass = carData.filter(
+      (item, index, self) =>
+        item.brand === brand &&
+        item.model === model &&
+        self.findIndex((car) => car.class === item.class) === index
+    );
+
+    setChosenModels(CarsModels);
+    setChosenClass(CarsClass);
   };
+
+  const [chosenModels, setChosenModels] = useState<CarsType[]>([]);
+  const [chosenClass, setChosenClass] = useState<CarsType[]>([]);
+
+  const [brand, setBrand] = useState<string>("");
+  const [model, setModel] = useState<string>("");
+  const [carClass, setCarClass] = useState<string>("");
+
+  useEffect(() => {
+    FilteredModels(brand, model,carClass);
+  }, [brand, model, carClass]);
 
   return (
     <div className="bg-orange-500 h-full">
@@ -271,10 +291,13 @@ export function Main() {
                 name="textField"
                 rules={[{ required: true, message: "Please input a value!" }]}
               >
-                <Select placeholder="Select an option">
-                  {carData?.map((item: CarsType) => (
-                    <Select.Option key={item._id} value="demo">
-                      {item.brand}
+                <Select
+                  onChange={(e) => setBrand(e)}
+                  placeholder="Select an option"
+                >
+                  {collections?.map((item: TCollecttion, index: number) => (
+                    <Select.Option key={index} value={item.name}>
+                      {item.name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -286,9 +309,12 @@ export function Main() {
                   { required: true, message: "Please select an option!" },
                 ]}
               >
-                <Select placeholder="Select an option">
-                  {carData?.map((item: CarsType) => (
-                    <Select.Option key={item._id} value="demo">
+                <Select
+                  onChange={(e) => setModel(e)}
+                  placeholder="Select an option"
+                >
+                  {chosenModels?.map((item: CarsType) => (
+                    <Select.Option key={item._id} value={item.model}>
                       {item.model}
                     </Select.Option>
                   ))}
@@ -300,9 +326,14 @@ export function Main() {
                   { required: true, message: "Please select an option!" },
                 ]}
               >
-                <Select placeholder="Select an option">
-                  {carData?.map((item: CarsType) => (
-                    <Select.Option value="demo">{item.class}</Select.Option>
+                <Select
+                  onChange={(e) => setCarClass(e)}
+                  placeholder="Select an option"
+                >
+                  {chosenClass?.map((item: CarsType) => (
+                    <Select.Option value={item.class}>
+                      {item.class}
+                    </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -363,45 +394,48 @@ export function Main() {
                   placeholder="Email"
                   className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
                 />
-                <select
+                <Select
                   defaultValue={""}
                   className="p-2 rounded-xl bg-gray-400 text-white focus:outline-none"
                 >
-                  <option
+                  <Select.Option
                     className="text-black rounded bg-white"
                     disabled
                     value=""
                   >
                     Car
-                  </option>
-                  <option
+                  </Select.Option>
+                  <Select.Option
                     className="text-black rounded bg-white"
                     value="Porche"
                   >
                     Porche
-                  </option>
-                  <option
+                  </Select.Option>
+                  <Select.Option
                     className="text-black rounded bg-white"
                     value="Lamborghini"
                   >
                     Lamborghini
-                  </option>
-                  <option className="text-black rounded bg-white" value="Bmw">
+                  </Select.Option>
+                  <Select.Option
+                    className="text-black rounded bg-white"
+                    value="Bmw"
+                  >
                     Bmw
-                  </option>
-                  <option
+                  </Select.Option>
+                  <Select.Option
                     className="text-black rounded bg-white"
                     value="McLaren"
                   >
                     McLaren
-                  </option>
-                  <option
+                  </Select.Option>
+                  <Select.Option
                     className="text-black rounded bg-white"
                     value="Mercedes"
                   >
                     Mercedes
-                  </option>
-                </select>
+                  </Select.Option>
+                </Select>
               </div>
               <Button className="bg-blue-500 text-xl mt-4 w-40 border-none text-white font-medium">
                 Submit
