@@ -97,7 +97,6 @@ export async function PUT(req: Request) {
     );
   }
 }
-
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
@@ -107,6 +106,8 @@ export async function GET(req: Request) {
     const maxDayPrice = url.searchParams.get("maxDayPrice");
     const model = url.searchParams.get("model");
     const carClass = url.searchParams.get("class");
+    const limit = url.searchParams.get("limit"); 
+    await ConnectDB();
 
     if (id) {
       const car = await Cars.findById(id);
@@ -139,7 +140,16 @@ export async function GET(req: Request) {
       if (maxDayPrice) query.dayPrice.$lte = Number(maxDayPrice);
     }
 
-    const cars = await Cars.find(query);
+    const queryOptions: any = {};
+
+    if (limit) {
+      const limitValue = Number(limit);
+      if (!isNaN(limitValue) && limitValue > 0) {
+        queryOptions.limit = limitValue; 
+      }
+    }
+
+    const cars = await Cars.find(query, null, queryOptions);
 
     if (cars.length === 0) {
       return NextResponse.json({ message: "No cars found." }, { status: 404 });

@@ -57,7 +57,6 @@ export function Main() {
     setChosenModels(CarsModels);
   };
 
-
   useEffect(() => {
     FilteredModels(brand);
   }, [brand]);
