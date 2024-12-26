@@ -106,7 +106,9 @@ export async function GET(req: Request) {
     const maxDayPrice = url.searchParams.get("maxDayPrice");
     const model = url.searchParams.get("model");
     const carClass = url.searchParams.get("class");
-    const limit = url.searchParams.get("limit"); 
+    const limit = url.searchParams.get("limit");
+    const page = url.searchParams.get("page") || "1"; // default to page 1 if not provided
+
     await ConnectDB();
 
     if (id) {
@@ -122,6 +124,7 @@ export async function GET(req: Request) {
 
     const query: any = {};
 
+    // Filters based on brand and model
     if (brand && model) {
       query.brand = brand;
       query.model = { $regex: new RegExp(model, "i") };
@@ -130,6 +133,7 @@ export async function GET(req: Request) {
     } else if (model) {
       query.model = { $regex: new RegExp(model, "i") };
     }
+
     if (carClass) {
       query.class = carClass;
     }
@@ -142,12 +146,11 @@ export async function GET(req: Request) {
 
     const queryOptions: any = {};
 
-    if (limit) {
-      const limitValue = Number(limit);
-      if (!isNaN(limitValue) && limitValue > 0) {
-        queryOptions.limit = limitValue; 
-      }
-    }
+    const limitValue = Number(limit) || 10;
+    const pageValue = Number(page) || 1;
+
+    queryOptions.limit = limitValue;
+    queryOptions.skip = (pageValue - 1) * limitValue;
 
     const cars = await Cars.find(query, null, queryOptions);
 
@@ -155,7 +158,17 @@ export async function GET(req: Request) {
       return NextResponse.json({ message: "No cars found." }, { status: 404 });
     }
 
-    return NextResponse.json({ cars }, { status: 200 });
+    return NextResponse.json(
+      {
+        cars,
+        pagination: {
+          page: pageValue,
+          limit: limitValue,
+          totalCount: await Cars.countDocuments(query),
+        },
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
     console.error("Error fetching cars:", error);
     return NextResponse.json(

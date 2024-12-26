@@ -23,12 +23,13 @@ export function Main() {
     carsModels,
   } = useGlobalProvider();
   const router = useRouter();
+  const [form] = Form.useForm();
 
   useEffect(() => {
     const timeout = setTimeout(async () => {
       try {
         setLoading(true);
-        const resp = await axios.get("/api/cars");
+        const resp = await axios.get("/api/cars?limit=41&page=1");
         setCarData(resp.data.cars);
       } catch (error: unknown) {
         setError(null);
@@ -43,29 +44,65 @@ export function Main() {
     router.push(`/pages/brands/All/${model}/All`);
   };
 
-  const onFinish = (values: string[]) => {
-    console.log("Form values:", values);
-  };
-  const [brand, setBrand] = useState<string>("");
+  interface Formtype {
+    brand: string;
+    model: string;
+    class: string;
+  }
 
-  const FilteredModels = (brand: string) => {
+  const onFinish = (values: Formtype) => {
+    let url = `/pages/brands/${values.brand}`;
+    if (values.model) {
+      url += `/${values.model}`;
+    } else {
+      url += `/All`;
+    }
+    if (values.class) {
+      url += `/${values.class}`;
+    } else {
+      url += "/All";
+    }
+    router.push(url);
+  };
+
+  const [brand, setBrand] = useState<string>("");
+  const [model, setModel] = useState<string | undefined>("");
+  const [carClass, setCarClass] = useState<string | undefined>("");
+
+  const [chosenModels, setChosenModels] = useState<string[]>([]);
+  const [chosenClass, setChosenClass] = useState<string[]>([]);
+
+  const FilteredModels = (brand: string, model: string) => {
     const CarsModels = carData?.filter(
       (item, index, self) =>
         item.brand === brand &&
         self.findIndex((car) => car.model === item.model) === index
     );
-    setChosenModels(CarsModels);
+    setChosenModels(CarsModels.map((item: CarsType) => item.model));
+
+    const CarsClass = carData?.filter(
+      (item, index, self) =>
+        self.findIndex(
+          (car) =>
+            car.brand === brand &&
+            (model ? car.model === model : true) &&
+            car.class === item.class
+        ) === index
+    );
+    setChosenClass(CarsClass.map((item: CarsType) => item.class));
   };
 
   useEffect(() => {
-    FilteredModels(brand);
-  }, [brand]);
+    FilteredModels(brand, (model && model) || "");
+  }, [brand, model]);
 
-  const [chosenModels, setChosenModels] = useState<CarsType[]>([]);
-  const [chosenClass, setChosenClass] = useState<CarsType[]>([]);
-
-  const [model, setModel] = useState<string>("");
-  const [carClass, setCarClass] = useState<string>("");
+  const ClearModelsAndClases = () => {
+    form.resetFields();
+    setCarClass(undefined);
+    setModel(undefined);
+    setChosenModels([]);
+    setChosenClass([]);
+  };
 
   return (
     <div className="bg-orange-500 h-full">
@@ -276,12 +313,13 @@ export function Main() {
             src={"/carcollections.jpeg"}
           />
           <div className="absolute backdrop-blur-md rounded-xl w-1/2 h-1/2 m-auto bg-cyan-200 bg-opacity-10 inset-0 flex items-center justify-center">
-            <Form layout="horizontal" onFinish={onFinish}>
+            <Form<Formtype> form={form} layout="horizontal" onFinish={onFinish}>
               <Form.Item
                 name="brand"
                 rules={[{ required: true, message: "Please input a value!" }]}
               >
                 <Select
+                  value={brand}
                   onChange={(e) => setBrand(e)}
                   placeholder="Select an brand"
                 >
@@ -293,40 +331,34 @@ export function Main() {
                 </Select>
               </Form.Item>
 
-              <Form.Item
-                name="model"
-                rules={[
-                  { required: true, message: "Please select an option!" },
-                ]}
-              >
+              <Form.Item name="model">
                 <Select
+                  value={model}
                   onChange={(e) => setModel(e)}
                   placeholder="Select an model"
                 >
-                  {chosenModels?.map((item: CarsType) => (
-                    <Select.Option key={item._id} value={item.model}>
-                      {item.model}
+                  {chosenModels?.map((item: string, index: number) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
                     </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
-              <Form.Item
-                name="class"
-                rules={[
-                  { required: true, message: "Please select an option!" },
-                ]}
-              >
+              <Form.Item name="class">
                 <Select
+                  value={carClass}
                   onChange={(e) => setCarClass(e)}
                   placeholder="Select an class"
                 >
-                  {chosenClass?.map((item: CarsType) => (
-                    <Select.Option key={item._id} value={item.class}>
-                      {item.class}
+                  {chosenClass?.map((item: string, index: number) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
                     </Select.Option>
                   ))}
                 </Select>
               </Form.Item>
+
+              <Button onClick={ClearModelsAndClases}>Clear</Button>
 
               <Form.Item>
                 <Button type="primary" htmlType="submit">

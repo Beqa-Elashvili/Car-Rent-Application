@@ -77,9 +77,11 @@ export default function Page({
         params.append("model", decodeURIComponent(model));
       if (min) params.append("minDayPrice", String(min));
       if (max) params.append("maxDayPrice", String(max));
-      if (carClass && carClass !== "All")
-        params.append("class", String(carClass));
-
+      if (carClass && carClass !== "All") {
+        const formattedCarClass =
+          carClass.charAt(0).toUpperCase() + carClass.slice(1);
+        params.append("class", decodeURIComponent(formattedCarClass));
+      }
       const url = `/api/cars?${params}`;
       const resp = await axios.get(url);
       setBrandData(resp.data.cars);
@@ -356,7 +358,9 @@ export default function Page({
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
-                onClick={() => router.push(`/pages/brands/${item.name}/All/All`)}
+                onClick={() =>
+                  router.push(`/pages/brands/${item.name}/All/All`)
+                }
                 className={`flex items-center cursor-pointer hover:bg-gray-700 h-14 overflow-hidden rounded-xl p-2 gap-2 ${
                   params.brand === item.name && "bg-gray-800"
                 }`}
