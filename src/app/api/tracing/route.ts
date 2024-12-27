@@ -111,9 +111,9 @@ export async function GET(req: Request) {
     queryOptions.limit = limitValue;
     queryOptions.skip = (pageValue - 1) * limitValue;
 
-    const cars = await Tracing.find(query, null, queryOptions);
+    const tracingcars = await Tracing.find(query, null, queryOptions);
 
-    if (cars.length === 0) {
+    if (tracingcars.length === 0) {
       return NextResponse.json(
         { message: "No TracingCars found." },
         { status: 404 }
@@ -122,7 +122,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       {
-        cars,
+        tracingcars,
         pagination: {
           page: pageValue,
           limit: limitValue,
