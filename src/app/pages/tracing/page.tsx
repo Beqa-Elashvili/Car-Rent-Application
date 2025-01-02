@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { LiaLongArrowAltDownSolid } from "react-icons/lia";
+
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
 
@@ -19,7 +20,6 @@ export default function Tracing() {
       console.log("thisis error ", error);
     }
   }
-  console.log(TracingCars);
 
   useEffect(() => {
     GetTracingCars();
@@ -81,15 +81,15 @@ export default function Tracing() {
                                 left: `${x}px`,
                                 top: `${y}px`,
                               }}
-                              className="text-white bg-transparent font-semibold text-sm"
+                              className="text-white hover:text-red-200 bg-transparent font-semibold text-sm"
                             >
                               {number}
                             </div>
                           );
                         })}
-                        <div className="absolute z-20 h-full inset- left-10">
+                        <div className="absolute z-20 h-full left-10">
                           <h1>
-                            <h1 className="font-bold mt-6 text-2xl text-white">
+                            <h1 className="font-bold mt-6 text-2xl text-orange-500 font-serif">
                               HP
                             </h1>
                             <LiaLongArrowAltDownSolid className="absolute top-10  size-16 text-red-600 text-center transition-transform rotate-[-90deg] duration-1000 transform group-hover:rotate-[238deg]" />
@@ -102,16 +102,6 @@ export default function Tracing() {
               );
             })}
           </div>
-
-          {/* <div className="p-2 bg-indigo-500 text-white rounded-b-xl">
-                  <div className="mt-4 flex font-serif w-80 text-xl justify-between">
-                    <p>{item.horsepower} HP</p>
-                    {"|"}
-                    <p>{item.combination_mpg}L</p>
-                    {"|"}
-                    <p>$ {item.dayPrice}/Day</p>
-                  </div>
-                </div> */}
         </div>
       </div>
     </div>

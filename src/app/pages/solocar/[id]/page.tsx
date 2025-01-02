@@ -121,11 +121,19 @@ export default function Car({ params }: { params: { id?: string } }) {
       );
       setCar(reservedCarResponse.data.car);
     } catch (error) {
-      console.error("Error while fetching car from both APIs");
+      console.error("Error while fetching car from reservedCars APIs");
+    }
+    try {
+      const TracingCarsResponse = await axios.get(`/api/tracing?id=${id}`);
+      setCar(TracingCarsResponse.data.car);
+    } catch (error) {
+      console.error("Error while fetching car from Tracingcars APIs");
     } finally {
       setLoading(false);
     }
   };
+
+  console.log(car);
 
   useEffect(() => {
     if (params.id) {

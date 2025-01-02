@@ -83,7 +83,7 @@ export function Header() {
       alert("input the model");
       return;
     } else {
-      router.push(`/pages/brands/${!brand ? "All" : brand}/${model}`);
+      router.push(`/pages/brands/${!brand ? "All" : brand}/${model}/All`);
     }
   };
 

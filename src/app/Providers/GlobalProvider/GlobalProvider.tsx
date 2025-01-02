@@ -25,6 +25,65 @@ import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
+  const tracks = [
+    {
+      title: "Nürburgring",
+      loop: 20.83,
+      rentPrice: 200,  // Estimated price per lap
+      dayRentPrice: 2500,  // Estimated price for a full day's rental
+      location: "Nürburg, Germany",
+      description: "Known as 'The Green Hell,' the Nürburgring is a highly challenging 20.8 km circuit located in the Eifel Mountains. It is famed for its difficult turns, elevation changes, and unpredictable weather. The track is used for both racing and public driving events.",
+      established: 1927,
+      famousEvents: ["24 Hours of Nürburgring", "German Grand Prix"],
+      notes: "The track is used for both public and private events. Prices for private rentals can vary based on the event."
+    },
+    {
+      title: "Monaco Grand Prix",
+      loop: 3.34,
+      rentPrice: 300,  // Estimated price per lap
+      dayRentPrice: 3500,  // Estimated price for a full day's rental
+      location: "Monaco, Monte Carlo",
+      description: "The Monaco Grand Prix is one of the most prestigious and famous street races in the world. The narrow and winding track runs through the streets of Monte Carlo, offering little room for error. It is a regular event on the Formula 1 calendar.",
+      established: 1929,
+      famousEvents: ["Monaco Grand Prix", "Formula E Monaco ePrix"],
+      notes: "Because the track is located in an urban area, renting it for private events is incredibly expensive and difficult to arrange."
+    },
+    {
+      title: "Silverstone Circuit",
+      loop: 5.89,
+      rentPrice: 180,  // Estimated price per lap
+      dayRentPrice: 2200,  // Estimated price for a full day's rental
+      location: "Silverstone, United Kingdom",
+      description: "Silverstone is one of the oldest and most famous racing circuits in the world, having hosted the first-ever Formula 1 World Championship race in 1950. The circuit is fast and technical, featuring a mix of high-speed corners and challenging sections.",
+      established: 1948,
+      famousEvents: ["British Grand Prix", "Formula 1"],
+      notes: "The rent price can fluctuate based on the event and demand. Silverstone is commonly used for both professional racing and public track days."
+    },
+    {
+      title: "Circuit de Spa-Francorchamps",
+      loop: 7.004,
+      rentPrice: 220,  // Estimated price per lap
+      dayRentPrice: 2700,  // Estimated price for a full day's rental
+      location: "Stavelot, Belgium",
+      description: "Circuit de Spa-Francorchamps is one of the most famous and challenging tracks in the world. Known for its elevation changes, fast corners like Eau Rouge, and unpredictable weather, it is considered one of the most exciting tracks in motorsport.",
+      established: 1921,
+      famousEvents: ["Belgian Grand Prix", "6 Hours of Spa"],
+      notes: "Private rentals are available, but prices are higher during major events. It's often used for endurance races and various car events."
+    },
+    {
+      title: "Le Mans Circuit (Circuit de la Sarthe)",
+      loop: 13.626,
+      rentPrice: 250,  // Estimated price per lap
+      dayRentPrice: 3000,  // Estimated price for a full day's rental
+      location: "Le Mans, France",
+      description: "The Circuit de la Sarthe, home of the 24 Hours of Le Mans, is famous for its long straights and technical corners. This endurance racing track has seen some of the most iconic moments in motorsport history and is known for testing both car and driver over a grueling 24-hour race.",
+      established: 1923,
+      famousEvents: ["24 Hours of Le Mans", "Le Mans Classic"],
+      notes: "Private use of the circuit for racing or testing is available but can be expensive, especially during the lead-up to the 24-hour race."
+    },
+  ];
+  
+
   const ConditionsRules = [
     {
       title: "Driver requirements",

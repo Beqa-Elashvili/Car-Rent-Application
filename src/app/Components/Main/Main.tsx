@@ -313,7 +313,14 @@ export function Main() {
             src={"/carcollections.jpeg"}
           />
           <div className="absolute backdrop-blur-md rounded-xl w-1/2 h-1/2 m-auto bg-cyan-200 bg-opacity-10 inset-0 flex items-center justify-center">
-            <Form<Formtype> form={form} layout="horizontal" onFinish={onFinish}>
+            <Form<Formtype>
+              form={form}
+              className="flex flex-col justif-center gap-2"
+              onFinish={onFinish}
+            >
+              <h1 className="font-serif text-orange-600 text-4xl">
+                Discover new opportunities
+              </h1>
               <Form.Item
                 name="brand"
                 rules={[{ required: true, message: "Please input a value!" }]}
@@ -360,11 +367,9 @@ export function Main() {
 
               <Button onClick={ClearModelsAndClases}>Clear</Button>
 
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
+              <Button type="primary" htmlType="submit">
+                Search
+              </Button>
             </Form>
           </div>
         </div>

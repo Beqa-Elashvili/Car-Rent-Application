@@ -10,6 +10,18 @@ import { useRouter } from "next/navigation";
 export default function ReserveCars() {
   const { ReserveCars } = useGlobalProvider();
   const router = useRouter();
+
+  const getTotalPrice = () => {
+    const TotalPrice = localStorage.getItem("reserveTotalPrice");
+    if (TotalPrice) return TotalPrice;
+    else {
+      const totalPrice = ReserveCars.reduce((accimulator, car) => {
+        return accimulator + car.dayPrice;
+      }, 0);
+      localStorage.setItem("reserveTotalPrice", String(totalPrice));
+      return totalPrice;
+    }
+  };
   const TotalPrice = localStorage.getItem("reserveTotalPrice");
 
   const TotalDayCount = () => {
@@ -82,7 +94,7 @@ export default function ReserveCars() {
           </div>
           <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
             <h1 className="w-20">Total Price:</h1>
-            <span>{TotalPrice} $</span>
+            <span>{getTotalPrice()} $</span>
           </div>
           <button
             onClick={() => router.push("/pages/chackout")}
