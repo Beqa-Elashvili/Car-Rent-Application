@@ -10,7 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { LiaLongArrowAltDownSolid } from "react-icons/lia";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { Carousel } from "antd";
+import { Button, Carousel } from "antd";
 
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
@@ -144,24 +144,36 @@ export default function Tracing() {
               return (
                 <div className="p-4">
                   <div
-                    className="rounded-xl relative overflow-hidden"
+                    className="rounded-xl relative overflow-hidden group"
                     key={index}
                   >
                     <Image
                       width={2000}
                       height={2000}
                       alt="trackimage"
-                      className="h-60"
+                      className="h-60 rounded-xl transition-all duration-300 group-hover:blur-sm"
                       src={item.img}
                     />
                     <motion.div
                       initial={{ opacity: 0 }}
                       transition={{ duration: 1 }}
                       whileHover={{ opacity: 1 }}
-                      className="absolute inset-0 p-6"
+                      className="absolute inset-0 flex flex-col items-center justify-center"
                     >
-                      <h1 className="text-xl font-serif text-orange-600">{item.title}</h1>
+                      <h1 className="text-2xl font-serif text-orange-600">
+                        {item.title}
+                      </h1>
+                      <p className="text-orange-500">{item.location}</p>
+                      <p className="text-orange-500 text-center p-2">{item.description}</p>
                     </motion.div>
+                  </div>
+                  <div className="flex gap-4 mt-2">
+                    <Button className="w-1/2">
+                      One lap / $ {item.rentPrice}
+                    </Button>
+                    <Button className="w-1/2">
+                      Day / $ {item.dayRentPrice}
+                    </Button>
                   </div>
                 </div>
               );
