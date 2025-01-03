@@ -3,12 +3,18 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
+import {
+  CarsType,
+  Ttracks,
+} from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { LiaLongArrowAltDownSolid } from "react-icons/lia";
+import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+import { Carousel } from "antd";
 
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
+  const { tracks } = useGlobalProvider();
 
   const router = useRouter();
 
@@ -102,6 +108,65 @@ export default function Tracing() {
               );
             })}
           </div>
+        </div>
+      </div>
+      <div className="relative">
+        <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-black"></div>
+        <Image
+          width={2000}
+          className="z-10"
+          height={2000}
+          src="/1000_F.jpg"
+          alt=""
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="absolute top-40 text-6xl text-orange-600 font-serif">
+            FAMOUS TRACKS FOR OUR ENJOYMENT
+          </h1>
+          <Carousel
+            slidesToShow={3}
+            arrows
+            autoplay
+            className="absolute h-1/2 m-auto"
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 40,
+            }}
+            dotPosition="bottom"
+            infinite={true}
+          >
+            {tracks?.map((item: Ttracks, index: number) => {
+              return (
+                <div className="p-4">
+                  <div
+                    className="rounded-xl relative overflow-hidden"
+                    key={index}
+                  >
+                    <Image
+                      width={2000}
+                      height={2000}
+                      alt="trackimage"
+                      className="h-60"
+                      src={item.img}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      transition={{ duration: 1 }}
+                      whileHover={{ opacity: 1 }}
+                      className="absolute inset-0 p-6"
+                    >
+                      <h1 className="text-xl font-serif text-orange-600">{item.title}</h1>
+                    </motion.div>
+                  </div>
+                </div>
+              );
+            })}
+          </Carousel>
         </div>
       </div>
     </div>

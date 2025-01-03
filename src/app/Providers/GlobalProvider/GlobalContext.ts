@@ -1,10 +1,23 @@
 import { CardType } from "antd/es/card/Card";
+import { StaticImageData } from "next/image";
 import { Dispatch, SetStateAction, createContext } from "react";
 import { IconType } from "react-icons";
 
 export interface TLocation {
   city: string | null;
   street: string | null;
+}
+export interface Ttracks {
+  title: string;
+  loop: number;
+  rentPrice: number;
+  dayRentPrice: number;
+  location: string;
+  description: string;
+  established: number;
+  famousEvents: string[];
+  notes: string;
+  img: string;
 }
 export interface TcarsModels {
   name: string;
@@ -74,6 +87,9 @@ interface GlobalContextProps {
   ReserveTotalPrice: number | null;
   setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
 
+  tracks: Ttracks[];
+  setTracks: Dispatch<SetStateAction<Ttracks[]>>;
+
   userId: string | undefined;
 
   fetchReservedCars: () => Promise<void>;
@@ -102,6 +118,8 @@ export const GlobalContext = createContext<GlobalContextProps>({
   collections: [],
   setCollections: () => {},
   conditions: [],
+  tracks: [],
+  setTracks: () => {},
   setConditions: () => {},
   fetchReservedCars: async () => {},
   deleteReservedCar: async () => {},
