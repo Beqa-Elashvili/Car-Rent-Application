@@ -14,7 +14,6 @@ import {
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
-import { query } from "express";
 
 export default function Page({
   params,
@@ -35,6 +34,7 @@ export default function Page({
     setError,
     fetchReservedCars,
     deleteReservedCar,
+    addCarToReserve,
   } = useGlobalProvider();
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
@@ -158,34 +158,6 @@ export default function Page({
         ...prev,
         [car._id]: false,
       }));
-    }
-  };
-
-  const addCarToReserve = async (car: CarsType) => {
-    try {
-      const userId = session?.user.id;
-      if (!userId) {
-        console.error("User is not authenticated");
-        return;
-      }
-      const Existeditem = ReserveCars.find(
-        (item: CarsType) => item.img === car.img
-      );
-
-      if (Existeditem) {
-        await ChangeCarDayCount(car, true, "increase");
-        setIsOpen(true);
-        return;
-      } else {
-        const response = await axios.post("/api/reservedcars", {
-          userId,
-          car,
-        });
-      }
-      await fetchReservedCars();
-      setIsOpen(true);
-    } catch (error: any) {
-      console.error("Error adding car to reserve:", error);
     }
   };
 
@@ -470,7 +442,10 @@ export default function Page({
                           <p>8+ days</p>
                         </div>
                         <Button
-                          onClick={() => addCarToReserve(car)}
+                          disabled={!session?.user}
+                          onClick={() =>
+                            addCarToReserve(car, ChangeCarDayCount, setIsOpen)
+                          }
                           className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
                         >
                           RESERVE

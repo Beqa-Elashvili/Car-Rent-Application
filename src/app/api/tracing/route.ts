@@ -1,4 +1,5 @@
 import { Tracing } from "models/tracing";
+import mongoose from "mongoose";
 import { NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
 
@@ -83,7 +84,6 @@ export async function GET(req: Request) {
 
     const query: any = {};
 
-    // Filters based on brand and model
     if (brand && model) {
       query.brand = brand;
       query.model = { $regex: new RegExp(model, "i") };
@@ -135,6 +135,42 @@ export async function GET(req: Request) {
     console.error("Error fetching TracingCars:", error);
     return NextResponse.json(
       { message: "Failed to fetch TracingCars", error: error.message || error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: any) {
+  try {
+    const carId = req.nextUrl.searchParams.get("id");
+
+    if (carId) {
+      if (!mongoose.Types.ObjectId.isValid(carId)) {
+        return NextResponse.json(
+          { message: "Invalid Car ID format" },
+          { status: 400 }
+        );
+      }
+
+      const deletedCar = await Tracing.findOneAndDelete({ _id: carId });
+
+      if (!deletedCar) {
+        return NextResponse.json({ message: "Tracing Car not found" }, { status: 404 });
+      }
+
+      return NextResponse.json(
+        { message: "car deleted successfully" },
+        { status: 200 }
+      );
+    }
+    return NextResponse.json(
+      { message: "Car ID is required" },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error while deleting car:", error);
+    return NextResponse.json(
+      { message: "Failed to delete car", error },
       { status: 500 }
     );
   }

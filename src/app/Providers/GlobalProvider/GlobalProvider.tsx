@@ -265,6 +265,42 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     }
   };
 
+  const addCarToReserve = async (
+    car: CarsType,
+    ChangeCarDayCount: (
+      car: CarsType,
+      isDayCountIncrease: boolean,
+      action: string
+    ) => void,
+    setIsOpen: (open: boolean) => void
+  ) => {
+    try {
+      const userId = session?.user.id;
+      if (!userId) {
+        console.error("User is not authenticated");
+        return;
+      }
+      const Existeditem = ReserveCars.find(
+        (item: CarsType) => item.img === car.img
+      );
+
+      if (Existeditem) {
+        ChangeCarDayCount(car, true, "increase");
+        setIsOpen(true);
+        return;
+      } else {
+        const response = await axios.post("/api/reservedcars", {
+          userId,
+          car,
+        });
+      }
+      await fetchReservedCars();
+      setIsOpen(true);
+    } catch (error: any) {
+      console.error("Error adding car to reserve:", error);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -285,6 +321,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         ReserveTotalPrice,
         setReserveTotalPrice,
         deleteReservedCar,
+        addCarToReserve,
         userId,
         carData,
         setCarData,

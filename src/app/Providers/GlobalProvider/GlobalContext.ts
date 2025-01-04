@@ -98,6 +98,16 @@ interface GlobalContextProps {
     isUserId: boolean,
     setIsOpen: Dispatch<SetStateAction<boolean>>
   ) => Promise<void>;
+
+  addCarToReserve: (
+    car: CarsType,
+    ChangeCarDayCount: (
+      car: CarsType,
+      isDayCountIncrease: boolean,
+      action: string
+    ) => void,
+    setIsOpen: (open: boolean) => void
+  ) => Promise<void>;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
@@ -117,6 +127,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setLocation: () => {},
   collections: [],
   setCollections: () => {},
+  addCarToReserve: async () => {},
   conditions: [],
   tracks: [],
   setTracks: () => {},

@@ -14,7 +14,7 @@ import { Button, Carousel } from "antd";
 
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
-  const { tracks } = useGlobalProvider();
+  const { tracks, addCarToReserve } = useGlobalProvider();
 
   const router = useRouter();
 
@@ -53,7 +53,7 @@ export default function Tracing() {
             Extraordinary cars limitless journeys await
           </motion.h1>
           <div className="flex gap-4">
-            {TracingCars?.slice(3, 7).map((item: CarsType) => {
+            {TracingCars?.slice(0, 4).map((item: CarsType) => {
               const maxHorsePower = item.horsepower;
               const numbers = Array.from({ length: 12 }, (_, i) =>
                 Math.round((maxHorsePower / 12) * (i + 1))
@@ -164,7 +164,9 @@ export default function Tracing() {
                         {item.title}
                       </h1>
                       <p className="text-orange-500">{item.location}</p>
-                      <p className="text-orange-500 text-center p-2">{item.description}</p>
+                      <p className="text-orange-500 text-center p-2">
+                        {item.description}
+                      </p>
                     </motion.div>
                   </div>
                   <div className="flex gap-4 mt-2">
@@ -179,6 +181,40 @@ export default function Tracing() {
               );
             })}
           </Carousel>
+        </div>
+      </div>
+      <div className="relative">
+        <Image
+          src="/track.jpg"
+          className="h-full"
+          width={2000}
+          height={2000}
+          alt="image"
+        />
+        <div className="absolute p-20 inset-0 grid grid-cols-5 items-center justify-center">
+          {TracingCars?.map((item: CarsType) => {
+            return (
+              <div
+                onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                className="w-full z-10 cursor-pointer rounded-xl transition-transform transform hover:scale-105 duration-300 group"
+                key={item._id}
+              >
+                <div className="relative flex flex-col items-center rounded-t-xl overflow-hidden">
+                  <Image
+                    src={item.img}
+                    width={2000}
+                    height={2000}
+                    alt="carImg"
+                    className="w-full h-40 object-contain"
+                  />
+                  <h1 className="text-xl font-sans font-medium text-orange-600">
+                    {item.model}
+                  </h1>
+                  <Button>RESERVE</Button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

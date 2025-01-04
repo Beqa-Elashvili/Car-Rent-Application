@@ -270,33 +270,34 @@ export default function Car({ params }: { params: { id?: string } }) {
               </Button>
             </div>
           )}
-
-          <Carousel
-            slidesToShow={3}
-            className="rounded-full bg-slate-800 p-12 "
-            arrows
-            autoplay
-            dotPosition="bottom"
-            infinite={true}
-          >
-            {ReserveCars?.map((item: CarsType) => (
-              <div
-                key={item._id}
-                onClick={() => router.push(`/pages/solocar/${item._id}`)}
-                className="text-center p-2 hover:bg-slate-700 rounded-full cursor-pointer"
-              >
-                <img
-                  className="h-60 w-96 m-auto object-contain"
-                  src={item.img}
-                  alt="Carimg"
-                />
-                <div className="text-xl text-white">
-                  <h1>{item.make.toUpperCase()}</h1>
-                  <h1>{item.model.toUpperCase()}</h1>
+          {ReserveCars.length !== 0 && (
+            <Carousel
+              slidesToShow={3}
+              className="rounded-full bg-slate-800 p-12 "
+              arrows
+              autoplay
+              dotPosition="bottom"
+              infinite={true}
+            >
+              {ReserveCars?.map((item: CarsType) => (
+                <div
+                  key={item._id}
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  className="text-center p-2 hover:bg-slate-700 rounded-full cursor-pointer"
+                >
+                  <img
+                    className="h-60 w-96 m-auto object-contain"
+                    src={item.img}
+                    alt="Carimg"
+                  />
+                  <div className="text-xl text-white">
+                    <h1>{item.make.toUpperCase()}</h1>
+                    <h1>{item.model.toUpperCase()}</h1>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </Carousel>
+              ))}
+            </Carousel>
+          )}
         </>
       )}
     </div>
