@@ -10,11 +10,12 @@ import {
 import { useRouter } from "next/navigation";
 import { LiaLongArrowAltDownSolid } from "react-icons/lia";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { Button, Carousel } from "antd";
+import { Button, Carousel, Spin } from "antd";
 
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
-  const { tracks, addCarToReserve } = useGlobalProvider();
+  const { tracks, addCarToReserve, ChangeCarDayCount, loadingStates } =
+    useGlobalProvider();
 
   const router = useRouter();
 
@@ -195,7 +196,6 @@ export default function Tracing() {
           {TracingCars?.map((item: CarsType) => {
             return (
               <div
-                onClick={() => router.push(`/pages/solocar/${item._id}`)}
                 className="w-full z-10 cursor-pointer rounded-xl transition-transform transform hover:scale-105 duration-300 group"
                 key={item._id}
               >
@@ -205,12 +205,18 @@ export default function Tracing() {
                     width={2000}
                     height={2000}
                     alt="carImg"
+                    onClick={() => router.push(`/pages/solocar/${item._id}`)}
                     className="w-full h-40 object-contain"
                   />
                   <h1 className="text-xl font-sans font-medium text-orange-600">
                     {item.model}
                   </h1>
-                  <Button>RESERVE</Button>
+                  <Button
+                    onClick={() => addCarToReserve(item, ChangeCarDayCount)}
+                  >
+                    RESERVE
+                    <div>{loadingStates[item._id] && <Spin />}</div>
+                  </Button>
                 </div>
               </div>
             );

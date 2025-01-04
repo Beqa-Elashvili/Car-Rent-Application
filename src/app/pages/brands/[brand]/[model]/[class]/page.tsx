@@ -35,6 +35,9 @@ export default function Page({
     fetchReservedCars,
     deleteReservedCar,
     addCarToReserve,
+    loadingStates,
+    setLoadingStates,
+    ChangeCarDayCount,
   } = useGlobalProvider();
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
@@ -43,9 +46,6 @@ export default function Page({
   const userId = session?.user.id;
   const router = useRouter();
   const numb = 9;
-  const [loadingStates, setLoadingStates] = useState<{
-    [key: string]: boolean;
-  }>({});
 
   const sortByPrices = (values: number[]) => {
     setMaxMinPrices({
@@ -124,42 +124,6 @@ export default function Page({
       setIsOpen(false);
     }
   }, [ReserveCars]);
-
-  const ChangeCarDayCount = async (
-    car: CarsType,
-    AddCar: boolean,
-    IncreseOrDecrese?: string
-  ) => {
-    try {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [car._id]: true,
-      }));
-
-      if (!userId) {
-        console.error("User is not authenticated");
-        return;
-      }
-      if (IncreseOrDecrese === "decrease" && car.carDayCount === 1) {
-        await deleteReservedCar(car._id, false, setIsOpen);
-        return;
-      }
-      let key = AddCar ? { carImg: car.img } : { carId: car._id };
-      const response = await axios.put("/api/reservedcars", {
-        userId,
-        ...key,
-        action: IncreseOrDecrese,
-      });
-      await fetchReservedCars();
-    } catch (error: any) {
-      console.error("Error decrementing car day count:", error);
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [car._id]: false,
-      }));
-    }
-  };
 
   const handleDaySelection = async (index: number, days: number) => {
     setSelectedDays((prevDays) => {

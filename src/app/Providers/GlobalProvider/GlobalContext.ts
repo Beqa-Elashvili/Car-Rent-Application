@@ -106,8 +106,24 @@ interface GlobalContextProps {
       isDayCountIncrease: boolean,
       action: string
     ) => void,
-    setIsOpen: (open: boolean) => void
+    setIsOpen?: (open: boolean) => void
   ) => Promise<void>;
+
+  ChangeCarDayCount: (
+    car: CarsType,
+    AddCar: boolean,
+    IncreseOrDecrese?: string,
+    setIsOpen?: Dispatch<SetStateAction<boolean>>
+  ) => Promise<void>;
+
+  loadingStates: {
+    [key: string]: boolean;
+  };
+  setLoadingStates: Dispatch<
+    SetStateAction<{
+      [key: string]: boolean;
+    }>
+  >;
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
@@ -119,6 +135,8 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setReserveTotalPrice: () => {},
   error: null,
   setError: () => {},
+  loadingStates: {},
+  setLoadingStates: () => {},
   loading: false,
   setLoading: () => {},
   ReserveCars: [],
@@ -134,4 +152,5 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setConditions: () => {},
   fetchReservedCars: async () => {},
   deleteReservedCar: async () => {},
+  ChangeCarDayCount: async () => {},
 });

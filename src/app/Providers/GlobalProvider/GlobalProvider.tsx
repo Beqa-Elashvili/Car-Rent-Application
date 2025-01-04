@@ -198,6 +198,10 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [carsModels, setCarsModels] = useState<TcarsModels[]>(CarsModels);
   const [carData, setCarData] = useState<CarsType[]>([]);
 
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const { data: session } = useSession();
   const userId = session?.user.id;
 
@@ -272,7 +276,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       isDayCountIncrease: boolean,
       action: string
     ) => void,
-    setIsOpen: (open: boolean) => void
+    setIsOpen?: (open: boolean) => void
   ) => {
     try {
       const userId = session?.user.id;
@@ -286,7 +290,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
 
       if (Existeditem) {
         ChangeCarDayCount(car, true, "increase");
-        setIsOpen(true);
+        if (setIsOpen) setIsOpen(true);
         return;
       } else {
         const response = await axios.post("/api/reservedcars", {
@@ -295,9 +299,46 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         });
       }
       await fetchReservedCars();
-      setIsOpen(true);
+      if (setIsOpen) setIsOpen(true);
     } catch (error: any) {
       console.error("Error adding car to reserve:", error);
+    }
+  };
+
+  const ChangeCarDayCount = async (
+    car: CarsType,
+    AddCar: boolean,
+    IncreseOrDecrese?: string,
+    setIsOpen?: Dispatch<SetStateAction<boolean>>
+  ) => {
+    try {
+      setLoadingStates((prev) => ({
+        ...prev,
+        [car._id]: true,
+      }));
+
+      if (!userId) {
+        console.error("User is not authenticated");
+        return;
+      }
+      if (IncreseOrDecrese === "decrease" && car.carDayCount === 1) {
+        await deleteReservedCar(car._id, false, setIsOpen);
+        return;
+      }
+      let key = AddCar ? { carImg: car.img } : { carId: car._id };
+      const response = await axios.put("/api/reservedcars", {
+        userId,
+        ...key,
+        action: IncreseOrDecrese,
+      });
+      await fetchReservedCars();
+    } catch (error: any) {
+      console.error("Error decrementing car day count:", error);
+    } finally {
+      setLoadingStates((prev) => ({
+        ...prev,
+        [car._id]: false,
+      }));
     }
   };
 
@@ -327,6 +368,9 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         setCarData,
         tracks,
         setTracks,
+        loadingStates,
+        setLoadingStates,
+        ChangeCarDayCount,
       }}
     >
       {children}
