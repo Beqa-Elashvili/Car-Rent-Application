@@ -1,10 +1,11 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import { Popover, Avatar, Button } from "antd";
+import { Popover, Avatar, Button, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import { useRouter } from "next/navigation";
 import { UserOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
 import { CiUser } from "react-icons/ci";
 import { MdFavoriteBorder } from "react-icons/md";
 import { FaCarTunnel } from "react-icons/fa6";
@@ -19,7 +20,7 @@ const UserProfile = () => {
   if (status === "loading") {
     return (
       <div>
-        <Spin />
+        <Spin indicator={<LoadingOutlined spin />} />
       </div>
     );
   }

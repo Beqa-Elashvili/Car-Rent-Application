@@ -17,6 +17,7 @@ export interface Ttracks {
   established: number;
   famousEvents: string[];
   notes: string;
+  index: number;
   img: string;
 }
 export interface TcarsModels {

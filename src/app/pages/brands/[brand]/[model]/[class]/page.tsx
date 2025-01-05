@@ -43,7 +43,6 @@ export default function Page({
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
   const [brand, setBrandData] = useState<CarsType[]>([]);
   const { data: session } = useSession();
-  const userId = session?.user.id;
   const router = useRouter();
   const numb = 9;
 

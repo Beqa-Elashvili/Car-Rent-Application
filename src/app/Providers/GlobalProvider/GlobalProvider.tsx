@@ -24,11 +24,8 @@ import { SiAstonmartin } from "react-icons/si";
 import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
-import Numburgring from "/10-nurburgring.jpg";
-import circuitDespa from "/circuitDespa .jpg";
-import CircuitDelaSarthe from "/Circuit_de_la_Sarthe_v2.png";
-import Silverstone from "/Silverstone-GP-2021.png";
-import MonacoGranPrix from "/Monaco-granPrix.png";
+
+import { randomUUID } from "crypto";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
   const RentTracks = [
@@ -45,6 +42,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       notes:
         "The track is used for both public and private events. Prices for private rentals can vary based on the event.",
       img: "/10-nurburgring.jpg",
+      index: 0,
     },
     {
       title: "Monaco Grand Prix",
@@ -59,6 +57,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       notes:
         "Because the track is located in an urban area, renting it for private events is incredibly expensive and difficult to arrange.",
       img: "/Monaco-granPrix.png",
+      index: 1,
     },
     {
       title: "Silverstone Circuit",
@@ -73,6 +72,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       notes:
         "The rent price can fluctuate based on the event and demand. Silverstone is commonly used for both professional racing and public track days.",
       img: "/Silverstone-GP-2021.png",
+      index: 2,
     },
     {
       title: "Circuit de Spa-Francorchamps",
@@ -87,6 +87,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       notes:
         "Private rentals are available, but prices are higher during major events. It's often used for endurance races and various car events.",
       img: "/circuitDespa .jpg",
+      index: 3,
     },
     {
       title: "Le Mans Circuit (Circuit de la Sarthe)",
@@ -101,6 +102,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       notes:
         "Private use of the circuit for racing or testing is available but can be expensive, especially during the lead-up to the 24-hour race.",
       img: "/Circuit_de_la_Sarthe_v2.png",
+
+      index: 4,
     },
   ];
 

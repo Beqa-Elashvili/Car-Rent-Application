@@ -11,20 +11,25 @@ import { useRouter } from "next/navigation";
 import { LiaLongArrowAltDownSolid } from "react-icons/lia";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { Button, Carousel, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { useSession } from "next-auth/react";
 
 export default function Tracing() {
   const [TracingCars, setTracingcars] = useState<CarsType[]>([]);
   const { tracks, addCarToReserve, ChangeCarDayCount, loadingStates } =
     useGlobalProvider();
 
+  console.log(tracks);
+
   const router = useRouter();
+  const { data: session } = useSession();
 
   async function GetTracingCars() {
     try {
       const resp = await axios.get("/api/tracing");
       setTracingcars(resp.data.tracingcars);
     } catch (error) {
-      console.log("thisis error ", error);
+      console.log("error Fetch Tracing cars", error);
     }
   }
 
@@ -95,12 +100,10 @@ export default function Tracing() {
                           );
                         })}
                         <div className="absolute z-20 h-full left-10">
-                          <h1>
-                            <h1 className="font-bold mt-6 text-2xl text-orange-500 font-serif">
-                              HP
-                            </h1>
-                            <LiaLongArrowAltDownSolid className="absolute top-10  size-16 text-red-600 text-center transition-transform rotate-[-90deg] duration-1000 transform group-hover:rotate-[238deg]" />
+                          <h1 className="font-bold mt-6 text-2xl text-orange-500 font-serif">
+                            HP
                           </h1>
+                          <LiaLongArrowAltDownSolid className="absolute top-10  size-16 text-red-600 text-center transition-transform rotate-[-90deg] duration-1000 transform group-hover:rotate-[238deg]" />
                         </div>
                       </div>
                     </div>
@@ -141,12 +144,14 @@ export default function Tracing() {
             dotPosition="bottom"
             infinite={true}
           >
-            {tracks?.map((item: Ttracks, index: number) => {
+            {tracks?.map((item: Ttracks) => {
               return (
-                <div className="p-4">
+                <div key={item.index} className="p-4">
                   <div
-                    className="rounded-xl relative overflow-hidden group"
-                    key={index}
+                    onClick={() =>
+                      router.push(`/pages/track/${item.index}/${item.title}`)
+                    }
+                    className="rounded-xl hover:cursor-pointer relative overflow-hidden group"
                   >
                     <Image
                       width={2000}
@@ -192,7 +197,7 @@ export default function Tracing() {
           height={2000}
           alt="image"
         />
-        <div className="absolute p-20 inset-0 grid grid-cols-5 items-center justify-center">
+        <div className="absolute p-20 inset-0 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  items-center justify-center">
           {TracingCars?.map((item: CarsType) => {
             return (
               <div
@@ -200,6 +205,9 @@ export default function Tracing() {
                 key={item._id}
               >
                 <div className="relative flex flex-col items-center rounded-t-xl overflow-hidden">
+                  <h1 className="text-xl font-sans font-medium text-amber-600">
+                    {item.model}
+                  </h1>
                   <Image
                     src={item.img}
                     width={2000}
@@ -208,15 +216,35 @@ export default function Tracing() {
                     onClick={() => router.push(`/pages/solocar/${item._id}`)}
                     className="w-full h-40 object-contain"
                   />
-                  <h1 className="text-xl font-sans font-medium text-orange-600">
-                    {item.model}
-                  </h1>
-                  <Button
-                    onClick={() => addCarToReserve(item, ChangeCarDayCount)}
-                  >
-                    RESERVE
-                    <div>{loadingStates[item._id] && <Spin />}</div>
-                  </Button>
+                  {session !== null ? (
+                    <Button
+                      className="bg-orange-500 border-none text"
+                      onClick={() => addCarToReserve(item, ChangeCarDayCount)}
+                    >
+                      RESERVE
+                      {loadingStates[item._id] && (
+                        <Spin indicator={<LoadingOutlined spin />} />
+                      )}
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2  items-center">
+                      <Button
+                        className="bg-orange-500 text-orange-900 font-serif w-full border-none text"
+                        onClick={() => router.push("/register")}
+                      >
+                        Sign up
+                        {loadingStates[item._id] && (
+                          <Spin indicator={<LoadingOutlined spin />} />
+                        )}
+                      </Button>
+                      <Button
+                        className="bg-orange-500 text-orange-900 font-serif w-full border-none text"
+                        onClick={() => router.push("/login")}
+                      >
+                        Sign in
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
