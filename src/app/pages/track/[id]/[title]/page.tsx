@@ -1,34 +1,124 @@
 "use client";
 
-import {
-  CarsType,
-  Ttracks,
-} from "@/app/Providers/GlobalProvider/GlobalContext";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { createCarImage } from "@/app/CreateCarImage";
+import { Ttracks } from "@/app/Providers/GlobalProvider/GlobalContext";
+
 import { Button } from "antd";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Carousel } from "antd";
+import { Carousel, Calendar, Modal } from "antd";
+import type { Dayjs } from "dayjs";
 import Image from "next/image";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+import { useState } from "react";
+import { truncate } from "fs";
 
-export default function Car({ params }: { params: { id: number } }) {
+export default function Track({ params }: { params: { id: number } }) {
   const { tracks } = useGlobalProvider();
   const router = useRouter();
-
   const currentTrack = tracks[params.id];
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const [reserveTrackValue, setReserveTrackValue] = useState({
+    dayStart: "",
+    dayEnd: "",
+    rentPrice: 0,
+    dayRentPrice: 0,
+    totalPrice: 0,
+    dayCount: 0,
+  });
+
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  console.log(reserveTrackValue);
+
+  const onDateChange = (value: Dayjs) => {
+    if (reserveTrackValue.rentPrice > 0) {
+      setReserveTrackValue((prev) => ({
+        ...prev,
+        dayStart: value.format("YYYY-MM-DD"),
+        dayEnd: value.format("YYYY-MM-DD"),
+        dayCount: 1,
+      }));
+    } else {
+      if (!startDate || (startDate && value.isBefore(startDate))) {
+        setStartDate(value);
+        setReserveTrackValue((prev) => ({
+          ...prev,
+          dayStart: value.format("YYYY-MM-DD"),
+          dayCount: 1,
+        }));
+      } else if (startDate && value.isAfter(startDate)) {
+        setReserveTrackValue((prev) => ({
+          ...prev,
+          dayEnd: value.format("YYYY-MM-DD"),
+        }));
+
+        if (startDate) {
+          const diff = value.diff(startDate, "day");
+          setReserveTrackValue((prev) => ({
+            ...prev,
+            dayEnd: value.format("YYYY-MM-DD"),
+            dayCount: diff + 1,
+          }));
+        }
+      }
+    }
+  };
+
+  const handleDayOrDays = (key: string, value: number) => {
+    if (reserveTrackValue.rentPrice > 0 || reserveTrackValue.dayRentPrice > 0) {
+      const yesOrno = confirm(
+        `you alreay choose ${
+          reserveTrackValue.rentPrice > 0 ? "oneLap" : "whole day/days"
+        } : if you need change, clear the sentance`
+      );
+      if (yesOrno) {
+        setReserveTrackValue({
+          dayStart: "",
+          dayEnd: "",
+          rentPrice: 0,
+          dayRentPrice: 0,
+          totalPrice: 0,
+          dayCount: 0,
+        });
+        return;
+      }
+    }
+    setIsModalOpen(true);
+    setReserveTrackValue((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
 
   return (
     <div className="bg-gray-900 w-full min-h-screen flex flex-col h-full p-12">
+      <Modal
+        title="Basic Modal"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Calendar fullscreen={false} onChange={onDateChange} />
+      </Modal>
       {currentTrack && (
         <div className="bg-gray-900 min-h-screen h-full w-full text-white flex flex-col gap-2 items-center">
           <h1 className="text-3xl text-orange-500 font-serif">
             {currentTrack.title}
           </h1>
           <h1 className="text-sm font-mono text-orange-300">
-            {currentTrack.location}
+            {currentTrack.location} : {currentTrack.established}
           </h1>
           <div className="flex flex-col w-1/2">
             <div className="flex flex-col">
@@ -47,7 +137,12 @@ export default function Car({ params }: { params: { id: number } }) {
             </div>
           </div>
           <div className="flex items-center justify-center gap-6 w-7/12">
-            <Button className="rounded-full bg-orange-500 text-white border-none transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 ">
+            <Button
+              onClick={() =>
+                handleDayOrDays("rentPrice", currentTrack.rentPrice)
+              }
+              className="rounded-full bg-orange-500 text-white border-none transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 "
+            >
               LAP/{currentTrack.rentPrice}$
             </Button>
             <Image
@@ -57,7 +152,12 @@ export default function Car({ params }: { params: { id: number } }) {
               alt="trackImage"
               className="w-full mt-2 rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
             />
-            <Button className="rounded-full bg-orange-500 border-none text-white transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 ">
+            <Button
+              onClick={() =>
+                handleDayOrDays("dayRentPrice", currentTrack.dayRentPrice)
+              }
+              className="rounded-full bg-orange-500 border-none text-white transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 "
+            >
               DAY/{currentTrack.dayRentPrice}$
             </Button>
           </div>
@@ -70,7 +170,11 @@ export default function Car({ params }: { params: { id: number } }) {
             </h1>
             <div className="h-px bg-gray-700 w-full"></div>
             <h1 className="text-xl text-orange-300">
-              {currentTrack.famousEvents}
+              {currentTrack.famousEvents.map((item: string, index: number) =>
+                index === currentTrack.famousEvents.length - 1
+                  ? item
+                  : item + " : "
+              )}
             </h1>
           </div>
           <div className="h-px bg-gray-700 w-full"></div>
@@ -79,6 +183,7 @@ export default function Car({ params }: { params: { id: number } }) {
           </div>
         </div>
       )}
+
       <Carousel
         className="p-12"
         slidesToShow={4}

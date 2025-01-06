@@ -25,7 +25,6 @@ import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
 
-import { randomUUID } from "crypto";
 
 export function GlobalProvider({ children }: PropsWithChildren) {
   const RentTracks = [
