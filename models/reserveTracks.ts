@@ -9,9 +9,10 @@ const reservedTracksSchema = new mongoose.Schema(
     location: { type: String, required: true },
     description: { type: String, required: true },
     dayCount: { type: Number, required: false },
-    dayStart: { type: String, required: false },
-    dayEnd: { type: String, required: false },
-    oneLap: { type: String, required: false },
+    dayStart: { type: String, required: true },
+    dayEnd: { type: String, required: true },
+    oneLap: { type: Boolean, required: false },
+    totalPrice: { type: Number, required: true },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -23,6 +24,6 @@ const reservedTracksSchema = new mongoose.Schema(
 
 const reservedTracks =
   mongoose.models.reservedTracksSchema ||
-  mongoose.model("reservedTracks", reservedTracksSchema);
+  mongoose.model("ReservedTracks", reservedTracksSchema);
 
 export { reservedTracks };

@@ -1,12 +1,13 @@
 import { User } from "models/userModal";
 import { reservedTracks } from "models/reserveTracks";
 import { NextResponse } from "next/server";
+import { ConnectDB } from "utils/connect";
 import mongoose from "mongoose";
 
 export async function POST(req: any) {
   try {
+    await ConnectDB();
     const { userId, track } = await req.json();
-
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
         { message: "Invalid userId format" },
@@ -39,6 +40,7 @@ export async function POST(req: any) {
       dayEnd: track.dayEnd,
       dayCount: track.dayCount,
       oneLap: track.oneLap,
+      totalPrice: track.totalPrice,
       userId,
     });
 
@@ -59,8 +61,8 @@ export async function POST(req: any) {
 
 export async function GET(req: any) {
   try {
+    await ConnectDB();
     const userId = req.nextUrl.searchParams.get("userId");
-
     if (userId) {
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         return NextResponse.json(

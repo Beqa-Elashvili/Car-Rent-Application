@@ -25,7 +25,6 @@ import { SiFerrari } from "react-icons/si";
 import { SiPorsche } from "react-icons/si";
 import { SiBugatti } from "react-icons/si";
 
-
 export function GlobalProvider({ children }: PropsWithChildren) {
   const RentTracks = [
     {
@@ -199,6 +198,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [tracks, setTracks] = useState<Ttracks[]>(RentTracks);
   const [carsModels, setCarsModels] = useState<TcarsModels[]>(CarsModels);
   const [carData, setCarData] = useState<CarsType[]>([]);
+
+
 
   const [loadingStates, setLoadingStates] = useState<{
     [key: string]: boolean;

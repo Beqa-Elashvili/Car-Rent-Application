@@ -6,23 +6,20 @@ import { Button } from "antd";
 import { useRouter } from "next/navigation";
 import { Carousel, Calendar, Modal } from "antd";
 import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import Image from "next/image";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState } from "react";
-import { truncate } from "fs";
+import axios from "axios";
 
 export default function Track({ params }: { params: { id: number } }) {
-  const { tracks } = useGlobalProvider();
+  const { tracks, userId } = useGlobalProvider();
   const router = useRouter();
   const currentTrack = tracks[params.id];
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
   const handleOk = () => {
+    PostReserveTrack();
     setIsModalOpen(false);
   };
 
@@ -37,10 +34,10 @@ export default function Track({ params }: { params: { id: number } }) {
     dayRentPrice: 0,
     totalPrice: 0,
     dayCount: 0,
+    oneLap: false,
   });
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  console.log(reserveTrackValue);
 
   const onDateChange = (value: Dayjs) => {
     if (reserveTrackValue.rentPrice > 0) {
@@ -48,6 +45,8 @@ export default function Track({ params }: { params: { id: number } }) {
         ...prev,
         dayStart: value.format("YYYY-MM-DD"),
         dayEnd: value.format("YYYY-MM-DD"),
+        dayRentPrice: 0,
+        oneLap: true,
         dayCount: 1,
       }));
     } else {
@@ -62,6 +61,7 @@ export default function Track({ params }: { params: { id: number } }) {
         setReserveTrackValue((prev) => ({
           ...prev,
           dayEnd: value.format("YYYY-MM-DD"),
+          dayCount: 1,
         }));
 
         if (startDate) {
@@ -91,7 +91,9 @@ export default function Track({ params }: { params: { id: number } }) {
           dayRentPrice: 0,
           totalPrice: 0,
           dayCount: 0,
+          oneLap: false,
         });
+        setStartDate(null);
         return;
       }
     }
@@ -101,6 +103,47 @@ export default function Track({ params }: { params: { id: number } }) {
       [key]: value,
     }));
   };
+  const disableBeforeToday = (current: any) => {
+    return current && current.isBefore(dayjs(), "day");
+  };
+
+  async function PostReserveTrack() {
+    try {
+      if (!reserveTrackValue || !currentTrack) {
+        console.log("Missing data for reserveTrackValue or currentTrack");
+        return;
+      }
+
+      const totalPrice = reserveTrackValue.dayRentPrice
+        ? reserveTrackValue.dayRentPrice * reserveTrackValue.dayCount
+        : reserveTrackValue.rentPrice * reserveTrackValue.dayCount;
+
+      if (!userId) {
+        console.log("User ID is missing");
+        return;
+      }
+      const requestData = {
+        track: {
+          title: currentTrack.title,
+          loop: currentTrack.loop, 
+          rentPrice: currentTrack.rentPrice, 
+          dayRentPrice: reserveTrackValue.dayRentPrice, 
+          location: currentTrack.location, 
+          description: currentTrack.description, 
+          dayStart: reserveTrackValue.dayStart, 
+          dayEnd: reserveTrackValue.dayEnd, 
+          dayCount: reserveTrackValue.dayCount, 
+          oneLap: reserveTrackValue.oneLap, 
+          totalPrice: totalPrice,
+        },
+        userId,
+      };
+
+      const resp = await axios.post("/api/reservedtracks", requestData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="bg-gray-900 w-full min-h-screen flex flex-col h-full p-12">
@@ -110,7 +153,11 @@ export default function Track({ params }: { params: { id: number } }) {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Calendar fullscreen={false} onChange={onDateChange} />
+        <Calendar
+          disabledDate={disableBeforeToday}
+          fullscreen={false}
+          onChange={onDateChange}
+        />
       </Modal>
       {currentTrack && (
         <div className="bg-gray-900 min-h-screen h-full w-full text-white flex flex-col gap-2 items-center">
@@ -211,4 +258,7 @@ export default function Track({ params }: { params: { id: number } }) {
       </Carousel>
     </div>
   );
+}
+function moment(): any {
+  throw new Error("Function not implemented.");
 }
