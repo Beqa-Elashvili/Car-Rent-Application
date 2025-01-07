@@ -21,9 +21,9 @@ export default function Chackout() {
   const [SubTotal, setSubtotal] = useState<number>(0);
   const [value, setValue] = useState<number>();
   const [PromoCode, setPromoCode] = useState<number[]>([]);
-  const [randomNumber, setRandomNumber] = useState<number>();
+  const [randomNumber, setRandomNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
+  // const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
   const userId = session?.user?.id;
   const [form] = Form.useForm();
   const router = useRouter();
@@ -65,23 +65,11 @@ export default function Chackout() {
       return Math.floor(Math.random() * (100 - 30 + 1)) + 30;
     };
     setRandomNumber(generateRandomNumber());
-    setSubtotal(reserveTotalPrice ? parseFloat(reserveTotalPrice) : 0);
   }, []);
 
   const handleButtonClick = () => {
     const newRandomNumber = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
     setSubtotal((_prevSubTotal) => SubTotal - newRandomNumber);
-  };
-
-  const getSubTotal = () => {
-    const totalReservedCars = ReserveCars.reduce((accumulator, car) => {
-      return accumulator + car.carDayCount || 0;
-    }, 0);
-    const totalReservedTracks = reservedTracks.reduce((accumulator, track) => {
-      return accumulator + track.dayCount || 0;
-    }, 0);
-    const total = totalReservedCars + totalReservedTracks;
-    return total;
   };
 
   type FieldType = {
@@ -155,13 +143,14 @@ export default function Chackout() {
   };
 
   async function PostChackout(order: FieldType) {
-    const totalDays = getSubTotal();
+    const totalDays = getRentCarDaysTotal();
+    const totalPrice = handleToTalPrice();
     try {
       const resp = await axios.post("/api/orders", {
         userId,
         order: {
           ...order,
-          TotalPrice: SubTotal.toString(),
+          TotalPrice: totalPrice.toString(),
           TotalDays: totalDays.toString(),
         },
       });
@@ -173,6 +162,29 @@ export default function Chackout() {
       console.log("error while post order", error);
     }
   }
+
+  const totalTrackDays = reservedTracks.reduce((accumulator, track) => {
+    return accumulator + track.dayCount;
+  }, 0);
+  const totalTrackDayPrice = reservedTracks.reduce((accumulator, track) => {
+    return accumulator + track.totalPrice;
+  }, 0);
+
+  const getRentCarDaysTotal = () => {
+    const totalReservedCars = ReserveCars.reduce((accumulator, car) => {
+      return accumulator + car.carDayCount;
+    }, 0);
+    return totalReservedCars;
+  };
+
+  const totalRentCarPrice = ReserveCars.reduce((accumulator, car) => {
+    return accumulator + car.dayPrice * car.carDayCount;
+  }, 0);
+
+  const handleToTalPrice = () => {
+    const Total = totalRentCarPrice + totalTrackDayPrice + randomNumber;
+    return Total;
+  };
 
   return (
     <div className="bg-slate-800 min-h-screen h-full lg:p-20 p-2 lg:px-40">
@@ -406,29 +418,41 @@ export default function Chackout() {
             <GoogleMap />
           </div>
           <h1 className="text-gray-600 mb-2">CARS SUMMARY</h1>
-          <div className="flex font-bold text-sm justify-between">
-            <h1>Subtotal </h1>
-            <h1>{SubTotal} $</h1>
-          </div>
-          <div className="flex font-bold text-sm justify-between">
-            <h1>Taxes</h1>
-            <h1>{randomNumber} $</h1>
-          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
           <div className="flex font-bold text-sm justify-between">
             <h1>Reserved Car</h1>
             <h1>({ReserveCars.length})</h1>
           </div>
           <div className="flex font-bold text-sm justify-between">
+            <h1>Total Rent Cars days</h1>
+            <h1>({getRentCarDaysTotal()})</h1>
+          </div>
+          <div className="flex font-bold text-sm justify-between">
+            <h1>Total Rent Cars Price</h1>
+            <h1>({totalRentCarPrice} $)</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="flex font-bold text-sm justify-between">
             <h1>Reserved Track</h1>
             <h1>({reservedTracks.length})</h1>
           </div>
+
           <div className="flex font-bold text-sm justify-between">
-            <h1>Subdays</h1>
-            <h1>{getSubTotal()}</h1>
+            <h1>Total Track Days</h1>
+            <h1>({totalTrackDays})</h1>
+          </div>
+          <div className="flex font-bold text-sm justify-between">
+            <h1>Total Track Days Price</h1>
+            <h1>({totalTrackDayPrice} $)</h1>
+          </div>
+          <div className="h-px bg-gray-900 w-full"></div>
+          <div className="flex font-bold text-sm justify-between">
+            <h1>Taxes</h1>
+            <h1>{randomNumber} $</h1>
           </div>
           <div className="w-full bg-gray-900 h-px mt-2"></div>
           <h1 className="flex justify-between w-full text-lg">
-            Total <p>{SubTotal && randomNumber && SubTotal + randomNumber} $</p>
+            Total <p>{handleToTalPrice()} $</p>
           </h1>
           <div className="mt-4">
             <p className="text-sm text-gray-500">
