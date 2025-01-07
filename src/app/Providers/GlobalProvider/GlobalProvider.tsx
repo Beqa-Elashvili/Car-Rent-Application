@@ -5,7 +5,12 @@ import {
   useEffect,
   useState,
 } from "react";
-import { CarsType, GlobalContext, TcarsModels } from "./GlobalContext";
+import {
+  CarsType,
+  GlobalContext,
+  TcarsModels,
+  TRentalTracks,
+} from "./GlobalContext";
 import { TLocation } from "./GlobalContext";
 import { TCollecttion } from "./GlobalContext";
 import { Ttracks } from "./GlobalContext";
@@ -198,8 +203,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [tracks, setTracks] = useState<Ttracks[]>(RentTracks);
   const [carsModels, setCarsModels] = useState<TcarsModels[]>(CarsModels);
   const [carData, setCarData] = useState<CarsType[]>([]);
-
-
+  const [reservedTracks, setReservedTracks] = useState<TRentalTracks[]>([]);
 
   const [loadingStates, setLoadingStates] = useState<{
     [key: string]: boolean;
@@ -207,6 +211,15 @@ export function GlobalProvider({ children }: PropsWithChildren) {
 
   const { data: session } = useSession();
   const userId = session?.user.id;
+
+  async function fetchReservedTrack() {
+    try {
+      const resp = await axios.get(`/api/reservedtracks?userId=${userId}`);
+      setReservedTracks(resp.data.ReservedTracks);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   async function GetBrands() {
     try {
@@ -225,21 +238,24 @@ export function GlobalProvider({ children }: PropsWithChildren) {
 
   async function fetchReservedCars() {
     try {
-      if (userId) {
-        const response = await axios.get("/api/reservedcars", {
-          params: { userId },
-        });
-        setReserveCars(response.data.ReservedCars);
-        setLoading(false);
-      }
+      const response = await axios.get("/api/reservedcars", {
+        params: { userId },
+      });
+      setReserveCars(response.data.ReservedCars);
+      setLoading(false);
     } catch (error: any) {
       setError(error.message || "Error fetching reserved cars");
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchReservedCars();
+    if (userId) {
+      fetchReservedCars();
+      fetchReservedTrack();
+    }
   }, [userId]);
 
   const deleteReservedCar = async (
@@ -374,6 +390,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         loadingStates,
         setLoadingStates,
         ChangeCarDayCount,
+        reservedTracks,
+        setReservedTracks,
       }}
     >
       {children}

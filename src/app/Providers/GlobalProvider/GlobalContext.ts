@@ -7,6 +7,20 @@ export interface TLocation {
   city: string | null;
   street: string | null;
 }
+
+export interface TRentalTracks {
+  title: string;
+  loop: number;
+  rentPrice: number;
+  dayRentPrice: number;
+  location: string;
+  description: string;
+  dayCount: number; // Optional field
+  dayStart: string;
+  dayEnd: string;
+  oneLap?: boolean; // Optional field
+  totalPrice: number;
+}
 export interface Ttracks {
   title: string;
   loop: number;
@@ -91,6 +105,9 @@ interface GlobalContextProps {
   tracks: Ttracks[];
   setTracks: Dispatch<SetStateAction<Ttracks[]>>;
 
+  reservedTracks: TRentalTracks[];
+  setReservedTracks: Dispatch<SetStateAction<TRentalTracks[]>>;
+
   userId: string | undefined;
 
   fetchReservedCars: () => Promise<void>;
@@ -147,6 +164,8 @@ export const GlobalContext = createContext<GlobalContextProps>({
   collections: [],
   setCollections: () => {},
   addCarToReserve: async () => {},
+  reservedTracks: [],
+  setReservedTracks: () => {},
   conditions: [],
   tracks: [],
   setTracks: () => {},

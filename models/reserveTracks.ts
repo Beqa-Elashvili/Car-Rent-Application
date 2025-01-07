@@ -23,7 +23,7 @@ const reservedTracksSchema = new mongoose.Schema(
 );
 
 const reservedTracks =
-  mongoose.models.reservedTracksSchema ||
+  mongoose.models.ReservedTracks ||
   mongoose.model("ReservedTracks", reservedTracksSchema);
 
 export { reservedTracks };

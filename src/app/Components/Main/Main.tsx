@@ -16,6 +16,7 @@ export function Main() {
   const {
     carData,
     setCarData,
+
     collections,
     loading,
     setLoading,
@@ -102,6 +103,29 @@ export function Main() {
     setModel(undefined);
     setChosenModels([]);
     setChosenClass([]);
+  };
+
+  const [quete, setQuete] = useState({
+    Name: "",
+    Email: "",
+    Phonenumber: "",
+    Brand: "Brand",
+  });
+
+  const handleQuoteValues = (key: string, value: string) => {
+    setQuete((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const ClearQuete = () => {
+    setQuete({
+      Name: "",
+      Email: "",
+      Phonenumber: "",
+      Brand: "",
+    });
   };
 
   return (
@@ -402,69 +426,55 @@ export function Main() {
             </div>
           ))}
         </div>
-        <div className="h-40"></div>
-        <div className="h-px bg-gray-900 w-full"></div>
-        <div className="relative h-96 bg-green-900 ">
+        <div className="h-px bg-gray-900 w-full mt-40"></div>
+        <div className="relative h-96 bg-orange-900 ">
           <div className="absolute inset-0 h-96 bg-gradient-to-t to-black from-transparent opacity-90 ">
             <div className="w-3/4 py-12 m-auto">
               <h1 className="text-6xl">Get a quote</h1>
               <div className="grid grid-cols-2 items-center mt-12 gap-8">
                 <Input
+                  name="Name"
+                  value={quete.Name}
+                  onChange={(e) => handleQuoteValues("Name", e.target.value)}
                   placeholder="Name"
                   className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
                 />
                 <Input
-                  placeholder="Phone"
+                  name="PhoneNumber"
+                  value={quete.Phonenumber}
+                  onChange={(e) =>
+                    handleQuoteValues("Phonenumber", e.target.value)
+                  }
+                  placeholder="PhoneNumber"
                   className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
                 />
                 <Input
+                  name="Email"
+                  value={quete.Email}
+                  onChange={(e) => handleQuoteValues("Email", e.target.value)}
                   placeholder="Email"
                   className="p-2 rounded-xl placeholder-white text-white  bg-gray-400 focus:bg-gray-400 hover:bg-gray-400 border-none focus:outline-none "
                 />
                 <Select
-                  defaultValue={""}
-                  className="p-2 rounded-xl bg-gray-400 text-white focus:outline-none"
+                  value={quete.Brand}
+                  onChange={(value) => handleQuoteValues("Brand", value)}
+                  defaultValue={"Car"}
+                  placeholder="Car"
                 >
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    disabled
-                    value=""
-                  >
-                    Car
-                  </Select.Option>
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    value="Porche"
-                  >
-                    Porche
-                  </Select.Option>
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    value="Lamborghini"
-                  >
-                    Lamborghini
-                  </Select.Option>
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    value="Bmw"
-                  >
-                    Bmw
-                  </Select.Option>
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    value="McLaren"
-                  >
-                    McLaren
-                  </Select.Option>
-                  <Select.Option
-                    className="text-black rounded bg-white"
-                    value="Mercedes"
-                  >
-                    Mercedes
-                  </Select.Option>
+                  {collections?.map((item: TCollecttion) => (
+                    <Select.Option
+                      className="text-black rounded bg-white"
+                      value={item.name}
+                    >
+                      {item.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </div>
-              <Button className="bg-blue-500 text-xl mt-4 w-40 border-none text-white font-medium">
+              <Button
+                onClick={ClearQuete}
+                className="mt-4 w-40 border-none font-medium"
+              >
                 Submit
               </Button>
             </div>

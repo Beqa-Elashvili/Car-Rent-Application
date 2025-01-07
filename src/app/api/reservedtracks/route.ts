@@ -72,16 +72,16 @@ export async function GET(req: any) {
       }
       console.log("Looking for userId:", userId);
 
-      const ReservedTracks = await reservedTracks.find({ userId });
+      const ReservedTracksData = await reservedTracks.find({ userId });
 
-      if (ReservedTracks.length === 0) {
+      if (ReservedTracksData.length === 0) {
         return NextResponse.json(
           { message: "No tracks reserved by this user." },
           { status: 404 }
         );
       }
 
-      return NextResponse.json({ ReservedTracks });
+      return NextResponse.json({ ReservedTracks: ReservedTracksData });
     }
 
     return NextResponse.json(

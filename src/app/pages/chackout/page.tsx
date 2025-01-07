@@ -15,7 +15,8 @@ import "react-credit-cards-2/dist/es/styles-compiled.css";
 import axios from "axios";
 
 export default function Chackout() {
-  const { ReserveCars, location, deleteReservedCar } = useGlobalProvider();
+  const { ReserveCars, location, deleteReservedCar, reservedTracks } =
+    useGlobalProvider();
   const { data: session, status } = useSession();
   const [SubTotal, setSubtotal] = useState<number>(0);
   const [value, setValue] = useState<number>();
@@ -73,9 +74,13 @@ export default function Chackout() {
   };
 
   const getSubTotal = () => {
-    const total = ReserveCars.reduce((accumulator, car) => {
-      return accumulator + car.carDayCount;
+    const totalReservedCars = ReserveCars.reduce((accumulator, car) => {
+      return accumulator + car.carDayCount || 0;
     }, 0);
+    const totalReservedTracks = reservedTracks.reduce((accumulator, track) => {
+      return accumulator + track.dayCount || 0;
+    }, 0);
+    const total = totalReservedCars + totalReservedTracks;
     return total;
   };
 
@@ -410,8 +415,12 @@ export default function Chackout() {
             <h1>{randomNumber} $</h1>
           </div>
           <div className="flex font-bold text-sm justify-between">
-            <h1>Reserved</h1>
+            <h1>Reserved Car</h1>
             <h1>({ReserveCars.length})</h1>
+          </div>
+          <div className="flex font-bold text-sm justify-between">
+            <h1>Reserved Track</h1>
+            <h1>({reservedTracks.length})</h1>
           </div>
           <div className="flex font-bold text-sm justify-between">
             <h1>Subdays</h1>
