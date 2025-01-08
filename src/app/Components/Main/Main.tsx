@@ -9,7 +9,6 @@ import {
   TCollecttion,
   TFormtype,
 } from "@/app/Providers/GlobalProvider/GlobalContext";
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -434,6 +433,7 @@ export function Main() {
                 >
                   {collections?.map((item: TCollecttion) => (
                     <Select.Option
+                      key={item.img}
                       className="text-black rounded bg-white"
                       value={item.name}
                     >

@@ -15,7 +15,6 @@ import {
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
-import { form } from "framer-motion/client";
 import { useForm } from "antd/es/form/Form";
 
 export default function Page({
@@ -28,6 +27,9 @@ export default function Page({
   };
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+
   const {
     collections,
     ReserveCars,
@@ -68,7 +70,8 @@ export default function Page({
     max?: number,
     brand?: string,
     model?: string,
-    carClass?: string
+    carClass?: string,
+    page?: number
   ) {
     try {
       setLoading(true);
@@ -84,9 +87,19 @@ export default function Page({
           carClass.charAt(0).toUpperCase() + carClass.slice(1);
         params.append("class", decodeURIComponent(formattedCarClass));
       }
-      const url = `/api/cars?${params}`;
+
+      const par = new URLSearchParams({
+        page: String(page),
+        limit: "5",
+        ...params,
+      });
+      const url = `/api/cars?${params}&${par.toString()}`;
       const resp = await axios.get(url);
-      setBrandData(resp.data.cars);
+      const newCars = resp.data.cars;
+      setBrandData((prevCars) => [...prevCars, ...newCars]);
+      if (newCars.length === 0) {
+        setHasMore(false);
+      }
       setPrices([]);
       setSelectedDays([]);
       setLoading(false);
@@ -94,7 +107,7 @@ export default function Page({
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         setError(error.response?.data?.message);
-        setBrandData([]);
+        // setBrandData([]);
         console.log("error thile fatch brand data");
       }
     } finally {
@@ -105,10 +118,17 @@ export default function Page({
   useEffect(() => {
     const { brand, model, class: carClass } = params;
     const timeoutId = setTimeout(() => {
-      GetCarData(maxMinprices.min, maxMinprices.max, brand, model, carClass);
+      GetCarData(
+        maxMinprices.min,
+        maxMinprices.max,
+        brand,
+        model,
+        carClass,
+        page
+      );
     }, 500);
     return () => clearTimeout(timeoutId);
-  }, [maxMinprices, params.brand, params.model]);
+  }, [maxMinprices, params.brand, params.model, page]);
 
   const calculateTotalPrice = () => {
     const total = ReserveCars.reduce((accumulatedTotal, item) => {
@@ -228,6 +248,12 @@ export default function Page({
       url += "/All";
     }
     router.push(url);
+  };
+
+  const loadMoreData = () => {
+    if (!loading && hasMore) {
+      setPage((prevPage) => prevPage + 1);
+    }
   };
 
   return (
@@ -445,7 +471,7 @@ export default function Page({
             </Form>
           </div>
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2 text-center">
               {Array.from({ length: numb }).map((_item, index: number) => (
                 <div key={index} className="flex flex-col gap-4">
                   <Skeleton.Image active />
@@ -456,78 +482,83 @@ export default function Page({
               ))}
             </div>
           ) : (
-            <div className="bg-orange-900 w-10/12 rounded-xl">
-              {error && <div className="text-center mt-12">{error}</div>}
-              <div className="grid items-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
-                {brand?.map((car: CarsType, index: number) => {
-                  return (
-                    <div
-                      key={car._id}
-                      className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
-                    >
-                      <img
-                        className="h-40 text-center w-full object-contain"
-                        src={car.img}
-                        alt="carimg"
-                        onClick={() => router.push(`/pages/solocar/${car._id}`)}
-                      />
-                      <div className="bg-orange-700 text-orange-200 font-serif p-2 rounded-b-xl">
-                        <h1 className="text-2xl font-mono min-h-16">
-                          {car.make.toUpperCase()} {car.model.toUpperCase()}
-                        </h1>
-                        <h1 className="mt-2 text-lg">
-                          {car.displacement} | {car.transmission} |{" "}
-                          {car.fuel_type}
-                        </h1>
-                        <h1 className="mt-2 text-2xl text-yellow-400">
-                          $ {prices[index] ? prices[index] : car.dayPrice}
-                        </h1>
-                        <div className="flex gap-2 mt-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 2}
-                            onChange={() => handleDaySelection(index, 2)}
-                            type="checkbox"
-                          />
-                          <p>2 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 4}
-                            onChange={() => handleDaySelection(index, 4)}
-                            type="checkbox"
-                          />
-                          <p>4 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 6}
-                            onChange={() => handleDaySelection(index, 6)}
-                            type="checkbox"
-                          />
-                          <p>6 days</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Checkbox
-                            checked={selectedDays[index] === 8}
-                            onChange={() => handleDaySelection(index, 8)}
-                            type="checkbox"
-                          />
-                          <p>8+ days</p>
-                        </div>
-                        <Button
-                          disabled={!session?.user}
+            <div className="bg-orange-900 w-10/12 p-2 flex flex-col justify-between text-center rounded-xl">
+              <div>
+                {error && <div className="text-center mt-12">{error}</div>}
+                <div className="grid items-start text-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
+                  {brand?.map((car: CarsType, index: number) => {
+                    return (
+                      <div
+                        key={car._id}
+                        className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
+                      >
+                        <img
+                          className="h-40 text-center w-full object-contain"
+                          src={car.img}
+                          alt="carimg"
                           onClick={() =>
-                            addCarToReserve(car, ChangeCarDayCount, setIsOpen)
+                            router.push(`/pages/solocar/${car._id}`)
                           }
-                          className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
-                        >
-                          RESERVE
-                        </Button>
+                        />
+                        <div className="bg-orange-700 text-orange-200 font-serif p-2 rounded-b-xl">
+                          <h1 className="text-2xl font-mono min-h-16">
+                            {car.make.toUpperCase()} {car.model.toUpperCase()}
+                          </h1>
+                          <h1 className="mt-2 text-lg">
+                            {car.displacement} | {car.transmission} |{" "}
+                            {car.fuel_type}
+                          </h1>
+                          <h1 className="mt-2 text-2xl text-yellow-400">
+                            $ {prices[index] ? prices[index] : car.dayPrice}
+                          </h1>
+                          <div className="flex gap-2 mt-2">
+                            <Checkbox
+                              checked={selectedDays[index] === 2}
+                              onChange={() => handleDaySelection(index, 2)}
+                              type="checkbox"
+                            />
+                            <p>2 days</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Checkbox
+                              checked={selectedDays[index] === 4}
+                              onChange={() => handleDaySelection(index, 4)}
+                              type="checkbox"
+                            />
+                            <p>4 days</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Checkbox
+                              checked={selectedDays[index] === 6}
+                              onChange={() => handleDaySelection(index, 6)}
+                              type="checkbox"
+                            />
+                            <p>6 days</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Checkbox
+                              checked={selectedDays[index] === 8}
+                              onChange={() => handleDaySelection(index, 8)}
+                              type="checkbox"
+                            />
+                            <p>8+ days</p>
+                          </div>
+                          <Button
+                            disabled={!session?.user}
+                            onClick={() =>
+                              addCarToReserve(car, ChangeCarDayCount, setIsOpen)
+                            }
+                            className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
+                          >
+                            RESERVE
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
+              <Button onClick={loadMoreData}>Load More</Button>
             </div>
           )}
         </div>
