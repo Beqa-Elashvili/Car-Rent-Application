@@ -7,6 +7,17 @@ export interface TLocation {
   city: string | null;
   street: string | null;
 }
+export interface TFormtype {
+  brand: string;
+  model: string;
+  class: string;
+}
+
+export interface TFormtype {
+  brand: string;
+  model: string;
+  class: string;
+}
 
 export interface TRentalTracks {
   title: string;
@@ -20,6 +31,7 @@ export interface TRentalTracks {
   dayEnd: string;
   oneLap?: boolean; // Optional field
   totalPrice: number;
+  _id: string;
 }
 export interface Ttracks {
   title: string;

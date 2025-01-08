@@ -7,51 +7,22 @@ import {
   CarsType,
   TcarsModels,
   TCollecttion,
+  TFormtype,
 } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function Main() {
-  const {
-    carData,
-    setCarData,
-
-    collections,
-    loading,
-    setLoading,
-    setError,
-    carsModels,
-  } = useGlobalProvider();
+  const { carData, collections, loading, carsModels } = useGlobalProvider();
   const router = useRouter();
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    const timeout = setTimeout(async () => {
-      try {
-        setLoading(true);
-        const resp = await axios.get("/api/cars?limit=41&page=1");
-        setCarData(resp.data.cars);
-      } catch (error: unknown) {
-        setError(null);
-      } finally {
-        setLoading(false);
-      }
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, []);
 
   const GetCarModel = (model: string) => {
     router.push(`/pages/brands/All/${model}/All`);
   };
 
-  interface Formtype {
-    brand: string;
-    model: string;
-    class: string;
-  }
-
-  const onFinish = (values: Formtype) => {
+  const onFinish = (values: TFormtype) => {
     let url = `/pages/brands/${values.brand}`;
     if (values.model) {
       url += `/${values.model}`;
@@ -337,7 +308,7 @@ export function Main() {
             src={"/carcollections.jpeg"}
           />
           <div className="absolute backdrop-blur-md rounded-xl w-1/2 h-1/2 m-auto bg-cyan-200 bg-opacity-10 inset-0 flex items-center justify-center">
-            <Form<Formtype>
+            <Form<TFormtype>
               form={form}
               className="flex flex-col justif-center gap-2"
               onFinish={onFinish}

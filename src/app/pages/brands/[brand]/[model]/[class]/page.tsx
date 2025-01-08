@@ -2,7 +2,7 @@
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
-import { Checkbox, Button, Slider, Spin } from "antd";
+import { Checkbox, Button, Slider, Spin, Form, Select } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
@@ -10,10 +10,13 @@ import { CiCircleMinus } from "react-icons/ci";
 import {
   CarsType,
   TCollecttion,
+  TFormtype,
 } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
+import { form } from "framer-motion/client";
+import { useForm } from "antd/es/form/Form";
 
 export default function Page({
   params,
@@ -30,13 +33,12 @@ export default function Page({
     ReserveCars,
     loading,
     setLoading,
+    carData,
     error,
     setError,
-    fetchReservedCars,
     deleteReservedCar,
     addCarToReserve,
     loadingStates,
-    setLoadingStates,
     ChangeCarDayCount,
   } = useGlobalProvider();
 
@@ -44,6 +46,7 @@ export default function Page({
   const [brand, setBrandData] = useState<CarsType[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
+  const [form] = useForm();
   const numb = 9;
 
   const sortByPrices = (values: number[]) => {
@@ -171,6 +174,60 @@ export default function Page({
     }
     const discountPercentage = discount ? (discount / dayPrice) * 100 : 0;
     return { updatedPrice, discountPercentage };
+  };
+
+  const [brandName, setBrandName] = useState<string>("");
+  const [model, setModel] = useState<string | undefined>("");
+  const [carClass, setCarClass] = useState<string | undefined>("");
+
+  const [chosenModels, setChosenModels] = useState<string[]>([]);
+  const [chosenClass, setChosenClass] = useState<string[]>([]);
+
+  const FilteredModels = (brandName: string, modelName: string) => {
+    const CarsModels = carData?.filter(
+      (item, index, self) =>
+        item.brand === brandName &&
+        self.findIndex((car) => car.model === item.model) === index
+    );
+    setChosenModels(CarsModels.map((item: CarsType) => item.model));
+
+    const CarsClass = carData?.filter(
+      (item, index, self) =>
+        self.findIndex(
+          (car) =>
+            car.brand === brandName &&
+            (model ? car.model === model : true) &&
+            car.class === item.class
+        ) === index
+    );
+    setChosenClass(CarsClass.map((item: CarsType) => item.class));
+  };
+
+  const ClearModelsAndClases = () => {
+    form.resetFields();
+    setCarClass(undefined);
+    setModel(undefined);
+    setChosenModels([]);
+    setChosenClass([]);
+  };
+
+  useEffect(() => {
+    FilteredModels(brandName, (model && model) || "");
+  }, [brandName, model]);
+
+  const onFinish = (values: TFormtype) => {
+    let url = `/pages/brands/${values.brand}`;
+    if (values.model) {
+      url += `/${values.model}`;
+    } else {
+      url += `/All`;
+    }
+    if (values.class) {
+      url += `/${values.class}`;
+    } else {
+      url += "/All";
+    }
+    router.push(url);
   };
 
   return (
@@ -333,6 +390,59 @@ export default function Page({
                 </div>
               </div>
             </div>
+            <Form<TFormtype>
+              form={form}
+              onFinish={onFinish}
+              className="flex border p-2 rounded-xl flex-col justif-center gap-2"
+            >
+              <Form.Item
+                name="brand"
+                rules={[{ required: true, message: "Please input a value!" }]}
+              >
+                <Select
+                  value={brandName}
+                  onChange={(e) => setBrandName(e)}
+                  placeholder="Select an brand"
+                >
+                  {collections?.map((item: TCollecttion, index: number) => (
+                    <Select.Option key={index} value={item.name}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item name="model">
+                <Select
+                  value={model}
+                  onChange={(e) => setModel(e)}
+                  placeholder="Select an model"
+                >
+                  {chosenModels?.map((item: string, index: number) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+              <Form.Item name="class">
+                <Select
+                  value={carClass}
+                  onChange={(e) => setCarClass(e)}
+                  placeholder="Select an class"
+                >
+                  {chosenClass?.map((item: string, index: number) => (
+                    <Select.Option key={index} value={item}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Button onClick={ClearModelsAndClases}>Clear</Button>
+              <Button type="primary" htmlType="submit">
+                Search
+              </Button>
+            </Form>
           </div>
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 m-auto gap-8 p-2 text-center">

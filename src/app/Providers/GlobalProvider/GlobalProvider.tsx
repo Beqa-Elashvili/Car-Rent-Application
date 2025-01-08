@@ -212,6 +212,21 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const resp = await axios.get("/api/cars?limit=41&page=1");
+        setCarData(resp.data.cars);
+      } catch (error: unknown) {
+        setError(null);
+      } finally {
+        setLoading(false);
+      }
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, []);
+
   async function fetchReservedTrack() {
     try {
       const resp = await axios.get(`/api/reservedtracks?userId=${userId}`);

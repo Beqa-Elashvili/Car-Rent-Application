@@ -61,9 +61,6 @@ const UserProfile = () => {
               <CiUser className="size-8" />
             </button>
           </Popover>
-          <button className="hover:text-green-500 w-6">
-            <MdFavoriteBorder className="size-8" />
-          </button>
           <button
             onClick={() => router.push("/pages/reserveCars")}
             className="hover:text-green-500 relative p-2"

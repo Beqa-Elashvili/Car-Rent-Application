@@ -27,7 +27,6 @@ export function Header() {
   const { collections } = useGlobalProvider();
   const router = useRouter();
 
-
   const getSearchResults = useCallback(async () => {
     try {
       setLoading(true);
@@ -215,8 +214,6 @@ export function Header() {
             MAIN
           </div>
           <span className="border bg-gray-500"></span>
-          <div className="hover:text-green-400 cursor-pointer">BEST</div>
-          <span className="border bg-gray-500"></span>
           <div
             onClick={() => router.push("/pages/conditions")}
             className="hover:text-green-400 cursor-pointer"
@@ -229,7 +226,7 @@ export function Header() {
             className="flex items-center gap-2 text-xl hover:text-green-400 cursor-pointer "
           >
             <GiCarKey />
-            <p>Collection</p>
+            <p>COLLECTION</p>
           </Link>
         </div>
       </div>

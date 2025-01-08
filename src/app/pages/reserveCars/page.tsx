@@ -1,33 +1,37 @@
 "use client";
 
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
-import { createCarImage } from "@/app/CreateCarImage";
+import {
+  CarsType,
+  TRentalTracks,
+} from "@/app/Providers/GlobalProvider/GlobalContext";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { Button } from "antd/es/radio";
 import { useRouter } from "next/navigation";
 
 export default function ReserveCars() {
-  const { ReserveCars } = useGlobalProvider();
+  const { ReserveCars, reservedTracks } = useGlobalProvider();
   const router = useRouter();
 
   const getTotalPrice = () => {
-    const TotalPrice = localStorage.getItem("reserveTotalPrice");
-    if (TotalPrice) return TotalPrice;
-    else {
-      const totalPrice = ReserveCars.reduce((accimulator, car) => {
-        return accimulator + car.dayPrice;
-      }, 0);
-      localStorage.setItem("reserveTotalPrice", String(totalPrice));
-      return totalPrice;
-    }
+    const totalRentCarPrice = ReserveCars.reduce((accimulator, car) => {
+      return accimulator + car.dayPrice;
+    }, 0);
+    const totalRentTrackPrice = reservedTracks.reduce((accumulator, track) => {
+      return accumulator + track.totalPrice;
+    }, 0);
+    const totalPrice = totalRentCarPrice + totalRentTrackPrice;
+    return totalPrice;
   };
-  const TotalPrice = localStorage.getItem("reserveTotalPrice");
 
   const TotalDayCount = () => {
-    const total = ReserveCars.reduce((accimulator, car) => {
+    const totalReserveCars = ReserveCars.reduce((accimulator, car) => {
       return accimulator + car.carDayCount;
     }, 0);
+    const totalTrack = reservedTracks.reduce((accumulator, track) => {
+      return accumulator + track.dayCount;
+    }, 0);
+    const total = totalReserveCars + totalTrack;
     return total;
   };
 
@@ -82,6 +86,46 @@ export default function ReserveCars() {
           </div>
         );
       })}
+      <h1 className="text-3xl text-orange-500 font-mono p-2">TRACKS</h1>
+      {reservedTracks?.map((item: TRentalTracks) => {
+        return (
+          <div key={item._id}>
+            <div className="bg-yellow-500 p-2 rounded-xl mx-2 md:flex items-center  justify-between">
+              <div className="flex md:text-start flex-col">
+                <p className="font-medium text-xl">
+                  {item.title.toUpperCase()} | {item.location.toUpperCase()}
+                </p>
+                <div className="text-md">
+                  <p>
+                    Price per Day.Rental :{" "}
+                    <span>
+                      $ {item.dayRentPrice ? item.dayRentPrice : item.rentPrice}
+                    </span>
+                  </p>
+                  <p className="text-red-500 text-bold">
+                    {item.oneLap && <>One Lap (ONLY)</>}
+                  </p>
+                  <p>Period: {item.dayCount} day</p>
+                  <h1>Total: {item.totalPrice} $</h1>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                Date:
+                {item.oneLap ? (
+                  <h1>{item.dayStart}</h1>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <h1>{item.dayStart}</h1>
+                    <h1>{item.dayEnd}</h1>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="bg-gray-200 mt-4 h-px w-full mb-4"></div>
+          </div>
+        );
+      })}
+
       <div className="w-full bg-green-500 rounded-xl p-12">
         <div className="w-3/6 m-auto flex flex-col gap-2 text-start">
           <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
@@ -91,6 +135,10 @@ export default function ReserveCars() {
           <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
             <h1 className="w-20">Total Cars:</h1>
             <span>{ReserveCars.length} x</span>
+          </div>
+          <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
+            <h1 className="w-20">Total Track:</h1>
+            <span>{reservedTracks.length} x</span>
           </div>
           <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
             <h1 className="w-20">Total Price:</h1>

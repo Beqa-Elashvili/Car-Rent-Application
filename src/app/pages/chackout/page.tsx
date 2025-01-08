@@ -17,13 +17,12 @@ import axios from "axios";
 export default function Chackout() {
   const { ReserveCars, location, deleteReservedCar, reservedTracks } =
     useGlobalProvider();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [SubTotal, setSubtotal] = useState<number>(0);
   const [value, setValue] = useState<number>();
   const [PromoCode, setPromoCode] = useState<number[]>([]);
   const [randomNumber, setRandomNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const reserveTotalPrice = localStorage.getItem("reserveTotalPrice");
   const userId = session?.user?.id;
   const [form] = Form.useForm();
   const router = useRouter();
@@ -143,7 +142,7 @@ export default function Chackout() {
   };
 
   async function PostChackout(order: FieldType) {
-    const totalDays = getRentCarDaysTotal();
+    const totalDays = TotalRentDays();
     const totalPrice = handleToTalPrice();
     try {
       const resp = await axios.post("/api/orders", {
@@ -175,6 +174,10 @@ export default function Chackout() {
       return accumulator + car.carDayCount;
     }, 0);
     return totalReservedCars;
+  };
+  const TotalRentDays = () => {
+    const Total = totalTrackDays + getRentCarDaysTotal();
+    return Total;
   };
 
   const totalRentCarPrice = ReserveCars.reduce((accumulator, car) => {

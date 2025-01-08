@@ -133,8 +133,6 @@ export default function Car({ params }: { params: { id?: string } }) {
     }
   };
 
-  console.log(car);
-
   useEffect(() => {
     if (params.id) {
       const timeout = setTimeout(() => {
@@ -174,7 +172,7 @@ export default function Car({ params }: { params: { id?: string } }) {
       setLoading(false);
       return image;
     } catch (error) {
-      return "/gfhf";
+      alert("something went wrong");
     }
   };
 
