@@ -75,6 +75,10 @@ export default function Page({
   ) {
     try {
       setLoading(true);
+      if (min !== 0) {
+        page = 1;
+      }
+      console.log(min)
       const params = new URLSearchParams();
       if (brand && brand !== "All")
         params.append("brand", decodeURIComponent(brand));
@@ -96,7 +100,11 @@ export default function Page({
       const url = `/api/cars?${params}&${par.toString()}`;
       const resp = await axios.get(url);
       const newCars = resp.data.cars;
-      setBrandData((prevCars) => [...prevCars, ...newCars]);
+      if (page !== 1) setBrandData((prevCars) => [...prevCars, ...newCars]);
+      else {
+        setBrandData(newCars);
+      }
+
       if (newCars.length === 0) {
         setHasMore(false);
       }
