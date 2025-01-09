@@ -10,7 +10,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import Link from "next/link";
 
 import Image from "next/image";
-import { Input, Select, Spin } from "antd";
+import { Button, Input, Select, Spin } from "antd";
 import axios from "axios";
 import {
   CarsType,
@@ -105,25 +105,95 @@ export function Header() {
             transform: isOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "opacity 0.5s ease, transform 0.5s ease",
           }}
-          className={`absolute z-10 top-16 flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
+          className={`absolute z-10 top-[100%] flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
            }`}
         >
-          <button className="hover:text-yellow-300 cursor-pointer bg-green-600 rounded p-2 w-full">
+          <div className="relative w-full flex md:hidden  items-center text-black">
+            <Select
+              onChange={(value: string) => setBrand(value)}
+              placeholder="Brand"
+              className={`absolute left-0 w-20 z-40 border-none ${
+                searchResults.length !== 0 && "rounded-bl-none"
+              }`}
+            >
+              <Select.Option value="All">All</Select.Option>
+              {collections?.map((item: TCollecttion) => (
+                <Select.Option key={item.img} value={item.name}>
+                  {item.name}
+                </Select.Option>
+              ))}
+            </Select>
+            <Input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Search"
+              className={`w-full z-30 pl-20 ${
+                searchResults.length !== 0 && "rounded-b-none"
+              }`}
+            />
+            {loading && <Spin className="z-40 absolute right-14" />}
+            <button
+              onClick={() => handleSearchResults(brand, value)}
+              className={`z-40 hover:bg-cyan-600 absolute right-0 border-none border-l h-full ${
+                searchResults.length !== 0 ? "rounded-tr" : "rounded-r"
+              } hover:border-none bg-cyan-500 px-2 `}
+            >
+              <IoSearchSharp className="text-slate-800 " />
+            </button>
+            {searchResults.length !== 0 && (
+              <div className="bg-white w-full max-h-96 overflow-y-scroll p-2 flex flex-col gap-2 rounded-b absolute top-8 z-50">
+                <div className="flex flex-col gap-2">
+                  {searchResults?.map((item: CarsType) => (
+                    <div
+                      key={item._id}
+                      onClick={() => handleCar(item._id)}
+                      className="bg-orange-600 rounded text-center w-full hover:bg-orange-800 cursor-pointer"
+                    >
+                      <div className="flex flex-col text-center justify-center items-center ">
+                        <Image
+                          src={item.img}
+                          alt="img"
+                          width={500}
+                          height={1000}
+                          className="w-full h-20 object-contain"
+                        />
+                        <div className="text-white">
+                          <p>{item.make}</p>
+                          <p>{item.model}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <Button
+            onClick={() => router.push("/")}
+            className="hover:text-yellow-300 cursor-pointer bg-orange-500 border-none font-mono text-xl text-white rounded p-2 w-full"
+          >
             MAIN
-          </button>
-          <button className="hover:text-yellow-300 cursor-pointer  bg-green-600  rounded p-2 w-full">
-            BEST
-          </button>
-          <button className="hover:text-yellow-300 cursor-pointer  bg-green-600  rounded p-2 w-full">
+          </Button>
+          <Button
+            onClick={() => router.push("/pages/conditions")}
+            className="hover:text-yellow-300 cursor-pointer  bg-orange-500  font-mono border-none text-xl text-white  rounded p-2 w-full"
+          >
             CONDITIONS
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => router.push("/pages/collection")}
-            className="flex items-center justify-center gap-2 text-xl hover:text-yellow-300 cursor-pointer  bg-green-600 rounded p-2 w-full"
+            className="hover:text-yellow-300 cursor-pointer  bg-orange-500  font-mono text-xl text-white border-none  rounded p-2 w-full"
           >
             <GiCarKey />
             <p>Collection</p>
-          </button>
+          </Button>
+          <Button
+            onClick={() => router.push("/pages/tracing")}
+            className="hover:text-yellow-300 cursor-pointer  bg-red-600  font-mono text-xl text-white border-none  rounded p-2 w-full"
+          >
+            <GiCarKey />
+            <p>Tracing</p>
+          </Button>
         </div>
         <div
           onClick={() => router.push("/")}
@@ -140,7 +210,7 @@ export function Header() {
             LUXURY <span className="text-red-400">DRIVE</span>
           </p>
         </div>
-        <div className="relative flex w-1/2 items-center text-black">
+        <div className="relative hidden md:flex w-1/2 items-center text-black">
           <Select
             onChange={(value: string) => setBrand(value)}
             placeholder="Brand"
