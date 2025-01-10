@@ -36,10 +36,22 @@ export default function Tracing() {
   useEffect(() => {
     GetTracingCars();
   }, []);
+  const iconVariants = (duration: number) => ({
+    initial: { y: -10 },
+    animate: {
+      y: [10, -10],
+      transition: {
+        duration: duration,
+        ease: "linear" as "linear",
+        repeat: Infinity,
+        repeatType: "reverse" as "reverse",
+      },
+    },
+  });
 
   return (
     <div className="w-full h-full">
-      <div className="relative w-full">
+      <div className="relative h-full w-full">
         <Image
           alt="porche"
           quality={100}
@@ -49,16 +61,16 @@ export default function Tracing() {
           unoptimized
           src="/pngtree.jpg"
         />
-        <div className="absolute flex flex-col items-center justify-center  gap-12 h-full p-20 inset-0">
+        <div className="absolute flex top-2 flex-col items-center justify-center  gap-4 md:gap-12 h-full p-2 md:p-20 inset-0">
           <motion.h1
             whileInView={{ opacity: 1, x: 0 }}
             initial={{ opacity: 0, x: -100 }}
             transition={{ duration: 1 }}
-            className="text-8xl w-10/12 font-medium text-center text-white "
+            className="text-xl md:text-8xl w-full md:w-10/12 font-medium text-center text-white "
           >
             Extraordinary cars limitless journeys await
           </motion.h1>
-          <div className="flex gap-4">
+          <div className="grid grid-cols-2 gap-x-12 md:flex md:gap-4">
             {TracingCars?.slice(0, 4).map((item: CarsType) => {
               const maxHorsePower = item.horsepower;
               const numbers = Array.from({ length: 12 }, (_, i) =>
@@ -71,14 +83,17 @@ export default function Tracing() {
                   className="w-full z-10 cursor-pointer rounded-xl transition-transform transform hover:scale-105 duration-300 group"
                   key={item._id}
                 >
-                  <div className="relative flex flex-col items-center min-h-60 rounded-t-xl overflow-hidden">
-                    <img
+                  <div className="relative flex flex-col items-center  md:min-h-60 rounded-t-xl overflow-hidden">
+                    <motion.img
+                      variants={iconVariants(2)}
+                      initial="initial"
+                      animate="animate"
                       src={item.img}
                       alt="carImg"
-                      className="w-full h-full object-contain"
+                      className="w-28 md:w-full h-14 md:h-full object-contain"
                     />
                     <div className="absolute inset-0">
-                      <div className="bg-red-600 flex items-center justify-center relative">
+                      <div className="bg-red-600 hidden md:flex items-center justify-center relative">
                         {numbers.map((number, index) => {
                           const angle = (index * 360) / numbers.length;
                           const x = 70 + 65 * Math.cos((angle * Math.PI) / 180);
@@ -115,38 +130,38 @@ export default function Tracing() {
         </div>
       </div>
       <div className="relative">
-        <div className="absolute inset-0 h-96 bg-gradient-to-t from-transparent to-black"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-transparent to-black"></div>
+        <div className="absolute inset-0  h-40 md:h-96 bg-gradient-to-t from-transparent to-black"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-20 md:h-96 bg-gradient-to-b from-transparent to-black"></div>
         <Image
           width={2000}
           className="z-10"
           height={2000}
           src="/1000_F.jpg"
-          alt=""
+          alt="car-img"
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="absolute top-40 text-6xl text-orange-600 font-serif">
+          <h1 className="absolute top-4 md:top-20 text-center text-center  text-xl md:text-6xl text-orange-600 font-serif">
             FAMOUS TRACKS FOR OUR ENJOYMENT
           </h1>
           <Carousel
             slidesToShow={3}
             arrows
             autoplay
-            className="absolute h-1/2 m-auto"
+            className="absolute h-full md:h-1/2 m-auto"
             style={{
               position: "absolute",
               inset: 0,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              padding: 40,
+              padding: 20,
             }}
             dotPosition="bottom"
             infinite={true}
           >
             {tracks?.map((item: Ttracks) => {
               return (
-                <div key={item.index} className="p-4">
+                <div key={item.index} className="p-4 mt-20 md:mt-0 ">
                   <div
                     onClick={() =>
                       router.push(`/pages/track/${item.index}/${item.title}`)
@@ -157,14 +172,14 @@ export default function Tracing() {
                       width={2000}
                       height={2000}
                       alt="trackimage"
-                      className="h-60 rounded-xl transition-all duration-300 group-hover:blur-sm"
+                      className="w-full h-20  md:h-60 rounded-xl transition-all duration-300 md:group-hover:blur-sm"
                       src={item.img}
                     />
                     <motion.div
                       initial={{ opacity: 0 }}
                       transition={{ duration: 1 }}
                       whileHover={{ opacity: 1 }}
-                      className="absolute inset-0 flex flex-col items-center justify-center"
+                      className="absolute hidden md:flex md:inset-0 flex-col items-center justify-center"
                     >
                       <h1 className="text-2xl font-serif text-orange-600">
                         {item.title}
@@ -175,13 +190,10 @@ export default function Tracing() {
                       </p>
                     </motion.div>
                   </div>
-                  <div className="flex gap-4 mt-2">
-                    <Button className="w-1/2">
-                      One lap / $ {item.rentPrice}
-                    </Button>
-                    <Button className="w-1/2">
-                      Day / $ {item.dayRentPrice}
-                    </Button>
+                  <div className=" block md:hidden w-24 h-6 m-auto text-start overflow-hidden">
+                    <p className="text-orange-500">
+                      {item.title.split("(").slice(0, 1)}...
+                    </p>
                   </div>
                 </div>
               );

@@ -551,6 +551,20 @@ export default function Page({
         </AnimatePresence>
         <div className="flex justify-between text-white h-full">
           <div className="bg-orange-900 hidden md:flex flex-col gap-2 min-h-screen z-40 rounded p-2 w-60">
+            <Select
+              placeholder="Sorting"
+              onChange={(value) => handleSortBrands(value)}
+              className="font-mono text-xl  border-none"
+            >
+              <Select.Option value={"price-asc"}>
+                Price: Low to High
+              </Select.Option>
+              <Select.Option value={"price-desc"}>
+                Price: High to Low
+              </Select.Option>
+              <Select.Option value={"name-asc"}>Name: A to Z</Select.Option>
+              <Select.Option value={"name-desc"}>Name: Z to A</Select.Option>
+            </Select>
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
