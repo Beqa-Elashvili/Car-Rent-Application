@@ -78,7 +78,7 @@ export default function Page({
       if (min !== 0) {
         page = 1;
       }
-      console.log(min)
+      console.log(min);
       const params = new URLSearchParams();
       if (brand && brand !== "All")
         params.append("brand", decodeURIComponent(brand));
@@ -264,6 +264,28 @@ export default function Page({
     }
   };
 
+  const handleSortBrands = (sortType: string) => {
+    let newBrand = [...brand];
+
+    switch (sortType) {
+      case "price-asc":
+        newBrand = newBrand.sort((a, b) => a.dayPrice - b.dayPrice);
+        break;
+      case "price-desc":
+        newBrand = newBrand.sort((a, b) => b.dayPrice - a.dayPrice);
+        break;
+      case "name-asc":
+        newBrand = newBrand.sort((a, b) => a.model.localeCompare(b.model));
+        break;
+      case "name-desc":
+        newBrand = newBrand.sort((a, b) => b.model.localeCompare(a.model));
+        break;
+      default:
+        break;
+    }
+    setBrandData(newBrand);
+  };
+
   return (
     <div className="bg-orange-500 min-h-screen relative p-2 h-full">
       <div>
@@ -380,7 +402,7 @@ export default function Page({
           )}
         </AnimatePresence>
         <div className="flex justify-between text-white h-full">
-          <div className="bg-orange-900 flex flex-col gap-2 min-h-screen z-40 rounded p-2 w-60">
+          <div className="bg-orange-900 hidden md:flex flex-col gap-2 min-h-screen z-40 rounded p-2 w-60">
             {collections.map((item: TCollecttion, index: number) => (
               <div
                 key={index}
@@ -479,7 +501,7 @@ export default function Page({
             </Form>
           </div>
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-10/12 gap-8 p-2 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full md:w-10/12 gap-8 p-2 text-center">
               {Array.from({ length: numb }).map((_item, index: number) => (
                 <div key={index} className="flex flex-col gap-4">
                   <Skeleton.Image active />
@@ -490,10 +512,29 @@ export default function Page({
               ))}
             </div>
           ) : (
-            <div className="bg-orange-900 w-10/12 p-2 flex flex-col justify-between text-center rounded-xl">
+            <div className="bg-orange-900 w-full md:w-10/12 p-2 flex flex-col justify-between items-center rounded-xl">
+              <div className="flex md:hidden w-full font-mono text-2xl gap-4 justify-between">
+                <Select
+                  placeholder="Sort"
+                  onChange={(value) => handleSortBrands(value)}
+                  className="font-mono text-xl  border-none w-1/2"
+                >
+                  <Select.Option value={"price-asc"}>
+                    Price: Low to High
+                  </Select.Option>
+                  <Select.Option value={"price-desc"}>
+                    Price: High to Low
+                  </Select.Option>
+                  <Select.Option value={"name-asc"}>Name: A to Z</Select.Option>
+                  <Select.Option value={"name-desc"}>
+                    Name: Z to A
+                  </Select.Option>
+                </Select>
+                <Button className="border-none w-1/2">Filter</Button>
+              </div>
               <div>
                 {error && <div className="text-center mt-12">{error}</div>}
-                <div className="grid items-start text-start grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
+                <div className="grid items-center text-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-2">
                   {brand?.map((car: CarsType, index: number) => {
                     return (
                       <div

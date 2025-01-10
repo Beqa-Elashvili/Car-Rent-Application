@@ -91,7 +91,7 @@ export function Header() {
       <div className="flex justify-between p-2 text-xl h-full items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-xl mr-2 inline lg:hidden"
+          className="rounded-xl mr-2 inline md:hidden"
         >
           {isOpen ? (
             <RiMenuFoldFill className="size-8" />
@@ -275,7 +275,7 @@ export function Header() {
         </div>
         <UserProfile />
       </div>
-      <div className="hidden lg:inline">
+      <div className="hidden md:inline">
         <div className="flex px-12 p-2 gap-4 bg-slate-700 justify-between">
           <div
             onClick={() => router.push("/")}

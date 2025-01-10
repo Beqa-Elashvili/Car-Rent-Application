@@ -304,7 +304,7 @@ export function Main() {
               whileInView={{ opacity: 1, y: 0 }}
               initial={{ opacity: 0, y: 200 }}
               transition={{ duration: 1 }}
-              className="text-xl text-black hover:bg-orange-600  p-2 px-6 rounded-full bg-orange-500"
+              className="text-xl md:text-3xl text-black hover:bg-orange-600  p-2 px-6 rounded-full bg-orange-500"
             >
               EXPLORE
             </motion.button>
@@ -380,7 +380,11 @@ export function Main() {
               <Button className="h-6  md:h-full" onClick={ClearModelsAndClases}>
                 Clear
               </Button>
-              <Button className="h-6 md:h-full mt-1" type="primary" htmlType="submit">
+              <Button
+                className="h-6 md:h-full mt-1"
+                type="primary"
+                htmlType="submit"
+              >
                 Search
               </Button>
             </Form>
@@ -393,12 +397,12 @@ export function Main() {
               className="cursor-pointer"
               onClick={() => GetCarModel(item.name)}
             >
-              <div className="relative hover:text-gray-400 h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
+              <div className="relative hover:text-gray-200 h-44 w-10/12 flex flex-col overflow-hidden justify-center m-auto">
                 <motion.div
                   whileInView={{ opacity: 1, x: 0 }}
                   initial={{ opacity: 0, x: -100 }}
                   transition={{ duration: 1 }}
-                  className="text-[220px] absolute"
+                  className="text-9xl  md:text-[220px] absolute"
                 >
                   <item.img className="opacity-40" />
                 </motion.div>
@@ -406,7 +410,7 @@ export function Main() {
                   whileInView={{ opacity: 1, x: 0 }}
                   initial={{ opacity: 0, x: 100 }}
                   transition={{ duration: 1 }}
-                  className="ml-36"
+                  className="ml-20 text-5xl md:text-[100px] lg:text-[120px]  md:ml-36"
                 >
                   {item.name}
                 </motion.h1>
@@ -419,7 +423,7 @@ export function Main() {
         <div className="relative h-96 bg-orange-900 ">
           <div className="absolute inset-0 h-96 bg-gradient-to-t to-black from-transparent opacity-90 ">
             <div className="w-3/4 py-12 m-auto">
-              <h1 className="text-6xl">Get a quote</h1>
+              <h1 className=" text-3xl md:text-6xl">Get a quote</h1>
               <div className="grid grid-cols-2 items-center mt-12 gap-8">
                 <Input
                   name="Name"
