@@ -46,6 +46,7 @@ export default function Page({
 
   const [maxMinprices, setMaxMinPrices] = useState({ min: 0, max: 2000 });
   const [brand, setBrandData] = useState<CarsType[]>([]);
+  const [FilterisOpen, setFilterisOpen] = useState<boolean>(false);
   const { data: session } = useSession();
   const router = useRouter();
   const [form] = useForm();
@@ -207,7 +208,6 @@ export default function Page({
   const [brandName, setBrandName] = useState<string>("");
   const [model, setModel] = useState<string | undefined>("");
   const [carClass, setCarClass] = useState<string | undefined>("");
-
   const [chosenModels, setChosenModels] = useState<string[]>([]);
   const [chosenClass, setChosenClass] = useState<string[]>([]);
 
@@ -285,10 +285,149 @@ export default function Page({
     }
     setBrandData(newBrand);
   };
+  const handleReserved = () => {
+    if (FilterisOpen) {
+      setFilterisOpen(false);
+    }
+    setIsOpen(true);
+  };
 
   return (
     <div className="bg-orange-500 min-h-screen relative p-2 h-full">
       <div>
+        <AnimatePresence>
+          {FilterisOpen && (
+            <motion.div
+              key={"modal"}
+              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, x: 100 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.5 }}
+              className="fixed overflow-y-auto top-0 right-0 w-4/5 h-screen bg-white z-50 p-2"
+            >
+              <button
+                onClick={() => setFilterisOpen(false)}
+                className="p-2 w-40 bg-red-500 hover:bg-red-600 rounded-xl float-end"
+              >
+                close
+              </button>
+              <div className="mt-12">
+                <div className="bg-gray-200 h-px w-full"></div>
+                <div className="bg-orange-900 flex md:hidden flex-col gap-2 min-h-screen z-40 rounded p-2">
+                  <Select
+                    className="flex items-center gap-2 overflow-hidden"
+                    defaultValue={params.brand}
+                    value={params.brand}
+                    onChange={(value) =>
+                      router.push(`/pages/brands/${value}/All/All`)
+                    }
+                  >
+                    {collections.map((item: TCollecttion, index: number) => (
+                      <Select.Option
+                        key={index}
+                        value={item.name}
+                        className={` flex items-center  cursor-pointer hover:bg-gray-700 h-14 w-full overflow-hidden rounded-xl p-2 gap-2 ${
+                          params.brand === item.name && "bg-gray-200"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <img
+                            className="w-8 h-8 object-contain"
+                            src={item.img}
+                            alt="logo"
+                          />
+                          <p className="font-serif">{item.name}</p>
+                        </div>
+                      </Select.Option>
+                    ))}
+                  </Select>
+                  <Button
+                    disabled={ReserveCars.length === 0}
+                    onClick={handleReserved}
+                    className="rounded w-full border-none font-medium text-white bg-green-600 p-2 cursor-pointer hover:bg-green-700 mt-2"
+                  >
+                    Reserved
+                  </Button>
+                  <div className="border text-center text-white p-2 mt-2 rounded">
+                    <h1 className="font-medium">PRICES SORT</h1>
+                    <Slider
+                      onChange={(e: number[]) => sortByPrices(e)}
+                      range
+                      max={2000}
+                      min={0}
+                      defaultValue={[maxMinprices.min, maxMinprices.max]}
+                    />
+                    <div className="flex w-full gap-2">
+                      <div className="border w-full border-orange-500 rounded  p-2">
+                        $ {maxMinprices.min}
+                      </div>
+                      <div className="border w-full border-orange-500 rounded  p-2">
+                        $ {maxMinprices.max}
+                      </div>
+                    </div>
+                  </div>
+                  <Form<TFormtype>
+                    form={form}
+                    onFinish={onFinish}
+                    className="flex border p-2 rounded-xl flex-col justif-center gap-2"
+                  >
+                    <Form.Item
+                      name="brand"
+                      rules={[
+                        { required: true, message: "Please input a value!" },
+                      ]}
+                    >
+                      <Select
+                        value={brandName}
+                        onChange={(e) => setBrandName(e)}
+                        placeholder="Select an brand"
+                      >
+                        {collections?.map(
+                          (item: TCollecttion, index: number) => (
+                            <Select.Option key={index} value={item.name}>
+                              {item.name}
+                            </Select.Option>
+                          )
+                        )}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item name="model">
+                      <Select
+                        value={model}
+                        onChange={(e) => setModel(e)}
+                        placeholder="Select an model"
+                      >
+                        {chosenModels?.map((item: string, index: number) => (
+                          <Select.Option key={index} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Form.Item name="class">
+                      <Select
+                        value={carClass}
+                        onChange={(e) => setCarClass(e)}
+                        placeholder="Select an class"
+                      >
+                        {chosenClass?.map((item: string, index: number) => (
+                          <Select.Option key={index} value={item}>
+                            {item}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+
+                    <Button onClick={ClearModelsAndClases}>Clear</Button>
+                    <Button type="primary" htmlType="submit">
+                      Search
+                    </Button>
+                  </Form>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -297,7 +436,7 @@ export default function Page({
               initial={{ opacity: 0, x: 100 }}
               exit={{ opacity: 0, x: 100 }}
               transition={{ duration: 0.5 }}
-              className="fixed overflow-y-auto top-0 right-0 w-1/2 h-screen bg-white z-50 p-2"
+              className="fixed overflow-y-auto top-0 right-0 w-4/5 md:w-1/2 h-screen bg-white z-50 p-2"
             >
               <button
                 onClick={() => setIsOpen(false)}
@@ -320,19 +459,27 @@ export default function Page({
 
                     return (
                       <div key={item._id}>
-                        <div className="bg-yellow-500 p-2 rounded-xl flex items-center justify-center">
-                          <img className="w-40" src={item.img} alt="Carimg" />
+                        <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-center">
+                          <img
+                            className="w-40 m-auto md:text-start"
+                            src={item.img}
+                            alt="Carimg"
+                          />
                           <div className="flex flex-col w-full">
-                            <p className="font-medium text-lg">
+                            <p className="font-medium hidden md:block text-lg">
                               {item.make.toUpperCase()} |{" "}
                               {item.model.toUpperCase()}
                             </p>
-                            <div className="flex justify-between w-full">
+                            <p className="font-medium block md:hidden flex flex-col">
+                              <p> {item.make.toUpperCase()}</p>
+                              <p> {item.model.toUpperCase()}</p>
+                            </p>
+                            <div className="md:flex justify-between w-full">
                               <div className="text-sm">
                                 <p>Price per Day: ${item.dayPrice}</p>
                                 <p>Period: 8+ days</p>
                               </div>
-                              <div className="flex gap-2 items-center">
+                              <div className="flex gap-2 mt-2 md:mt-0 items-center justify-between">
                                 <button
                                   onClick={() =>
                                     ChangeCarDayCount(item, false, "increase")
@@ -359,6 +506,7 @@ export default function Page({
                                   </span>
                                 )}
                                 <button
+                                  className="text-end"
                                   onClick={() =>
                                     deleteReservedCar(
                                       item._id,
@@ -530,7 +678,12 @@ export default function Page({
                     Name: Z to A
                   </Select.Option>
                 </Select>
-                <Button className="border-none w-1/2">Filter</Button>
+                <Button
+                  onClick={() => setFilterisOpen(!FilterisOpen)}
+                  className="border-none w-1/2"
+                >
+                  Filter
+                </Button>
               </div>
               <div>
                 {error && <div className="text-center mt-12">{error}</div>}
