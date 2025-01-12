@@ -9,7 +9,7 @@ export default function Page() {
   const { collections } = useGlobalProvider();
   const router = useRouter();
   return (
-    <div className="bg-gray-800 min-h-screen h-full flex items-center p-4 justify-center flex-wrap gap-2 ">
+    <div className="bg-gray-800 min-h-screen h-full items-center p-4 grid grid-cols-2 md:grid-cols-4 items-center justify-center  gap-2 ">
       {collections?.map((item: TCollecttion, index: number) => (
         <div
           key={index}
@@ -29,7 +29,7 @@ export default function Page() {
               alt="brand-logo"
             />
           </motion.div>
-          <h1 className="text-3xl font-medium text-white">
+          <h1 className="text-lg md:text-3xl font-medium text-white">
             {item.name?.toUpperCase()}
           </h1>
         </div>

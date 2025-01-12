@@ -18,9 +18,7 @@ export default function Chackout() {
   const { ReserveCars, location, deleteReservedCar, reservedTracks } =
     useGlobalProvider();
   const { data: session } = useSession();
-  const [SubTotal, setSubtotal] = useState<number>(0);
   const [value, setValue] = useState<number>();
-  const [PromoCode, setPromoCode] = useState<number[]>([]);
   const [randomNumber, setRandomNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const userId = session?.user?.id;
@@ -49,27 +47,12 @@ export default function Chackout() {
     cardunlock: state.cardunlock,
   };
 
-  const handlePromoCode = () => {
-    if (value && value.toString().length === 4 && !PromoCode.includes(value)) {
-      setPromoCode((prevCodes) => [...prevCodes, value]);
-      handleButtonClick();
-      setValue(0);
-    } else {
-      alert("Invalid or duplicate promo code");
-    }
-  };
-
   useEffect(() => {
     const generateRandomNumber = () => {
       return Math.floor(Math.random() * (100 - 30 + 1)) + 30;
     };
     setRandomNumber(generateRandomNumber());
   }, []);
-
-  const handleButtonClick = () => {
-    const newRandomNumber = Math.floor(Math.random() * (200 - 100 + 1)) + 100;
-    setSubtotal((_prevSubTotal) => SubTotal - newRandomNumber);
-  };
 
   type FieldType = {
     username: string;
@@ -457,27 +440,6 @@ export default function Chackout() {
           <h1 className="flex justify-between w-full text-lg">
             Total <p>{handleToTalPrice()} $</p>
           </h1>
-          <div className="mt-4">
-            <p className="text-sm text-gray-500">
-              Apply a Promo Code or Discount (one per order)
-            </p>
-            <div className="relative w-full mt-2 flex items-center">
-              <Input
-                type="number"
-                maxLength={4}
-                value={value}
-                onChange={(e) => setValue(parseInt(e.target.value))}
-                className="p-0 pl-2 h-8"
-                placeholder="Promo Code"
-              />
-              <Button
-                onClick={() => handlePromoCode()}
-                className="absolute rounded-none rounded-r right-0 px-2 h-full border-l"
-              >
-                APPLY
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

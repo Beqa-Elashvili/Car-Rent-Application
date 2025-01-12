@@ -116,7 +116,6 @@ export default function Page({
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         setError(error.response?.data?.message);
-        // setBrandData([]);
         console.log("error thile fatch brand data");
       }
     } finally {
@@ -767,6 +766,7 @@ export default function Page({
                             className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
                           >
                             RESERVE
+                            {loadingStates[car._id] && <Spin />}
                           </Button>
                         </div>
                       </div>

@@ -318,13 +318,13 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         console.error("User is not authenticated");
         return;
       }
+
       const Existeditem = ReserveCars.find(
         (item: CarsType) => item.img === car.img
       );
 
       if (Existeditem) {
         ChangeCarDayCount(car, true, "increase");
-        if (setIsOpen) setIsOpen(true);
         return;
       } else {
         const response = await axios.post("/api/reservedcars", {

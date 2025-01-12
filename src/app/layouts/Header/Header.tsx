@@ -105,7 +105,7 @@ export function Header() {
             transform: isOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "opacity 0.5s ease, transform 0.5s ease",
           }}
-          className={`absolute z-10 top-[100%] flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
+          className={`absolute z-20 top-[100%] flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
            }`}
         >
           <div className="relative w-full flex md:hidden  items-center text-black">
@@ -131,7 +131,7 @@ export function Header() {
                 searchResults.length !== 0 && "rounded-b-none"
               }`}
             />
-            {loading && <Spin className="z-40 absolute right-14" />}
+            {loading && <Spin className="z-40 absolute right-10" />}
             <button
               onClick={() => handleSearchResults(brand, value)}
               className={`z-40 hover:bg-cyan-600 absolute right-0 border-none border-l h-full ${

@@ -15,7 +15,7 @@ export default function ReserveCars() {
 
   const getTotalPrice = () => {
     const totalRentCarPrice = ReserveCars.reduce((accimulator, car) => {
-      return accimulator + car.dayPrice;
+      return accimulator + car.dayPrice * car.carDayCount;
     }, 0);
     const totalRentTrackPrice = reservedTracks.reduce((accumulator, track) => {
       return accumulator + track.totalPrice;
@@ -109,8 +109,9 @@ export default function ReserveCars() {
                   <h1>Total: {item.totalPrice} $</h1>
                 </div>
               </div>
-              <div className="flex gap-2">
-                Date:
+              <div className="flex flex-col md:flex gap-2">
+                <p>Date</p>
+                <p className="h-px bg-gray-200 w-full"></p>
                 {item.oneLap ? (
                   <h1>{item.dayStart}</h1>
                 ) : (
@@ -126,8 +127,8 @@ export default function ReserveCars() {
         );
       })}
 
-      <div className="w-full bg-green-500 rounded-xl p-12">
-        <div className="w-3/6 m-auto flex flex-col gap-2 text-start">
+      <div className="w-full bg-green-500 rounded-xl p-2 md:p-12">
+        <div className=" w-full md:w-3/6 m-auto flex flex-col gap-2 text-start">
           <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
             <h1 className="w-20">Total Days:</h1>
             <span>{TotalDayCount()} x</span>

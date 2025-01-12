@@ -2,7 +2,7 @@
 
 import { Ttracks } from "@/app/Providers/GlobalProvider/GlobalContext";
 
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { useRouter } from "next/navigation";
 import { Carousel, Calendar, Modal } from "antd";
 import type { Dayjs } from "dayjs";
@@ -25,6 +25,16 @@ export default function Track({ params }: { params: { id: number } }) {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setReserveTrackValue({
+      dayStart: "",
+      dayEnd: "",
+      rentPrice: 0,
+      dayRentPrice: 0,
+      totalPrice: 0,
+      dayCount: 0,
+      oneLap: false,
+    });
+    setStartDate(null);
   };
 
   const [reserveTrackValue, setReserveTrackValue] = useState({
@@ -77,26 +87,6 @@ export default function Track({ params }: { params: { id: number } }) {
   };
 
   const handleDayOrDays = (key: string, value: number) => {
-    if (reserveTrackValue.rentPrice > 0 || reserveTrackValue.dayRentPrice > 0) {
-      const yesOrno = confirm(
-        `you alreay choose ${
-          reserveTrackValue.rentPrice > 0 ? "oneLap" : "whole day/days"
-        } : if you need change, clear the sentance`
-      );
-      if (yesOrno) {
-        setReserveTrackValue({
-          dayStart: "",
-          dayEnd: "",
-          rentPrice: 0,
-          dayRentPrice: 0,
-          totalPrice: 0,
-          dayCount: 0,
-          oneLap: false,
-        });
-        setStartDate(null);
-        return;
-      }
-    }
     setIsModalOpen(true);
     setReserveTrackValue((prev) => ({
       ...prev,
@@ -125,15 +115,15 @@ export default function Track({ params }: { params: { id: number } }) {
       const requestData = {
         track: {
           title: currentTrack.title,
-          loop: currentTrack.loop, 
-          rentPrice: currentTrack.rentPrice, 
-          dayRentPrice: reserveTrackValue.dayRentPrice, 
-          location: currentTrack.location, 
-          description: currentTrack.description, 
-          dayStart: reserveTrackValue.dayStart, 
-          dayEnd: reserveTrackValue.dayEnd, 
-          dayCount: reserveTrackValue.dayCount, 
-          oneLap: reserveTrackValue.oneLap, 
+          loop: currentTrack.loop,
+          rentPrice: currentTrack.rentPrice,
+          dayRentPrice: reserveTrackValue.dayRentPrice,
+          location: currentTrack.location,
+          description: currentTrack.description,
+          dayStart: reserveTrackValue.dayStart,
+          dayEnd: reserveTrackValue.dayEnd,
+          dayCount: reserveTrackValue.dayCount,
+          oneLap: reserveTrackValue.oneLap,
           totalPrice: totalPrice,
         },
         userId,
@@ -142,97 +132,121 @@ export default function Track({ params }: { params: { id: number } }) {
       const resp = await axios.post("/api/reservedtracks", requestData);
     } catch (error) {
       console.log(error);
+    } finally {
+      setReserveTrackValue({
+        dayStart: "",
+        dayEnd: "",
+        rentPrice: 0,
+        dayRentPrice: 0,
+        totalPrice: 0,
+        dayCount: 0,
+        oneLap: false,
+      });
+      setStartDate(null);
     }
   }
+  console.log(reserveTrackValue);
 
   return (
-    <div className="bg-gray-900 w-full min-h-screen flex flex-col h-full p-12">
-      <Modal
-        title="Basic Modal"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Calendar
-          disabledDate={disableBeforeToday}
-          fullscreen={false}
-          onChange={onDateChange}
-        />
-      </Modal>
-      {currentTrack && (
-        <div className="bg-gray-900 min-h-screen h-full w-full text-white flex flex-col gap-2 items-center">
-          <h1 className="text-3xl text-orange-500 font-serif">
-            {currentTrack.title}
-          </h1>
-          <h1 className="text-sm font-mono text-orange-300">
-            {currentTrack.location} : {currentTrack.established}
-          </h1>
-          <div className="flex flex-col w-1/2">
-            <div className="flex flex-col">
-              <div className="flex justify-between text-3xl font-bold font-mono">
-                <div>
-                  <h1 className="text-orange-400">START WITH</h1>
-                  <div className="h-px bg-gray-700"></div>
-                  <h1>{currentTrack.rentPrice} $ LAP</h1>
-                </div>
-                <div>
-                  <h1 className="text-orange-400">LOOP</h1>
-                  <div className="h-px bg-gray-700"></div>
-                  <h1>{currentTrack.loop}KM</h1>
+    <div className="bg-gray-900 p-2 md:p-0">
+      <div className="w-full p-12 min-h-screen flex flex-col ">
+        <Modal
+          title="Basic Modal"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div className="p-2 w-full border rounded h-8 flex items-center justify-center">
+              {reserveTrackValue?.dayStart}
+            </div>
+            <div className="p-2 w-full border rounded h-8 flex items-center justify-center">
+              {reserveTrackValue?.dayEnd}
+            </div>
+          </div>
+          <Calendar
+            disabledDate={disableBeforeToday}
+            fullscreen={false}
+            onChange={onDateChange}
+          />
+        </Modal>
+        {currentTrack && (
+          <div className="bg-gray-900 min-h-screen h-full w-full text-white flex flex-col gap-2 items-center">
+            <h1 className="text-3xl text-orange-500 font-serif">
+              {currentTrack.title}
+            </h1>
+            <h1 className="text-sm font-mono text-orange-300">
+              {currentTrack.location} : {currentTrack.established}
+            </h1>
+            <div className="flex flex-col w-full md:w-1/2">
+              <div className="flex flex-col">
+                <div className="flex justify-between text-3xl font-bold font-mono">
+                  <div>
+                    <h1 className="text-orange-400">START WITH</h1>
+                    <div className="h-px bg-gray-700"></div>
+                    <h1>{currentTrack.rentPrice} $ LAP</h1>
+                  </div>
+                  <div>
+                    <h1 className="text-orange-400">LOOP</h1>
+                    <div className="h-px bg-gray-700"></div>
+                    <h1>{currentTrack.loop}KM</h1>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="flex items-center justify-center gap-6 w-7/12">
-            <Button
-              onClick={() =>
-                handleDayOrDays("rentPrice", currentTrack.rentPrice)
-              }
-              className="rounded-full bg-orange-500 text-white border-none transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 "
-            >
-              LAP/{currentTrack.rentPrice}$
-            </Button>
-            <Image
-              src={currentTrack.img}
-              width={2000}
-              height={2000}
-              alt="trackImage"
-              className="w-full mt-2 rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
-            />
-            <Button
-              onClick={() =>
-                handleDayOrDays("dayRentPrice", currentTrack.dayRentPrice)
-              }
-              className="rounded-full bg-orange-500 border-none text-white transition duration-300 hover:scale-105 font-mono font-bold w-24 h-24 "
-            >
-              DAY/{currentTrack.dayRentPrice}$
-            </Button>
-          </div>
-          <div className="text-center text-balance mt-2 text-sm font-mono text-orange-300">
-            {currentTrack.description}
-          </div>
-          <div className="text-center w-full flex flex-col gap-4">
-            <h1 className="text-3xl text-mono text-orange-500">
-              FAMOUS EVENTS
-            </h1>
+            <div className="flex items-center justify-center gap-6 w-7/12">
+              <Button
+                onClick={() =>
+                  handleDayOrDays("rentPrice", currentTrack.rentPrice)
+                }
+                className="rounded-full bg-orange-500 text-white border-none transition duration-300 hover:scale-105 font-mono font-bold w-20 md:w-24 h-20 md:h-24 "
+              >
+                LAP/{currentTrack.rentPrice}$
+              </Button>
+              <Image
+                src={currentTrack.img}
+                width={2000}
+                height={2000}
+                alt="trackImage"
+                className="w-full mt-2 rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
+              />
+              <Button
+                onClick={() =>
+                  handleDayOrDays("dayRentPrice", currentTrack.dayRentPrice)
+                }
+                className="rounded-full bg-orange-500 border-none text-white transition duration-300 hover:scale-105 font-mono font-bold w-20 md:w-24 h-20 md:h-24 "
+              >
+                DAY/{currentTrack.dayRentPrice}$
+              </Button>
+            </div>
+            <div className="text-center text-balance mt-2 text-sm font-mono text-orange-300">
+              {currentTrack.description}
+            </div>
+            <div className="text-center w-full flex flex-col gap-4">
+              <h1 className="text-3xl text-mono text-orange-500">
+                FAMOUS EVENTS
+              </h1>
+              <div className="h-px bg-gray-700 w-full"></div>
+              <h1 className="text-xl text-orange-300">
+                {currentTrack.famousEvents.map((item: string, index: number) =>
+                  index === currentTrack.famousEvents.length - 1
+                    ? item
+                    : item + " : "
+                )}
+              </h1>
+            </div>
             <div className="h-px bg-gray-700 w-full"></div>
-            <h1 className="text-xl text-orange-300">
-              {currentTrack.famousEvents.map((item: string, index: number) =>
-                index === currentTrack.famousEvents.length - 1
-                  ? item
-                  : item + " : "
-              )}
-            </h1>
+            <div>
+              <h1 className="text-orange-500 text-center md:text-start font-mono">
+                {currentTrack.notes}
+              </h1>
+            </div>
           </div>
-          <div className="h-px bg-gray-700 w-full"></div>
-          <div>
-            <h1 className="text-orange-500 font-mono">{currentTrack.notes}</h1>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <Carousel
-        className="p-12"
+        className="py-6 md:py-0 p-4 md:p-0 md:p-12"
         slidesToShow={4}
         arrows
         infinite
@@ -244,6 +258,7 @@ export default function Track({ params }: { params: { id: number } }) {
             onClick={() =>
               router.push(`/pages/track/${item.index}/${item.title}`)
             }
+            className="p-2"
             key={item.index}
           >
             <Image
@@ -251,7 +266,7 @@ export default function Track({ params }: { params: { id: number } }) {
               width={2000}
               height={2000}
               alt="trackImage"
-              className="w-60 h-40 m-auto rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
+              className="w-40 md:w-60 h-20 md:h-40 m-auto rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
             />
           </div>
         ))}

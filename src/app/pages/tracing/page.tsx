@@ -209,15 +209,15 @@ export default function Tracing() {
           height={2000}
           alt="image"
         />
-        <div className="absolute p-20 inset-0 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5  items-center justify-center">
-          {TracingCars?.map((item: CarsType) => {
+        <div className="absolute p-2 md:p-20 inset-0 grid grid-cols-3 items-center justify-center">
+          {TracingCars.slice(0, 6)?.map((item: CarsType) => {
             return (
               <div
                 className="w-full z-10 cursor-pointer rounded-xl transition-transform transform hover:scale-105 duration-300 group"
                 key={item._id}
               >
                 <div className="relative flex flex-col items-center rounded-t-xl overflow-hidden">
-                  <h1 className="text-xl font-sans font-medium text-amber-600">
+                  <h1 className="text-xl hidden md:block font-sans font-medium text-amber-600">
                     {item.model}
                   </h1>
                   <Image
@@ -226,11 +226,11 @@ export default function Tracing() {
                     height={2000}
                     alt="carImg"
                     onClick={() => router.push(`/pages/solocar/${item._id}`)}
-                    className="w-full h-40 object-contain"
+                    className="w-full h-16 md:h-40 object-contain"
                   />
                   {session !== null ? (
                     <Button
-                      className="bg-orange-500 border-none text"
+                      className="bg-orange-500 border-none font-serif text-white"
                       onClick={() => addCarToReserve(item, ChangeCarDayCount)}
                     >
                       RESERVE
