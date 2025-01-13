@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-      "build": "npm install --legacy-peer-deps && next build",
+    "build": "npm install --legacy-peer-deps && next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next export"
@@ -21,7 +21,6 @@
     "next": "^14.2.19",
     "next-auth": "^4.24.8",
     "react": "^18.3.1",
-    "react-credit-card-input": "^1.1.5",
     "react-credit-cards": "^0.8.3",
     "react-credit-cards-2": "^1.0.3",
     "react-date-range": "^2.0.1",

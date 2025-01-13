@@ -469,10 +469,10 @@ export default function Page({
                               {item.make.toUpperCase()} |{" "}
                               {item.model.toUpperCase()}
                             </p>
-                            <p className="font-medium block md:hidden flex flex-col">
+                            <div className="font-medium block md:hidden flex flex-col">
                               <p> {item.make.toUpperCase()}</p>
                               <p> {item.model.toUpperCase()}</p>
-                            </p>
+                            </div>
                             <div className="md:flex justify-between w-full">
                               <div className="text-sm">
                                 <p>Price per Day: ${item.dayPrice}</p>
