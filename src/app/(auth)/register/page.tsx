@@ -6,8 +6,6 @@ import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
 import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { FcGoogle } from "react-icons/fc";
-import { signIn } from "next-auth/react";
 import { FaMapMarkedAlt } from "react-icons/fa";
 
 function Register() {
@@ -243,13 +241,6 @@ function Register() {
                 <p className="text-gray-300 mb-1">or</p>
                 <div className="flex-1 h-px bg-gray-400"></div>
               </div>
-              <Button
-                onClick={() => signIn("google")}
-                className="flex items-center font-medium py-5 rounded-xl w-full"
-              >
-                <FcGoogle className="size-6" />
-                Sign up with Google
-              </Button>
               <div className="w-full flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-400"></div>
                 <p className="text-gray-300 mb-1">Already Member?</p>
