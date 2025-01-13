@@ -1,8 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import NextAuth from "next-auth/next";
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
 import { User } from "models/userModal";
 import bcrypt from "bcrypt";
-import GoogleProvider from "next-auth/providers/google";
 
 interface Credentials {
   email: string;
@@ -26,7 +26,7 @@ async function login(credentials: Credentials) {
   }
 }
 
-export const authOptions = {
+const authOptions = {
   pages: {
     signIn: "/login",
   },
@@ -71,5 +71,7 @@ export const authOptions = {
   },
 };
 
+// Define the GET and POST handlers using NextAuth
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
