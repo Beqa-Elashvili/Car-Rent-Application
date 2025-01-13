@@ -6,6 +6,7 @@ import { GiTridentShield } from "react-icons/gi";
 import { GoogleMap } from "@/app/Components/GoogleMap";
 import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+
 import { FaMapMarkedAlt } from "react-icons/fa";
 
 function Register() {
