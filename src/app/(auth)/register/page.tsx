@@ -28,11 +28,20 @@ function Register() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  type FormValues = {
+    phonenumber: string;
+    password: string;
+    repeatPassword: string;
+    email: string;
+    city: string;
+    street: string;
+  };
 
-  const handleSubmit = async (values: any) => {
-    const { email, city, street } = values;
+  const handleSubmit = async (values: FormValues) => {
+    const { phonenumber, password, repeatPassword, email, city, street } =
+      values;
 
-    if (values.phonenumber.length !== 9) {
+    if (phonenumber.length !== 9) {
       form.setFields([
         {
           name: "phonenumber",
@@ -41,7 +50,8 @@ function Register() {
       ]);
       return;
     }
-    if (values.password !== values.repeatPassword) {
+
+    if (password !== repeatPassword) {
       form.setFields([
         {
           name: "repeatPassword",
@@ -59,23 +69,24 @@ function Register() {
 
     try {
       setPending(true);
-      const res = await fetch("api/register", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
       });
+
       if (res.ok) {
         localStorage.setItem("city", city);
         localStorage.setItem("street", street);
         router.push("/login");
       } else {
         const errorData = await res.json();
-        setError(errorData.message);
+        setError(errorData.message || "Registration failed.");
       }
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
       setError("An error occurred while registering.");
     } finally {
       setPending(false);
@@ -89,7 +100,7 @@ function Register() {
     if (location.street) {
       form.setFieldsValue({ street: location.street });
     }
-  }, [location]);
+  }, [location, form]);
 
   return (
     <div className="text-white bg-green-600 w-full h-full relative flex items-center justify-center gap-12 py-8">

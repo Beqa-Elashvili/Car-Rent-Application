@@ -59,7 +59,7 @@ function SignIn() {
         <Image
           className="absolute top-60 object-contain lg:w-3/6 left-0 top-20 z-10"
           src="/pngimg.com - lamborghini.png"
-          alt=""
+          alt="img"
           width={1000}
           height={300}
         />

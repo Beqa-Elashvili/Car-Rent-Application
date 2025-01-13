@@ -327,7 +327,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         ChangeCarDayCount(car, true, "increase");
         return;
       } else {
-        const response = await axios.post("/api/reservedcars", {
+        await axios.post("/api/reservedcars", {
           userId,
           car,
         });
@@ -384,6 +384,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         error,
         setError,
         carsModels,
+        setCarsModels,
+
         conditions,
         ReserveCars,
         setReserveCars,

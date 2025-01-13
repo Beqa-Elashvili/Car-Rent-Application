@@ -1,5 +1,3 @@
-import { CardType } from "antd/es/card/Card";
-import { StaticImageData } from "next/image";
 import { Dispatch, SetStateAction, createContext } from "react";
 import { IconType } from "react-icons";
 
@@ -52,7 +50,7 @@ export interface TcarsModels {
 }
 export interface TCollecttion {
   name: string | undefined;
-  img: string | undefined;
+  img: string;
 }
 export interface TConditions {
   title: string;
@@ -110,6 +108,7 @@ interface GlobalContextProps {
   setCarData: Dispatch<SetStateAction<CarsType[]>>;
 
   carsModels: TcarsModels[];
+  setCarsModels: Dispatch<SetStateAction<TcarsModels[]>>;
 
   ReserveTotalPrice: number | null;
   setReserveTotalPrice: Dispatch<SetStateAction<number | null>>;
@@ -161,6 +160,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setCarData: () => {},
   userId: "",
   carsModels: [],
+  setCarsModels: () => {},
   ReserveTotalPrice: null,
   setReserveTotalPrice: () => {},
   error: null,

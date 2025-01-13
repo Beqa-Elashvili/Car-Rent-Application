@@ -18,7 +18,6 @@ export default function Chackout() {
   const { ReserveCars, location, deleteReservedCar, reservedTracks } =
     useGlobalProvider();
   const { data: session } = useSession();
-  const [value, setValue] = useState<number>();
   const [randomNumber, setRandomNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const userId = session?.user?.id;
@@ -115,12 +114,14 @@ export default function Chackout() {
     setIsModalOpen(true);
   };
 
-  const handleInputChange = (evt: { target: { name: any; value: any } }) => {
+  const handleInputChange = (evt: {
+    target: { name: string; value: string };
+  }) => {
     const { name, value } = evt.target;
     setState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleInputFocus = (evt: { target: { name: any } }) => {
+  const handleInputFocus = (evt: { target: { name: string } }) => {
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   };
 

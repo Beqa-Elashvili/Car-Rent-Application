@@ -1,5 +1,4 @@
 import { Brands } from "models/brands";
-import { Cars } from "models/cars";
 import { NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
 
@@ -62,7 +61,7 @@ export async function POST(req: Request) {
     );
   }
 }
-export async function GET(req: Request) {
+export async function GET() {
   try {
     await ConnectDB();
     const brands = await Brands.find({});

@@ -35,11 +35,13 @@ export function GoogleMap() {
 
         if (results.length > 0) {
           const addressComponents = results[0].address_components;
-          const cityComponent = addressComponents.find((component: any) =>
-            component.types.includes("locality")
+          const cityComponent = addressComponents.find(
+            (component: { types: string | string[] }) =>
+              component.types.includes("locality")
           );
-          const streetComponent = addressComponents.find((component: any) =>
-            component.types.includes("route")
+          const streetComponent = addressComponents.find(
+            (component: { types: string | string[] }) =>
+              component.types.includes("route")
           );
 
           setLocation({

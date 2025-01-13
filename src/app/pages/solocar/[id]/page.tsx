@@ -179,7 +179,13 @@ export default function Car({ params }: { params: { id?: string } }) {
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-2 md:p-12">
       {loading ? (
-        <img className="w-2/4 m-auto" src="/Animation.gif" alt="" />
+        <Image
+          width={2000}
+          height={2000}
+          className="w-2/4 m-auto"
+          src="/Animation.gif"
+          alt=""
+        />
       ) : (
         <>
           {car && (
@@ -225,9 +231,9 @@ export default function Car({ params }: { params: { id?: string } }) {
                       >
                         {"<"}
                       </p>
-                      <img
+                      <Image
                         className="w-full h-40 md:h-96 object-contain"
-                        src={handleCarImg(car, angle)}
+                        src={handleCarImg(car, angle) || car.img}
                         alt="Car Image"
                         width={2000}
                         height={2000}
@@ -317,7 +323,9 @@ export default function Car({ params }: { params: { id?: string } }) {
                   onClick={() => router.push(`/pages/solocar/${item._id}`)}
                   className="text-center p-0 md:p-2 hover:bg-slate-700 rounded-full cursor-pointer"
                 >
-                  <img
+                  <Image
+                    width={2000}
+                    height={2000}
                     className="h-20 md:h-60 md:w-96 m-auto object-contain"
                     src={item.img}
                     alt="Carimg"

@@ -11,7 +11,7 @@ import { TConditions } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { motion } from "framer-motion";
 
 export default function Conditions() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const { location } = useGlobalProvider();
   const router = useRouter();
   const { conditions } = useGlobalProvider();

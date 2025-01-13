@@ -20,7 +20,7 @@ async function login(credentials: Credentials) {
       throw new Error("Wrong Credentials");
     }
     return user;
-  } catch (error: any) {
+  } catch (error) {
     console.log("Error while logging in:", error);
     throw new Error("Something went wrong");
   }

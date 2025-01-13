@@ -36,7 +36,8 @@ export default function Tracing() {
   useEffect(() => {
     GetTracingCars();
   }, []);
-  const iconVariants = (duration: number) => ({
+
+  let iconVariants = (duration: number) => ({
     initial: { y: -10 },
     animate: {
       y: [10, -10],

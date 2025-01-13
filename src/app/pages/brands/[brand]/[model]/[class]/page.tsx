@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { Checkbox, Button, Slider, Spin, Form, Select } from "antd";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { TiDeleteOutline } from "react-icons/ti";
 import { CiCirclePlus } from "react-icons/ci";
 import { CiCircleMinus } from "react-icons/ci";
@@ -210,7 +211,7 @@ export default function Page({
   const [chosenModels, setChosenModels] = useState<string[]>([]);
   const [chosenClass, setChosenClass] = useState<string[]>([]);
 
-  const FilteredModels = (brandName: string, modelName: string) => {
+  const FilteredModels = (brandName: string, model: string) => {
     const CarsModels = carData?.filter(
       (item, index, self) =>
         item.brand === brandName &&
@@ -330,7 +331,9 @@ export default function Page({
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <img
+                          <Image
+                            width={2000}
+                            height={2000}
                             className="w-8 h-8 object-contain"
                             src={item.img}
                             alt="logo"
@@ -459,7 +462,9 @@ export default function Page({
                     return (
                       <div key={item._id}>
                         <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-center">
-                          <img
+                          <Image
+                            width={2000}
+                            height={2000}
                             className="w-40 m-auto md:text-start"
                             src={item.img}
                             alt="Carimg"
@@ -574,7 +579,9 @@ export default function Page({
                   params.brand === item.name && "bg-gray-800"
                 }`}
               >
-                <img
+                <Image
+                  width={2000}
+                  height={2000}
                   className="w-12 h-12 object-contain"
                   src={item.img}
                   alt="logo"
@@ -668,7 +675,13 @@ export default function Page({
                   <Skeleton.Image active />
                   <Skeleton.Input active size="large" />
                   <Skeleton.Input active size="large" />
-                  <img className="w-3/5 m-auto" src="/Animation.gif" alt="" />
+                  <Image
+                    width={2000}
+                    height={2000}
+                    className="w-3/5 m-auto"
+                    src="/Animation.gif"
+                    alt="img"
+                  />
                 </div>
               ))}
             </div>
@@ -707,7 +720,9 @@ export default function Page({
                         key={car._id}
                         className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
                       >
-                        <img
+                        <Image
+                          width={2000}
+                          height={2000}
                           className="h-40 text-center w-full object-contain"
                           src={car.img}
                           alt="carimg"

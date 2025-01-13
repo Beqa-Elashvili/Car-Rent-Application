@@ -162,10 +162,12 @@ export function Main() {
                   className="absolute inset-0 w-full h-full bg-cover bg-center"
                   style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
                 >
-                  <img
+                  <Image
                     src={item.img}
+                    width={2000}
+                    height={2000}
                     alt="carImg"
-                    className="w-full h-full object-contain "
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
@@ -215,8 +217,10 @@ export function Main() {
                     className="absolute inset-0 w-full h-full bg-cover bg-center"
                     style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
                   >
-                    <img
+                    <Image
                       src={item.img}
+                      width={2000}
+                      height={2000}
                       alt="Img"
                       className="w-full h-full object-contain "
                     />

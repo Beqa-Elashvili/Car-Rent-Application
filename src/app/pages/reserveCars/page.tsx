@@ -8,6 +8,7 @@ import {
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { Button } from "antd/es/radio";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function ReserveCars() {
   const { ReserveCars, reservedTracks, userId } = useGlobalProvider();
@@ -42,9 +43,11 @@ export default function ReserveCars() {
           <div key={item._id}>
             <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-between">
               <div className="flex md:text-start flex-col">
-                <img
+                <Image
                   className="w-40 flex object-cover w-full md:hidden "
                   src={item.img}
+                  width={2000}
+                  height={2000}
                   alt="Carimg"
                 />
 
@@ -59,7 +62,9 @@ export default function ReserveCars() {
                   <p>Day: {item.carDayCount}</p>
                 </div>
               </div>
-              <img
+              <Image
+                width={2000}
+                height={2000}
                 className="hidden md:block w-60"
                 src={item.img}
                 alt="Carimg"
