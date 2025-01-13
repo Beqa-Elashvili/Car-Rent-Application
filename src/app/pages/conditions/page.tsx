@@ -18,7 +18,7 @@ export default function Conditions() {
 
   return (
     <div className="bg-gray-900 h-full w-full text-white">
-      <div className="relative bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-16 items-center py-28">
+      <div className="relative w-full bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-16 items-center py-28">
         <h1 className="text-[200px] lg:text-9xl flex flex-col bg-gradient-to-r from-green-700 to-transparent text-transparent bg-clip-text text-balance absolute">
           LUXURY <span>DRIVE</span>
         </h1>
@@ -37,7 +37,7 @@ export default function Conditions() {
         <h1 className="text-2xl font-medium mb-4">
           ADD YOUR LOCATION FOR BETTER CONVERSATION
         </h1>
-        <div className=" flex flex-wrap lg:flex-nowrap justify-between gap-12">
+        <div className="flex flex-wrap lg:flex-nowrap justify-between gap-12">
           <div className="inline-flex w-full lg:w-1/2 flex-col">
             <div className="bg-gray-800 h-full flex flex-col justify-between text-2xl p-8 rounded-xl">
               <div>
@@ -80,18 +80,22 @@ export default function Conditions() {
             </div>
           </div>
           <div className="w-full">
-            {/* <GoogleMap /> */}
+            <GoogleMap />
           </div>
         </div>
-        <div className="flex flex-col gap-8 mt-8">
+        <div className="w-full overflow-hidden block md:flex md:flex-col gap-8 mt-8">
           <h1 className="text-center my-4 text-4xl">Car rental conditions</h1>
+          <div className="block md:hidden bg-gray-200 h-px w-full my-2"></div>
           {conditions.map((item: TConditions, index: number) => (
-            <div key={index} className="flex justify-between items-start gap-4">
+            <div
+              key={index}
+              className="md:flex justify-between w-full text-center md:text-start gap-4"
+            >
               <motion.h1
                 whileInView={{ opacity: 1, x: 0 }}
                 initial={{ opacity: 0, x: -100 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="text-6xl"
+                className="text-5xl md:text-6xl w-full"
               >
                 {item.title}
               </motion.h1>
@@ -99,7 +103,7 @@ export default function Conditions() {
                 whileInView={{ opacity: 1, x: 0 }}
                 initial={{ opacity: 0, x: 100 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="bg-gray-800 text-xl rounded-xl p-8 w-full max-w-3xl flex flex-col gap-2"
+                className="bg-gray-800 text-xl text-start md:text-center mt-4 rounded-xl p-8 w-full md:max-w-3xl flex flex-col gap-2"
               >
                 <div className="flex items-center gap-2">
                   <item.icon className="size-6 text-green-500" />
@@ -111,7 +115,7 @@ export default function Conditions() {
                   )}
                   <p>{item.text2}</p>
                 </div>
-                <div className="h-px w-full bg-green-500"></div>
+                <div className="h-px w-full mt-2 bg-green-500"></div>
                 <p className="text-lg">{item.description}</p>
                 <div className="flex flex-col gap-2">
                   {item.rules?.map((item: string, index: number) => (

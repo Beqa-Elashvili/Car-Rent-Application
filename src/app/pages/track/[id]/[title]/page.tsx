@@ -149,7 +149,7 @@ export default function Track({ params }: { params: { id: number } }) {
 
   return (
     <div className="bg-gray-900 p-2 md:p-0">
-      <div className="w-full p-12 min-h-screen flex flex-col ">
+      <div className="w-full p-6 md:p-12 min-h-screen flex flex-col ">
         <Modal
           title="Basic Modal"
           open={isModalOpen}
@@ -172,7 +172,7 @@ export default function Track({ params }: { params: { id: number } }) {
         </Modal>
         {currentTrack && (
           <div className="bg-gray-900 min-h-screen h-full w-full text-white flex flex-col gap-2 items-center">
-            <h1 className="text-3xl text-orange-500 font-serif">
+            <h1 className="text-3xl text-center text-orange-500 font-serif">
               {currentTrack.title}
             </h1>
             <h1 className="text-sm font-mono text-orange-300">
@@ -194,8 +194,9 @@ export default function Track({ params }: { params: { id: number } }) {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-center gap-6 w-7/12">
+            <div className="flex items-center justify-center gap-4 md:gap-6 w-7/12">
               <Button
+                disabled={!userId}
                 onClick={() =>
                   handleDayOrDays("rentPrice", currentTrack.rentPrice)
                 }
@@ -211,6 +212,7 @@ export default function Track({ params }: { params: { id: number } }) {
                 className="w-full mt-2 rounded-xl shadow transition duration-300  hover:scale-105 cursor-pointer"
               />
               <Button
+                disabled={!userId}
                 onClick={() =>
                   handleDayOrDays("dayRentPrice", currentTrack.dayRentPrice)
                 }
@@ -246,7 +248,7 @@ export default function Track({ params }: { params: { id: number } }) {
       </div>
 
       <Carousel
-        className="py-6 md:py-0 p-4 md:p-0 md:p-12"
+        className="py-6 md:py-8 p-4  md:p-12"
         slidesToShow={4}
         arrows
         infinite

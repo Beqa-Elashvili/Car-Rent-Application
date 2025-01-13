@@ -10,7 +10,7 @@ import { Button } from "antd/es/radio";
 import { useRouter } from "next/navigation";
 
 export default function ReserveCars() {
-  const { ReserveCars, reservedTracks } = useGlobalProvider();
+  const { ReserveCars, reservedTracks, userId } = useGlobalProvider();
   const router = useRouter();
 
   const getTotalPrice = () => {
@@ -145,12 +145,21 @@ export default function ReserveCars() {
             <h1 className="w-20">Total Price:</h1>
             <span>{getTotalPrice()} $</span>
           </div>
-          <button
-            onClick={() => router.push("/pages/chackout")}
-            className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
-          >
-            Go to Chackout
-          </button>
+          {!userId ? (
+            <button
+              onClick={() => router.push("/register")}
+              className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
+            >
+              Sign Up
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push("/pages/chackout")}
+              className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
+            >
+              Go to Chackout
+            </button>
+          )}
         </div>
       </div>
     </div>

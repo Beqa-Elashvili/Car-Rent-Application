@@ -7,6 +7,7 @@ import { RiMenuFold2Fill } from "react-icons/ri";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { useState, useEffect, useCallback } from "react";
 import { IoSearchSharp } from "react-icons/io5";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 import Image from "next/image";
@@ -70,6 +71,12 @@ export function Header() {
     };
   }, [isOpen]);
 
+  const PathName = usePathname();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [PathName]);
+
   const handleCar = (id: string) => {
     setValue("");
     setSearchResults([]);
@@ -105,7 +112,7 @@ export function Header() {
             transform: isOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "opacity 0.5s ease, transform 0.5s ease",
           }}
-          className={`absolute z-20 top-[100%] flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
+          className={`absolute z-30 top-[100%] flex flex-col items-start p-4 gap-2 left-0 w-64 min-h-screen h-full bg-gray-700
            }`}
         >
           <div className="relative w-full flex md:hidden  items-center text-black">

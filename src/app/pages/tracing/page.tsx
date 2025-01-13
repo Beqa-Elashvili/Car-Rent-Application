@@ -239,7 +239,7 @@ export default function Tracing() {
                       )}
                     </Button>
                   ) : (
-                    <div className="flex gap-2  items-center">
+                    <div className="text-center">
                       <Button
                         className="bg-orange-500 text-orange-900 font-serif w-full border-none text"
                         onClick={() => router.push("/register")}
@@ -248,12 +248,6 @@ export default function Tracing() {
                         {loadingStates[item._id] && (
                           <Spin indicator={<LoadingOutlined spin />} />
                         )}
-                      </Button>
-                      <Button
-                        className="bg-orange-500 text-orange-900 font-serif w-full border-none text"
-                        onClick={() => router.push("/login")}
-                      >
-                        Sign in
                       </Button>
                     </div>
                   )}
