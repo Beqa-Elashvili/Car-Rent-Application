@@ -21,7 +21,6 @@ export async function GET(req: any) {
 
       const ReservedCars = await reservedCars.find({ userId });
 
-
       if (ReservedCars.length === 0) {
         return NextResponse.json(
           { message: "No cars reserved by this user." },

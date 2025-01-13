@@ -36,16 +36,16 @@ export default function Tracing() {
   useEffect(() => {
     GetTracingCars();
   }, []);
-
-  let iconVariants = (duration: number) => ({
+  
+  const iconVariants = (duration: number) => ({
     initial: { y: -10 },
     animate: {
       y: [10, -10],
       transition: {
         duration: duration,
-        ease: "linear" as "linear",
+        ease: "linear" as const,
         repeat: Infinity,
-        repeatType: "reverse" as "reverse",
+        repeatType: "reverse" as const,
       },
     },
   });

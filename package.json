@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm install --legacy-peer-deps && next build",
+    "build": "next build && next lint --quiet",
     "start": "next start",
     "lint": "next lint",
     "export": "next export"

@@ -359,8 +359,8 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         await deleteReservedCar(car._id, false, setIsOpen);
         return;
       }
-      let key = AddCar ? { carImg: car.img } : { carId: car._id };
-      const response = await axios.put("/api/reservedcars", {
+      const key = AddCar ? { carImg: car.img } : { carId: car._id };
+      await axios.put("/api/reservedcars", {
         userId,
         ...key,
         action: IncreseOrDecrese,
