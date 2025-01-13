@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 import { Cars } from "models/cars";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server"; // Use NextRequest for request type
 import { ConnectDB } from "utils/connect";
 
-export async function POST(req: NextResponse) {
+// POST: Create new car or multiple cars
+export async function POST(req: NextRequest) {
   try {
     const { car, cars } = await req.json();
 
+    // Check if a single car object is provided
     if (car) {
       const newCar = new Cars({
         city_mpg: car.city_mpg,
@@ -33,13 +35,17 @@ export async function POST(req: NextResponse) {
         { message: "Car created successfully", car: newCar },
         { status: 201 }
       );
-    } else if (cars && Array.isArray(cars)) {
+    }
+    // Check if multiple cars are provided
+    else if (cars && Array.isArray(cars)) {
       const newCars = await Cars.insertMany(cars);
       return NextResponse.json(
         { message: "Cars created successfully", cars: newCars },
         { status: 201 }
       );
-    } else {
+    }
+    // Invalid request format
+    else {
       return NextResponse.json(
         {
           message:
@@ -57,10 +63,12 @@ export async function POST(req: NextResponse) {
   }
 }
 
-export async function PUT(req: Request) {
+// PUT: Update car details by carId
+export async function PUT(req: NextRequest) {
   try {
     const { carId, carData } = await req.json();
 
+    // Validate carId and carData
     if (!carId || !mongoose.Types.ObjectId.isValid(carId)) {
       return NextResponse.json(
         { message: "Invalid or missing car ID" },
@@ -75,6 +83,7 @@ export async function PUT(req: Request) {
       );
     }
 
+    // Update the car with new data
     const updatedCar = await Cars.findByIdAndUpdate(
       carId,
       { $set: carData },
@@ -97,7 +106,9 @@ export async function PUT(req: Request) {
     );
   }
 }
-export async function GET(req: Request) {
+
+// GET: Fetch cars with filters and pagination
+export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const brand = url.searchParams.get("brand");
@@ -107,7 +118,7 @@ export async function GET(req: Request) {
     const model = url.searchParams.get("model");
     const carClass = url.searchParams.get("class");
     const limit = url.searchParams.get("limit");
-    const page = url.searchParams.get("page") || "1"; // default to page 1 if not provided
+    const page = url.searchParams.get("page") || "1";
 
     await ConnectDB();
 
@@ -124,7 +135,7 @@ export async function GET(req: Request) {
 
     const query: any = {};
 
-    // Filters based on brand and model
+    // Apply filters based on query parameters
     if (brand && model) {
       query.brand = brand;
       query.model = { $regex: new RegExp(model, "i") };
@@ -146,6 +157,7 @@ export async function GET(req: Request) {
 
     const queryOptions: any = {};
 
+    // Pagination
     const limitValue = Number(limit) || 10;
     const pageValue = Number(page) || 1;
 
@@ -178,7 +190,8 @@ export async function GET(req: Request) {
   }
 }
 
-export async function DELETE(req: any) {
+// DELETE: Delete car by ID
+export async function DELETE(req: NextRequest) {
   try {
     const carId = req.nextUrl.searchParams.get("id");
 
@@ -197,10 +210,11 @@ export async function DELETE(req: any) {
       }
 
       return NextResponse.json(
-        { message: "car deleted successfully" },
+        { message: "Car deleted successfully" },
         { status: 200 }
       );
     }
+
     return NextResponse.json(
       { message: "Car ID is required" },
       { status: 400 }

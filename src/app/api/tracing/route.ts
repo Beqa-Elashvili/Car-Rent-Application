@@ -1,9 +1,9 @@
 import { Tracing } from "models/tracing";
 import mongoose from "mongoose";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
 
-export async function POST(req: NextResponse) {
+async function POST(req: NextRequest) {
   try {
     const { TracingCar, TracingCars } = await req.json();
 
@@ -51,13 +51,17 @@ export async function POST(req: NextResponse) {
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
-      { message: "Failed to process TracingCar(s)", error },
+      {
+        message: "Failed to process TracingCar(s)",
+        error: error || error,
+      },
       { status: 500 }
     );
   }
 }
 
-export async function GET(req: Request) {
+// GET: Fetch tracing cars with filters and pagination
+async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const brand = url.searchParams.get("brand");
@@ -111,9 +115,9 @@ export async function GET(req: Request) {
     queryOptions.limit = limitValue;
     queryOptions.skip = (pageValue - 1) * limitValue;
 
-    const tracingcars = await Tracing.find(query, null, queryOptions);
+    const tracingCars = await Tracing.find(query, null, queryOptions);
 
-    if (tracingcars.length === 0) {
+    if (tracingCars.length === 0) {
       return NextResponse.json(
         { message: "No TracingCars found." },
         { status: 404 }
@@ -122,7 +126,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       {
-        tracingcars,
+        tracingCars,
         pagination: {
           page: pageValue,
           limit: limitValue,
@@ -140,7 +144,8 @@ export async function GET(req: Request) {
   }
 }
 
-export async function DELETE(req: any) {
+// DELETE: Delete tracing car by ID
+async function DELETE(req: NextRequest) {
   try {
     const carId = req.nextUrl.searchParams.get("id");
 
@@ -155,11 +160,14 @@ export async function DELETE(req: any) {
       const deletedCar = await Tracing.findOneAndDelete({ _id: carId });
 
       if (!deletedCar) {
-        return NextResponse.json({ message: "Tracing Car not found" }, { status: 404 });
+        return NextResponse.json(
+          { message: "Tracing Car not found" },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json(
-        { message: "car deleted successfully" },
+        { message: "Tracing car deleted successfully" },
         { status: 200 }
       );
     }
@@ -170,8 +178,10 @@ export async function DELETE(req: any) {
   } catch (error) {
     console.error("Error while deleting car:", error);
     return NextResponse.json(
-      { message: "Failed to delete car", error },
+      { message: "Failed to delete car", error: error || error },
       { status: 500 }
     );
   }
 }
+
+export { GET, POST, DELETE };
