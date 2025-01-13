@@ -1,5 +1,4 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth/next";
 import { User } from "models/userModal";
 import bcrypt from "bcrypt";
@@ -27,7 +26,7 @@ async function login(credentials: Credentials) {
   }
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   pages: {
     signIn: "/login",
   },
