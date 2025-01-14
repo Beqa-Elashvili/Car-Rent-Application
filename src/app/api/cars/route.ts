@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import { Cars } from "models/cars";
-import { NextRequest, NextResponse } from "next/server"; // Use NextRequest for request type
+import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
 
-// POST: Create new car or multiple cars
 export async function POST(req: NextRequest) {
   try {
     const { car, cars } = await req.json();

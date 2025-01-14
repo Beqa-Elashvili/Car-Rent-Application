@@ -195,11 +195,24 @@ export async function PUT(req: any) {
     );
   }
 }
-
 export async function DELETE(req: any) {
   try {
     const userId = req.nextUrl.searchParams.get("userId");
     const carId = req.nextUrl.searchParams.get("id");
+    const deleteAll = req.nextUrl.searchParams.get("deleteAll");
+
+    await ConnectDB();
+
+    if (deleteAll === "true") {
+      const result = await reservedCars.deleteMany({});
+      return NextResponse.json(
+        {
+          message: "All reserved cars deleted successfully",
+          deletedCount: result.deletedCount,
+        },
+        { status: 200 }
+      );
+    }
 
     if (userId) {
       if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -209,19 +222,20 @@ export async function DELETE(req: any) {
         );
       }
 
-      await ConnectDB();
-
       const deletedCars = await reservedCars.deleteMany({ userId });
 
       if (deletedCars.deletedCount === 0) {
         return NextResponse.json(
-          { message: "No cars found to delete for this user" },
+          { message: "No reserved cars found for this user" },
           { status: 404 }
         );
       }
 
       return NextResponse.json(
-        { message: "All reserved cars deleted successfully" },
+        {
+          message: "All reserved cars for user deleted successfully",
+          deletedCount: deletedCars.deletedCount,
+        },
         { status: 200 }
       );
     }
@@ -234,12 +248,13 @@ export async function DELETE(req: any) {
         );
       }
 
-      await ConnectDB();
-
       const deletedCar = await reservedCars.findOneAndDelete({ _id: carId });
 
       if (!deletedCar) {
-        return NextResponse.json({ message: "Car not found" }, { status: 404 });
+        return NextResponse.json(
+          { message: "Reserved car not found" },
+          { status: 404 }
+        );
       }
 
       return NextResponse.json(
@@ -248,14 +263,15 @@ export async function DELETE(req: any) {
       );
     }
 
+    // If no userId, carId, or deleteAll parameter is provided
     return NextResponse.json(
-      { message: "Car ID or User ID is required" },
+      { message: "Car ID, User ID, or deleteAll flag is required" },
       { status: 400 }
     );
   } catch (error) {
-    console.error("Error while deleting car:", error);
+    console.error("Error while deleting reserved car:", error);
     return NextResponse.json(
-      { message: "Failed to delete car", error },
+      { message: "Failed to delete reserved car", error },
       { status: 500 }
     );
   }

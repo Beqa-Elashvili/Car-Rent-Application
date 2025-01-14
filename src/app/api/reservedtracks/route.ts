@@ -97,3 +97,87 @@ export async function GET(req: any) {
     );
   }
 }
+export async function DELETE(req: any) {
+  try {
+    const userId = req.nextUrl.searchParams.get("userId");
+    const trackId = req.nextUrl.searchParams.get("id");
+    const deleteAll = req.nextUrl.searchParams.get("deleteAll");
+
+    await ConnectDB();
+
+    if (deleteAll === "true") {
+      const result = await reservedTracks.deleteMany({});
+      return NextResponse.json(
+        {
+          message: "All reserved tracks deleted successfully",
+          deletedCount: result.deletedCount,
+        },
+        { status: 200 }
+      );
+    }
+
+    if (userId) {
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return NextResponse.json(
+          { message: "Invalid User ID format" },
+          { status: 400 }
+        );
+      }
+
+      const deletedTracks = await reservedTracks.deleteMany({ userId });
+
+      if (deletedTracks.deletedCount === 0) {
+        return NextResponse.json(
+          { message: "No reserved tracks found for this user" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        {
+          message: "All reserved tracks for user deleted successfully",
+          deletedCount: deletedTracks.deletedCount,
+        },
+        { status: 200 }
+      );
+    }
+
+    // Delete a specific reserved track
+    if (trackId) {
+      if (!mongoose.Types.ObjectId.isValid(trackId)) {
+        return NextResponse.json(
+          { message: "Invalid Track ID format" },
+          { status: 400 }
+        );
+      }
+
+      const deletedTrack = await reservedTracks.findOneAndDelete({
+        _id: trackId,
+      });
+
+      if (!deletedTrack) {
+        return NextResponse.json(
+          { message: "Reserved track not found" },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { message: "Reserved track deleted successfully" },
+        { status: 200 }
+      );
+    }
+
+    // If no userId, trackId, or deleteAll parameter is provided
+    return NextResponse.json(
+      { message: "Track ID, User ID, or deleteAll flag is required" },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error("Error while deleting reserved track:", error);
+    return NextResponse.json(
+      { message: "Failed to delete reserved track", error },
+      { status: 500 }
+    );
+  }
+}

@@ -78,11 +78,25 @@ export async function GET(req: Request) {
     );
   }
 }
-
 export async function DELETE(req: any) {
   try {
     const userId = req.nextUrl.searchParams.get("userId");
     const orderId = req.nextUrl.searchParams.get("id");
+    const deleteAll = req.nextUrl.searchParams.get("deleteAll");
+
+    await ConnectDB();
+
+    if (deleteAll === "true") {
+      // Delete all orders in the database
+      const result = await Orders.deleteMany({});
+      return NextResponse.json(
+        {
+          message: "All orders deleted successfully",
+          deletedCount: result.deletedCount,
+        },
+        { status: 200 }
+      );
+    }
 
     if (userId) {
       if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -92,19 +106,20 @@ export async function DELETE(req: any) {
         );
       }
 
-      await ConnectDB();
-
       const deletedCars = await Orders.deleteMany({ userId });
 
       if (deletedCars.deletedCount === 0) {
         return NextResponse.json(
-          { message: "No order found to delete for this user" },
+          { message: "No orders found to delete for this user" },
           { status: 404 }
         );
       }
 
       return NextResponse.json(
-        { message: "All Orders deleted successfully" },
+        {
+          message: "All orders for user deleted successfully",
+          deletedCount: deletedCars.deletedCount,
+        },
         { status: 200 }
       );
     }
@@ -112,35 +127,34 @@ export async function DELETE(req: any) {
     if (orderId) {
       if (!mongoose.Types.ObjectId.isValid(orderId)) {
         return NextResponse.json(
-          { message: "Invalid Car ID format" },
+          { message: "Invalid Order ID format" },
           { status: 400 }
         );
       }
-
-      await ConnectDB();
 
       const deletedCar = await Orders.findOneAndDelete({ _id: orderId });
 
       if (!deletedCar) {
         return NextResponse.json(
-          { message: "order not found" },
+          { message: "Order not found" },
           { status: 404 }
         );
       }
 
       return NextResponse.json(
-        { message: "order car deleted succesfuly" },
+        { message: "Order deleted successfully" },
         { status: 200 }
       );
     }
+
     return NextResponse.json(
-      { message: "order id or User ID is required" },
+      { message: "Order ID, User ID, or deleteAll flag is required" },
       { status: 400 }
     );
   } catch (error) {
-    console.error("Error while Deleting order", error);
+    console.error("Error while deleting orders:", error);
     return NextResponse.json(
-      { message: "Failed to delete order", error },
+      { message: "Failed to delete orders", error },
       { status: 500 }
     );
   }
