@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
     await ConnectDB();
 
     if (id) {
-      const car = await Cars.findById(id);
+      const car = await Cars.findById(id).maxTimeMS(5000);
       if (!car) {
         return NextResponse.json(
           { message: "Car not found." },
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
     queryOptions.limit = limitValue;
     queryOptions.skip = (pageValue - 1) * limitValue;
 
-    const cars = await Cars.find(query, null, queryOptions);
+    const cars = await Cars.find(query, null, queryOptions).maxTimeMS(5000);
 
     if (cars.length === 0) {
       return NextResponse.json({ message: "No cars found." }, { status: 404 });
