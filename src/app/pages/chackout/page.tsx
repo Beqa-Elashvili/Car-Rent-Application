@@ -6,7 +6,14 @@ import { CiUser } from "react-icons/ci";
 import { useSession } from "next-auth/react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useEffect, useState } from "react";
-import { GoogleMap } from "@/app/Components/GoogleMap";
+import dynamic from "next/dynamic";
+
+const GoogleMap = dynamic(
+  () => import("@/app/Components/GoogleMap/GoogleMap"),
+  {
+    ssr: false,
+  }
+);
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 

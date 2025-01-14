@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GiTridentShield } from "react-icons/gi";
-import { GoogleMap } from "@/app/Components/GoogleMap";
+import dynamic from "next/dynamic";
+
+const GoogleMap = dynamic(
+  () => import("@/app/Components/GoogleMap/GoogleMap"),
+  {
+    ssr: false,
+  }
+);
 import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 
