@@ -14,7 +14,7 @@ import L from "leaflet";
 import { Button } from "antd";
 import axios from "axios";
 
-export function GoogleMap() {
+export default function GoogleMap() {
   const { setLocation } = useGlobalProvider();
 
   const [clickedPosition, setClickedPosition] = useState<

@@ -1,5 +1,13 @@
 "use client";
-import { GoogleMap } from "@/app/Components/GoogleMap";
+import dynamic from "next/dynamic";
+
+const GoogleMap = dynamic(
+  () => import("@/app/Components/GoogleMap/GoogleMap"),
+  {
+    ssr: false,
+  }
+);
+
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useSession } from "next-auth/react";
 import { Button } from "antd";
@@ -12,9 +20,8 @@ import { motion } from "framer-motion";
 
 export default function Conditions() {
   const { data: session } = useSession();
-  const { location } = useGlobalProvider();
   const router = useRouter();
-  const { conditions } = useGlobalProvider();
+  const { conditions, location } = useGlobalProvider();
 
   return (
     <div className="bg-gray-900 h-full w-full text-white">
@@ -55,7 +62,7 @@ export default function Conditions() {
                   <div>
                     <h1>E-Mail:</h1>
                     <p className="text-green-600 text-lg">
-                      {session ? session?.user.email : "Not Registered"}
+                      {session ? session?.user?.email : "Not Registered"}
                     </p>
                   </div>
                 </div>
@@ -64,7 +71,7 @@ export default function Conditions() {
                   <div>
                     <h1>Username:</h1>
                     <p className="text-green-600 text-lg">
-                      {session ? session.user.username : "Not registered"}
+                      {session ? session.user?.username : "Not registered"}
                     </p>
                   </div>
                 </div>
