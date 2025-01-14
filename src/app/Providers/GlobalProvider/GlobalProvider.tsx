@@ -216,7 +216,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     const timeout = setTimeout(async () => {
       try {
         setLoading(true);
-        const resp = await axios.get("/api/cars?limit=41&page=1");
+        const resp = await axios.get("/api/cars?limit=20&page=1");
         setCarData(resp.data.cars);
       } catch (error: unknown) {
         setError(null);

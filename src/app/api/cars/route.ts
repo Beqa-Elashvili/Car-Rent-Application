@@ -106,7 +106,6 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// GET: Fetch cars with filters and pagination
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -134,7 +133,6 @@ export async function GET(req: NextRequest) {
 
     const query: any = {};
 
-    // Apply filters based on query parameters
     if (brand && model) {
       query.brand = brand;
       query.model = { $regex: new RegExp(model, "i") };
@@ -156,7 +154,6 @@ export async function GET(req: NextRequest) {
 
     const queryOptions: any = {};
 
-    // Pagination
     const limitValue = Number(limit) || 10;
     const pageValue = Number(page) || 1;
 
@@ -189,7 +186,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// DELETE: Delete car by ID
 export async function DELETE(req: NextRequest) {
   try {
     const carId = req.nextUrl.searchParams.get("id");
