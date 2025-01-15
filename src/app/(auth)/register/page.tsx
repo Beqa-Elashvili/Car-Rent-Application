@@ -14,6 +14,7 @@ const GoogleMap = dynamic(
 );
 import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+import axios from "axios";
 
 function Register() {
   const [form] = Form.useForm();
@@ -75,21 +76,18 @@ function Register() {
 
     try {
       setPending(true);
-      const res = await fetch("/api/register", {
-        method: "POST",
+      const res = await axios.post("/api/register", values, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
       });
 
-      if (res.ok) {
+      if (res.status >= 200 && res.status < 300) {
         localStorage.setItem("city", city);
         localStorage.setItem("street", street);
         router.push("/login");
       } else {
-        const errorData = await res.json();
-        setError(errorData.message || "Registration failed.");
+        setError(res.data.message || "Registration failed.");
       }
     } catch (error) {
       console.error("error", error);

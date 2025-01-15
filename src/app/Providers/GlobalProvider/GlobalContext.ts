@@ -49,7 +49,7 @@ export interface TcarsModels {
   img: IconType;
 }
 export interface TCollecttion {
-  name: string | undefined;
+  name: string;
   img: string;
 }
 export interface TConditions {

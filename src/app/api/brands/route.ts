@@ -1,5 +1,5 @@
 import { Brands } from "models/brands";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
 
 export async function POST(req: Request) {
@@ -64,9 +64,8 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     await ConnectDB();
-    const brands = await Brands.find({}, { name: 1, img: 1 })
-      .maxTimeMS(10000)
-      .limit(100);
+
+    const brands = await Brands.find({}).maxTimeMS(10000);
 
     if (!brands.length) {
       return NextResponse.json({ message: "No brands found" }, { status: 404 });

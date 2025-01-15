@@ -3,11 +3,13 @@ import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { TCollecttion } from "@/app/Providers/GlobalProvider/GlobalContext";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import useHandleBrandImg from "@/app/hooks/handleBrandImg/useHandleBrandImg";
 
 export default function Page() {
   const { collections } = useGlobalProvider();
+  const { handleIcon } = useHandleBrandImg();
   const router = useRouter();
+
   return (
     <div className="bg-gray-800 min-h-screen h-full items-center p-4 grid grid-cols-2 md:grid-cols-4 items-center justify-center  gap-2 ">
       {collections?.map((item: TCollecttion, index: number) => (
@@ -20,12 +22,10 @@ export default function Page() {
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.3 }}
           >
-            <Image
+            <img
               key={index}
-              width={1000}
-              height={500}
               className="h-60 w-60 object-contain"
-              src={item.img || ""}
+              src={handleIcon(item.name)}
               alt="brand-logo"
             />
           </motion.div>

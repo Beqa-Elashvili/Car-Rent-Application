@@ -18,6 +18,7 @@ import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
 import { useForm } from "antd/es/form/Form";
 import useGetUpdatedPrice from "@/app/hooks/GetDiscounthook/useGetDiscount";
+import useHandleBrandImg from "@/app/hooks/handleBrandImg/useHandleBrandImg";
 
 export default function Page({
   params,
@@ -32,6 +33,7 @@ export default function Page({
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const { getUpdatedPrice } = useGetUpdatedPrice();
+  const { handleIcon } = useHandleBrandImg();
 
   const {
     collections,
@@ -301,11 +303,9 @@ export default function Page({
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <Image
-                            width={2000}
-                            height={2000}
+                          <img
                             className="w-8 h-8 object-contain"
-                            src={item.img}
+                            src={handleIcon(item.name)}
                             alt="logo"
                           />
                           <p className="font-serif">{item.name}</p>
@@ -549,11 +549,9 @@ export default function Page({
                   params.brand === item.name && "bg-gray-800"
                 }`}
               >
-                <Image
-                  width={2000}
-                  height={2000}
+                <img
                   className="w-12 h-12 object-contain"
-                  src={item.img}
+                  src={handleIcon(item.name)}
                   alt="logo"
                 />
                 <p>{item.name}</p>
