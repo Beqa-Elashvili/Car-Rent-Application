@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import useGetUpdatedPrice from "@/app/hooks/GetDiscounthook/useGetDiscount";
 
 const GoogleMap = dynamic(
   () => import("@/app/Components/GoogleMap/GoogleMap"),
@@ -30,6 +31,7 @@ export default function Chackout() {
   const userId = session?.user?.id;
   const [form] = Form.useForm();
   const router = useRouter();
+  const { getUpdatedPrice } = useGetUpdatedPrice();
 
   const [state, setState] = useState({
     cardNumber: "",
@@ -172,7 +174,8 @@ export default function Chackout() {
   };
 
   const totalRentCarPrice = ReserveCars.reduce((accumulator, car) => {
-    return accumulator + car.dayPrice * car.carDayCount;
+    const { updatedPrice } = getUpdatedPrice(car.dayPrice, car.carDayCount);
+    return accumulator + updatedPrice * car.carDayCount;
   }, 0);
 
   const handleToTalPrice = () => {

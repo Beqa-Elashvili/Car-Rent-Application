@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GiTridentShield } from "react-icons/gi";
 import dynamic from "next/dynamic";
+import { FaMapMarkedAlt } from "react-icons/fa";
 
 const GoogleMap = dynamic(
   () => import("@/app/Components/GoogleMap/GoogleMap"),
@@ -13,8 +14,6 @@ const GoogleMap = dynamic(
 );
 import { Input, Button, Form, Modal } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-
-import { FaMapMarkedAlt } from "react-icons/fa";
 
 function Register() {
   const [form] = Form.useForm();
@@ -227,8 +226,13 @@ function Register() {
               </div>
             )}
             <>
-              <Button type="primary" onClick={showModal}>
-                Open Modal
+              <Button
+                className="flex items-center"
+                type="primary"
+                onClick={showModal}
+              >
+                Open Map
+                <FaMapMarkedAlt className="size-6" />
               </Button>
               <Modal
                 title={
@@ -255,11 +259,6 @@ function Register() {
               >
                 Submit
               </Button>
-              <div className="w-full flex items-center gap-2">
-                <div className="flex-1 h-px bg-gray-400"></div>
-                <p className="text-gray-300 mb-1">or</p>
-                <div className="flex-1 h-px bg-gray-400"></div>
-              </div>
               <div className="w-full flex items-center gap-2">
                 <div className="flex-1 h-px bg-gray-400"></div>
                 <p className="text-gray-300 mb-1">Already Member?</p>

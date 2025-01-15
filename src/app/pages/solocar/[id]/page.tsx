@@ -231,12 +231,10 @@ export default function Car({ params }: { params: { id?: string } }) {
                       >
                         {"<"}
                       </p>
-                      <Image
+                      <img
                         className="w-full h-40 md:h-96 object-contain"
-                        src={handleCarImg(car, angle) || car.img}
+                        src={handleCarImg(car, angle)}
                         alt="Car Image"
-                        width={2000}
-                        height={2000}
                       />
                       <p
                         onClick={() => getNextAngle()}
@@ -300,12 +298,21 @@ export default function Car({ params }: { params: { id?: string } }) {
                   {renderSectionContent()}
                 </motion.div>
               </div>
-              <Button
-                onClick={() => router.push("/pages/reserveCars")}
-                className="hidden md:flex p-12 w-20 h-20 rounded-full"
-              >
-                Return
-              </Button>
+              {ReserveCars?.length !== 0 ? (
+                <Button
+                  onClick={() => router.push("/pages/reserveCars")}
+                  className="hidden md:flex p-12 w-20 h-20 rounded-full"
+                >
+                  Return
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => router.push("/")}
+                  className="hidden md:flex p-12 w-20 h-20 rounded-full"
+                >
+                  Return
+                </Button>
+              )}
             </div>
           )}
           {ReserveCars.length !== 0 && (

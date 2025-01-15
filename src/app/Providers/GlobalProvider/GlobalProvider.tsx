@@ -212,20 +212,20 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(async () => {
-  //     try {
-  //       setLoading(true);
-  //       const resp = await axios.get("/api/cars?limit=20&page=1");
-  //       setCarData(resp.data.cars);
-  //     } catch (error: unknown) {
-  //       setError(null);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }, 100);
-  //   return () => clearTimeout(timeout);
-  // }, []);
+  useEffect(() => {
+    const timeout = setTimeout(async () => {
+      try {
+        setLoading(true);
+        const resp = await axios.get("/api/cars?limit=10&page=2");
+        setCarData(resp.data.cars);
+      } catch (error: unknown) {
+        setError(null);
+      } finally {
+        setLoading(false);
+      }
+    }, 10);
+    return () => clearTimeout(timeout);
+  }, []);
 
   async function fetchReservedTrack() {
     try {
@@ -289,11 +289,6 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       const response = await axios.delete(url);
       await fetchReservedCars();
       if (response.status === 200) {
-        alert(
-          isUserId
-            ? "Deleted all cars successfully"
-            : "Car deleted successfully"
-        );
         if (ReserveCars.length < 0 && setIsOpen) {
           setIsOpen(false);
         }

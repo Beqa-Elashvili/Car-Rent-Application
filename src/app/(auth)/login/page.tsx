@@ -3,8 +3,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { Form, Input, Button, Typography } from "antd";
 import { GiTridentShield } from "react-icons/gi";
-import { FcGoogle } from "react-icons/fc";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const { Text } = Typography;
 
@@ -12,6 +12,7 @@ function SignIn() {
   const [info, setInfo] = useState({ email: "", password: "" });
   const [error, setError] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,8 +36,12 @@ function SignIn() {
         setError("Invalid input values");
         setPending(false);
         return;
+      } else {
+        router.push("/");
       }
     } catch (error: unknown) {
+      setError("Invalid input values");
+      setPending(false);
       console.log("error", error);
     } finally {
       setPending(false);
@@ -120,18 +125,6 @@ function SignIn() {
               loading={pending}
             >
               {pending ? "Logging in..." : "Log in"}
-            </Button>
-            <div className="w-full flex items-center gap-2">
-              <div className="flex-1 h-px bg-gray-400"></div>
-              <p className="text-gray-300 mb-1">or</p>
-              <div className="flex-1 h-px bg-gray-400"></div>
-            </div>
-            <Button
-              onClick={() => signIn("google")}
-              className="flex items-center font-medium py-5 rounded-xl w-full"
-            >
-              <FcGoogle className="size-6" />
-              Sign in with Google
             </Button>
           </Form>
         </div>

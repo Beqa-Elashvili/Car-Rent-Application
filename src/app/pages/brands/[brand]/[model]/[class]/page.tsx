@@ -17,6 +17,7 @@ import { useRouter } from "next/navigation";
 import { Skeleton } from "antd";
 import { useSession } from "next-auth/react";
 import { useForm } from "antd/es/form/Form";
+import useGetUpdatedPrice from "@/app/hooks/GetDiscounthook/useGetDiscount";
 
 export default function Page({
   params,
@@ -30,6 +31,7 @@ export default function Page({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const { getUpdatedPrice } = useGetUpdatedPrice();
 
   const {
     collections,
@@ -171,38 +173,6 @@ export default function Page({
       updatedPrices[index] = updatedPrice;
       return updatedPrices;
     });
-  };
-  const getUpdatedPrice = (dayPrice: number, days: number) => {
-    let discount = 0;
-    let updatedPrice = dayPrice;
-
-    switch (true) {
-      case days >= 8:
-        discount = dayPrice * 0.4;
-        updatedPrice = dayPrice * 0.6;
-        break;
-
-      case days >= 6:
-        discount = dayPrice * 0.3;
-        updatedPrice = dayPrice * 0.7;
-        break;
-
-      case days >= 4:
-        discount = dayPrice * 0.2;
-        updatedPrice = dayPrice * 0.8;
-        break;
-
-      case days >= 2:
-        discount = dayPrice * 0.1;
-        updatedPrice = dayPrice * 0.9;
-        break;
-
-      default:
-        discount = 0;
-        updatedPrice = dayPrice;
-    }
-    const discountPercentage = discount ? (discount / dayPrice) * 100 : 0;
-    return { updatedPrice, discountPercentage };
   };
 
   const [brandName, setBrandName] = useState<string>("");
@@ -547,7 +517,7 @@ export default function Page({
                   onClick={() => router.push("/pages/reserveCars")}
                   className="w-full mt-2 bg-green-500 border-none p-6 font-medium text-xl text-white"
                 >
-                  RESERVE
+                  RESERVED
                 </Button>
               </div>
             </motion.div>
@@ -680,6 +650,7 @@ export default function Page({
                     height={2000}
                     className="w-3/5 m-auto"
                     src="/Animation.gif"
+                    unoptimized
                     alt="img"
                   />
                 </div>
@@ -778,10 +749,10 @@ export default function Page({
                             onClick={() =>
                               addCarToReserve(car, ChangeCarDayCount, setIsOpen)
                             }
-                            className="w-full mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
+                            className="w-full flex items-center mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
                           >
                             RESERVE
-                            {loadingStates[car._id] && <Spin />}
+                            <p>{loadingStates[car._id] && <Spin />}</p>
                           </Button>
                         </div>
                       </div>

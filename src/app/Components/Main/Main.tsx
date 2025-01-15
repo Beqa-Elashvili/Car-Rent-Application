@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Input, Button, Spin, Form, Select } from "antd";
+import { Input, Button, Spin, Form, Select, Skeleton } from "antd";
 import Image from "next/image";
 import { Carousel, Grid } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
@@ -130,7 +130,7 @@ export function Main() {
             Luxury Cars For your Confort
           </motion.h1>
           <Button
-            onClick={() => router.push("/pages/brands/Porsche/All")}
+            onClick={() => router.push("/pages/brands/Porsche/All/All")}
             className="p-2 md:p-14 lg:p-20 text-white text-sm rounded-full bg-cyan-500 h-20 w-20"
           >
             EXPLORE
@@ -138,9 +138,23 @@ export function Main() {
         </div>
       </div>
       {loading && (
-        <h1 className="text-center w-full text-white text-3xl mt-4">
-          please wait <Spin />
-        </h1>
+        <div className="p-20 text-center">
+          <div className="block md:hidden text-center">
+            <Skeleton.Image active className="w-full h-60 rounded-t-x" />
+          </div>
+          <div className="hidden md:flex lg:hidden items-center justify-between">
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+          </div>
+          <div className=" hidden lg:flex items-center justify-between">
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+            <Skeleton.Image active className="w-full h-48" />
+          </div>
+        </div>
       )}
       <Carousel
         slidesToShow={slidesToShow}
@@ -192,57 +206,6 @@ export function Main() {
         })}
       </Carousel>
       <div className="bg-gray-500 h-px w-full my-8"></div>
-      <h1 className="px-2 text-orange-900 text-center text-3xl">
-        Explore the BMW comfort
-      </h1>
-      <Carousel
-        slidesToShow={slidesToShow}
-        arrows
-        autoplay
-        className="p-4"
-        dotPosition="bottom"
-        infinite={true}
-      >
-        {carData
-          .filter((item: CarsType) => item.brand === "Bmw")
-          .map((item) => {
-            return (
-              <div
-                onClick={() => router.push(`/pages/solocar/${item._id}`)}
-                className="p-2 w-full cursor-pointer rounded-xl hover:bg-orange-300"
-                key={item._id}
-              >
-                <div className="relative min-h-60 rounded-t-xl overflow-hidden">
-                  <div
-                    className="absolute inset-0 w-full h-full bg-cover bg-center"
-                    style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
-                  >
-                    <Image
-                      src={item.img}
-                      width={2000}
-                      height={2000}
-                      alt="Img"
-                      className="w-full h-full object-contain "
-                    />
-                  </div>
-                </div>
-                <div className="p-2 bg-orange-900 text-orange-200 rounded-b-xl">
-                  <div className="flex justify-center font-mono text-balance gap-2">
-                    <h1 className="text-xl font-semibold">{item.make}</h1>
-                    <h1 className="text-xl font-semibold">{item.model}</h1>
-                  </div>
-                  <div className="mt-4 flex text-xl font-serif justify-between">
-                    <p>{item.horsepower} HP</p>
-                    {"|"}
-                    <p>{item.combination_mpg}L</p>
-                    {"|"}
-                    <p>$ {item.dayPrice}/Day</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-      </Carousel>
       <div className="py-2 relative ">
         <Image
           alt="image"
