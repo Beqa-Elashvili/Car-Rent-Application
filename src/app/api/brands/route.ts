@@ -64,7 +64,9 @@ export async function POST(req: Request) {
 export async function GET() {
   try {
     await ConnectDB();
-    const brands = await Brands.find({}).maxTimeMS(5000);
+    const brands = await Brands.find({}, { name: 1, img: 1 })
+      .maxTimeMS(10000)
+      .limit(100);
 
     if (!brands.length) {
       return NextResponse.json({ message: "No brands found" }, { status: 404 });

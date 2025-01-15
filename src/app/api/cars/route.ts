@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
     queryOptions.limit = limitValue;
     queryOptions.skip = (pageValue - 1) * limitValue;
 
-    const cars = await Cars.find(query, null, queryOptions).maxTimeMS(5000);
+    const cars = await Cars.find(query, null, queryOptions).maxTimeMS(10000);
 
     if (cars.length === 0) {
       return NextResponse.json({ message: "No cars found." }, { status: 404 });
