@@ -216,7 +216,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     const timeout = setTimeout(async () => {
       try {
         setLoading(true);
-        const resp = await axios.get("/api/cars?brand=Porsche&limit=10");
+        const resp = await axios.get("/api/cars?limit=45");
         setCarData(resp.data.cars);
       } catch (error: unknown) {
         setError(null);
@@ -244,6 +244,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       console.log("error twhile fetching brands");
     }
   }
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       GetBrands();

@@ -245,9 +245,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                     </>
                   ) : (
                     <>
-                      <Image
-                        width={500}
-                        height={1000}
+                      <img
                         className="w-full h-40 md:h-96 object-contain"
                         src={car.img}
                         alt="carImg"

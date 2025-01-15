@@ -176,10 +176,8 @@ export function Main() {
                   className="absolute inset-0 w-full h-full bg-cover bg-center"
                   style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
                 >
-                  <Image
+                  <img
                     src={item.img}
-                    width={2000}
-                    height={2000}
                     alt="carImg"
                     className="w-full h-full object-contain"
                   />

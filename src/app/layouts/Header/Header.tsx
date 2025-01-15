@@ -157,11 +157,9 @@ export function Header() {
                       className="bg-orange-600 rounded text-center w-full hover:bg-orange-800 cursor-pointer"
                     >
                       <div className="flex flex-col text-center justify-center items-center ">
-                        <Image
+                        <img
                           src={item.img}
                           alt="img"
-                          width={500}
-                          height={1000}
                           className="w-full h-20 object-contain"
                         />
                         <div className="text-white">
@@ -259,11 +257,9 @@ export function Header() {
                     className="bg-orange-600 rounded w-full hover:bg-orange-800 cursor-pointer p-2 flex justify-between items-center gap-12"
                   >
                     <div className="flex items-center">
-                      <Image
+                      <img
                         src={item.img}
                         alt="img"
-                        width={500}
-                        height={1000}
                         className="w-40 h-20 object-contain"
                       />
                       <div className="text-white">

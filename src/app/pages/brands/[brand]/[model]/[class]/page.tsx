@@ -432,9 +432,7 @@ export default function Page({
                     return (
                       <div key={item._id}>
                         <div className="bg-yellow-500 p-2 rounded-xl md:flex items-center justify-center">
-                          <Image
-                            width={2000}
-                            height={2000}
+                          <img
                             className="w-40 m-auto md:text-start"
                             src={item.img}
                             alt="Carimg"
@@ -689,9 +687,7 @@ export default function Page({
                         key={car._id}
                         className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
                       >
-                        <Image
-                          width={2000}
-                          height={2000}
+                        <img
                           className="h-40 text-center w-full object-contain"
                           src={car.img}
                           alt="carimg"

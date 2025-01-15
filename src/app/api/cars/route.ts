@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   try {
     const { car, cars } = await req.json();
 
-    // Check if a single car object is provided
     if (car) {
       const newCar = new Cars({
         city_mpg: car.city_mpg,
@@ -117,6 +116,12 @@ export async function GET(req: NextRequest) {
     const carClass = url.searchParams.get("class");
     const limit = url.searchParams.get("limit");
     const page = url.searchParams.get("page") || "1";
+    const modificationParam = url.searchParams.get("modification");
+
+    const modification =
+      modificationParam === "true" ||
+      modificationParam === "1" ||
+      modificationParam === "yes";
 
     await ConnectDB();
 
@@ -160,7 +165,11 @@ export async function GET(req: NextRequest) {
     queryOptions.limit = limitValue;
     queryOptions.skip = (pageValue - 1) * limitValue;
 
-    const cars = await Cars.find(query, null, queryOptions).maxTimeMS(10000);
+    const selectFields = modification ? "brand model class" : "";
+
+    const cars = await Cars.find(query, selectFields, queryOptions).maxTimeMS(
+      10000
+    );
 
     if (cars.length === 0) {
       return NextResponse.json({ message: "No cars found." }, { status: 404 });
@@ -188,7 +197,19 @@ export async function GET(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
+    const deleteAll = req.nextUrl.searchParams.get("deleteAll");
     const carId = req.nextUrl.searchParams.get("id");
+
+    if (deleteAll === "true") {
+      const result = await Cars.deleteMany({});
+      return NextResponse.json(
+        {
+          message: "All cars deleted successfully",
+          deletedCount: result.deletedCount,
+        },
+        { status: 200 }
+      );
+    }
 
     if (carId) {
       if (!mongoose.Types.ObjectId.isValid(carId)) {
