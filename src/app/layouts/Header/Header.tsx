@@ -124,8 +124,8 @@ export function Header() {
               }`}
             >
               <Select.Option value="All">All</Select.Option>
-              {collections?.map((item: TCollecttion) => (
-                <Select.Option key={item.img} value={item.name}>
+              {collections?.map((item: TCollecttion, index: number) => (
+                <Select.Option key={index} value={item.name}>
                   {item.name}
                 </Select.Option>
               ))}
@@ -224,8 +224,8 @@ export function Header() {
             }`}
           >
             <Select.Option value="All">All</Select.Option>
-            {collections?.map((item: TCollecttion) => (
-              <Select.Option key={item.img} value={item.name}>
+            {collections?.map((item: TCollecttion, index: number) => (
+              <Select.Option key={index} value={item.name}>
                 {item.name}
               </Select.Option>
             ))}
@@ -247,6 +247,9 @@ export function Header() {
           >
             <IoSearchSharp className="text-slate-800 " />
           </button>
+          {searchResults.length !== 0 && (
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-20"></div>
+          )}
           {searchResults.length !== 0 && (
             <div className="bg-white w-full max-h-96 overflow-y-scroll p-2 flex flex-col gap-2 rounded-b absolute top-8 z-30">
               <div className="flex flex-col gap-2">
@@ -276,6 +279,13 @@ export function Header() {
             </div>
           )}
         </div>
+        <Button
+          onClick={() => router.push("/pages/tracing")}
+          className="hidden md:flex hover:text-yellow-300 cursor-pointer  bg-red-600  font-mono text-xl text-white border-none  rounded"
+        >
+          <GiCarKey />
+          <p>Tracing</p>
+        </Button>
         <UserProfile />
       </div>
       <div className="hidden md:inline">

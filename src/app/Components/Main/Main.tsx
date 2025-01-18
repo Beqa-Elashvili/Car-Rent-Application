@@ -13,19 +13,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export function Main() {
-  const { carData, collections, loading, carsModels } = useGlobalProvider();
+  const { carData, collections, loading, carsModels, setLoading } =
+    useGlobalProvider();
   const router = useRouter();
   const [form] = Form.useForm();
 
   const screens = Grid.useBreakpoint();
 
-  // Determine the number of slides to show based on the screen size
-  let slidesToShow = 1; // Default for small screens
+  let slidesToShow = 1; 
   if (screens.md) {
-    slidesToShow = 3; // Show 3 slides on medium screens
+    slidesToShow = 3; 
   }
   if (screens.xl) {
-    slidesToShow = 5; // Show 5 slides on extra large screens
+    slidesToShow = 5; 
   }
 
   const GetCarModel = (model: string) => {
@@ -127,94 +127,214 @@ export function Main() {
             transition={{ duration: 1 }}
             className="text-xl md:text-4xl lg:text-6xl xl:text-6xl w-1/2 font-medium text-white "
           >
-            Luxury Cars For your Confort
+            Luxury Cars For your Comfort
           </motion.h1>
           <Button
-            onClick={() => router.push("/pages/brands/Porsche/All/All")}
+            onClick={() => router.push("/pages/brands/Bentley/All/All")}
             className="p-2 md:p-14 lg:p-20 text-white text-sm rounded-full bg-cyan-500 h-20 w-20"
           >
             EXPLORE
           </Button>
         </div>
       </div>
-      {loading && (
+      {loading ? (
         <div className="p-20 text-center">
-          <div className="block md:hidden text-center">
+          <div className="md:hidden flex flex-col items-center">
             <Skeleton.Image active className="w-full h-60 rounded-t-x" />
+            <Skeleton.Input active />
           </div>
           <div className="hidden md:flex lg:hidden items-center justify-between">
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
-          </div>
-          <div className=" hidden lg:flex items-center justify-between">
-            <div>
-              <Skeleton.Image active className="w-full h-48" />
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
             </div>
-            <div>
-              <Skeleton.Image active className="w-full h-48" />
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+          </div>
+          <div className="hidden lg:flex items-center justify-between">
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
             </div>{" "}
-            <div>
-              <Skeleton.Image active className="w-full h-48" />
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
             </div>{" "}
-            <div>
-              <Skeleton.Image active className="w-full h-48" />
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
             </div>{" "}
-            <div>
-              <Skeleton.Image active className="w-full h-48" />
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
               <Skeleton.Input active />
             </div>
           </div>
         </div>
+      ) : (
+        <Carousel
+          slidesToShow={slidesToShow}
+          arrows
+          autoplay
+          className="p-6"
+          dotPosition="bottom"
+          infinite={true}
+        >
+          {carData?.map((item: CarsType) => {
+            return (
+              <div
+                onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                className="p-2 w-full cursor-pointer rounded-xl transition duration-300 hover:scale-105 overflow-hidden"
+                key={item._id}
+              >
+                <div className="relative min-h-60 rounded-t-xl overflow-hidden">
+                  <div
+                    className="absolute inset-0 w-full h-full bg-cover bg-center"
+                    style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
+                  >
+                    <img
+                      src={item.img}
+                      alt="carImg"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+                <div className="p-2 bg-orange-900 flex items-center justify-between md:block text-orange-200 rounded-b-xl">
+                  <div className="block flex-col items-center justify-center md:flex font-mono md:justify-center text-balance gap-2">
+                    <h1 className="text-xl font-semibold">{item.make}</h1>
+                    <h1 className="text-xl font-semibold">{item.model}</h1>
+                  </div>
+                  <h1 className="block md:hidden font-mono text-xl">
+                    {item.dayPrice} $
+                  </h1>
+                  <div className="mt-4 hidden md:flex font-serif text-xl justify-between">
+                    <p>{item.horsepower} HP</p>
+                    {"|"}
+                    <p>{item.combination_mpg}L</p>
+                    {"|"}
+                    <p>$ {item.dayPrice}/Day</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </Carousel>
       )}
-      <Carousel
-        slidesToShow={slidesToShow}
-        arrows
-        autoplay
-        className="p-4"
-        dotPosition="bottom"
-        infinite={true}
-      >
-        {carData?.map((item: CarsType) => {
-          return (
-            <div
-              onClick={() => router.push(`/pages/solocar/${item._id}`)}
-              className="p-2 w-full cursor-pointer rounded-xl transition duration-300 hover:scale-105 overflow-hidden"
-              key={item._id}
-            >
-              <div className="relative min-h-60 rounded-t-xl overflow-hidden">
-                <div
-                  className="absolute inset-0 w-full h-full bg-cover bg-center"
-                  style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
-                >
-                  <img
-                    src={item.img}
-                    alt="carImg"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-              </div>
-              <div className="p-2 bg-orange-900 flex items-center justify-between md:block text-orange-200 rounded-b-xl">
-                <div className="block flex-col items-center justify-center md:flex font-mono md:justify-center text-balance gap-2">
-                  <h1 className="text-xl font-semibold">{item.make}</h1>
-                  <h1 className="text-xl font-semibold">{item.model}</h1>
-                </div>
-                <h1 className="block md:hidden font-mono text-xl">
-                  {item.dayPrice} $
-                </h1>
-                <div className="mt-4 hidden md:flex font-serif text-xl justify-between">
-                  <p>{item.horsepower} HP</p>
-                  {"|"}
-                  <p>{item.combination_mpg}L</p>
-                  {"|"}
-                  <p>$ {item.dayPrice}/Day</p>
-                </div>
-              </div>
+      <div className="bg-gray-500 h-px w-full my-4"></div>
+      <h1 className="text-center text-6xl py-8 text-orange-300">
+        Discover the possibilities of Ferrari
+      </h1>
+      {loading ? (
+        <div className="p-20 text-center">
+          <div className="md:hidden flex flex-col items-center">
+            <Skeleton.Image active className="w-full h-60 rounded-t-x" />
+            <Skeleton.Input active />
+          </div>
+          <div className="hidden md:flex lg:hidden items-center justify-between">
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
             </div>
-          );
-        })}
-      </Carousel>
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+          </div>
+          <div className="hidden lg:flex items-center justify-between">
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40" />
+              <Skeleton.Input active />
+            </div>
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
+            </div>{" "}
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
+            </div>{" "}
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+
+              <Skeleton.Input active />
+            </div>{" "}
+            <div className="flex flex-col items-center">
+              <Skeleton.Image active className="w-full h-40 " />
+              <Skeleton.Input active />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Carousel
+          slidesToShow={slidesToShow}
+          arrows
+          autoplay
+          className="p-6"
+          dotPosition="bottom"
+          infinite={true}
+        >
+          {carData
+            ?.filter((item: CarsType) => item.make === "Ferrari")
+            .map((item: CarsType) => {
+              return (
+                <div
+                  onClick={() => router.push(`/pages/solocar/${item._id}`)}
+                  className="p-2 w-full cursor-pointer rounded-xl transition duration-300 hover:scale-105 overflow-hidden"
+                  key={item._id}
+                >
+                  <div className="relative min-h-60 rounded-t-xl overflow-hidden">
+                    <div
+                      className="absolute inset-0 w-full h-full bg-cover bg-center"
+                      style={{ backgroundImage: `url('/industrialwebp.jpg')` }}
+                    >
+                      <img
+                        src={item.img}
+                        alt="carImg"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                  <div className="p-2 bg-orange-900 flex items-center justify-between md:block text-orange-200 rounded-b-xl">
+                    <div className="block flex-col items-center justify-center md:flex font-mono md:justify-center text-balance gap-2">
+                      <h1 className="text-xl font-semibold">{item.make}</h1>
+                      <h1 className="text-xl font-semibold">{item.model}</h1>
+                    </div>
+                    <h1 className="block md:hidden font-mono text-xl">
+                      {item.dayPrice} $
+                    </h1>
+                    <div className="mt-4 hidden md:flex font-serif text-xl justify-between">
+                      <p>{item.horsepower} HP</p>
+                      {"|"}
+                      <p>{item.combination_mpg}L</p>
+                      {"|"}
+                      <p>$ {item.dayPrice}/Day</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </Carousel>
+      )}
       <div className="bg-gray-500 h-px w-full my-8"></div>
+
       <div className="py-2 relative ">
         <Image
           alt="image"
@@ -430,9 +550,9 @@ export function Main() {
                   defaultValue={"Car"}
                   placeholder="Car"
                 >
-                  {collections?.map((item: TCollecttion) => (
+                  {collections?.map((item: TCollecttion, index: number) => (
                     <Select.Option
-                      key={item.img}
+                      key={index}
                       className="text-black rounded bg-white"
                       value={item.name}
                     >

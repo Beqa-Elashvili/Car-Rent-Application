@@ -51,7 +51,7 @@ export default function Tracing() {
   });
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-h-screen">
       <div className="relative h-full w-full">
         <Image
           alt="porche"
@@ -202,16 +202,16 @@ export default function Tracing() {
           </Carousel>
         </div>
       </div>
-      <div className="relative">
+      <div className="relative ">
         <Image
           src="/track.jpg"
-          className="h-full"
+          className="h-full min-h-screen"
           width={2000}
           height={2000}
           alt="image"
         />
         <div className="absolute p-2 md:p-20 inset-0 grid grid-cols-3 items-center justify-center">
-          {TracingCars.slice(0, 6)?.map((item: CarsType) => {
+          {TracingCars?.slice(3, -1).map((item: CarsType) => {
             return (
               <div
                 className="w-full z-10 cursor-pointer rounded-xl transition-transform transform hover:scale-105 duration-300 group"

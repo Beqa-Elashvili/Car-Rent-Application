@@ -68,7 +68,7 @@ function SignIn() {
           width={1000}
           height={300}
         />
-        <div className="relative">
+        <div className="relative w-10/12 md:w-1/2">
           <div className="absolute inset-0 backdrop-blur-lg z-10 rounded-lg"></div>
           <Form
             onFinish={handleSubmit}
@@ -81,10 +81,7 @@ function SignIn() {
             <h1 className="text-center text-3xl font-medium">
               Log in your Account
             </h1>
-            <p className="text-center text-sm text-gray-200 py-4">
-              Since that is your first trip, you'll need to provide us with some
-              information before you can check out.
-            </p>
+
             <p className="mb-2">Email:</p>
             <Form.Item
               name="email"
@@ -125,6 +122,15 @@ function SignIn() {
               loading={pending}
             >
               {pending ? "Logging in..." : "Log in"}
+            </Button>
+            <p className="text-center text-gray-200 py-2">dont have account?</p>
+            <div className="h-px bg-gray-500 w-full mb-4"></div>
+            <Button
+              onClick={() => router.push("/register")}
+              type="primary"
+              className="w-full"
+            >
+              Register
             </Button>
           </Form>
         </div>

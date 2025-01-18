@@ -46,6 +46,7 @@ export default function Page({
     deleteReservedCar,
     addCarToReserve,
     loadingStates,
+    userId,
     ChangeCarDayCount,
   } = useGlobalProvider();
 
@@ -84,7 +85,6 @@ export default function Page({
       if (min !== 0) {
         page = 1;
       }
-      console.log(min);
       const params = new URLSearchParams();
       if (brand && brand !== "All")
         params.append("brand", decodeURIComponent(brand));
@@ -100,7 +100,7 @@ export default function Page({
 
       const par = new URLSearchParams({
         page: String(page),
-        limit: "5",
+        limit: "10",
         ...params,
       });
       const url = `/api/cars?${params}&${par.toString()}`;
@@ -110,7 +110,6 @@ export default function Page({
       else {
         setBrandData(newCars);
       }
-
       if (newCars.length === 0) {
         setHasMore(false);
       }
@@ -653,7 +652,7 @@ export default function Page({
               ))}
             </div>
           ) : (
-            <div className="bg-orange-900 w-full md:w-10/12 p-2 flex flex-col justify-between items-center rounded-xl">
+            <div className="bg-orange-900 min-h-screen w-full md:w-10/12 p-2 flex flex-col justify-between rounded-xl">
               <div className="flex md:hidden w-full font-mono text-2xl gap-4 justify-between">
                 <Select
                   placeholder="Sort"
@@ -685,7 +684,11 @@ export default function Page({
                     return (
                       <div
                         key={car._id}
-                        className="bg-gray-300 hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
+                        style={{
+                          backgroundImage: `url('/industrialwebp.jpg')`,
+                          backgroundPosition: "center bottom",
+                        }}
+                        className="hover:cursor-pointer hover:bg-gray-400 text-white rounded-xl"
                       >
                         <img
                           className="h-40 text-center w-full object-contain"
@@ -738,23 +741,39 @@ export default function Page({
                             />
                             <p>8+ days</p>
                           </div>
-                          <Button
-                            disabled={!session?.user}
-                            onClick={() =>
-                              addCarToReserve(car, ChangeCarDayCount, setIsOpen)
-                            }
-                            className="w-full flex items-center mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
-                          >
-                            RESERVE
-                            <p>{loadingStates[car._id] && <Spin />}</p>
-                          </Button>
+                          {userId ? (
+                            <Button
+                              disabled={!session?.user}
+                              onClick={() =>
+                                addCarToReserve(
+                                  car,
+                                  ChangeCarDayCount,
+                                  setIsOpen
+                                )
+                              }
+                              className="w-full flex items-center mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
+                            >
+                              RESERVE
+                              <p>{loadingStates[car._id] && <Spin />}</p>
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => router.push("/login")}
+                              className="w-full flex items-center mt-2 font-mono text-orange-900 font-bold text-2xl bg-yellow-200 border-none"
+                            >
+                              Sign in
+                              <p>{loadingStates[car._id] && <Spin />}</p>
+                            </Button>
+                          )}
                         </div>
                       </div>
                     );
                   })}
                 </div>
               </div>
-              <Button onClick={loadMoreData}>Load More</Button>
+              <Button disabled={!hasMore} onClick={loadMoreData}>
+                Load More
+              </Button>
             </div>
           )}
         </div>

@@ -2,7 +2,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { User } from "models/userModal";
 import bcrypt from "bcrypt";
-import GoogleProvider from "next-auth/providers/google";
 
 interface Credentials {
   email: string;

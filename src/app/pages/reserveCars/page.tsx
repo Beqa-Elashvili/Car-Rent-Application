@@ -198,7 +198,9 @@ export default function ReserveCars() {
                           <div className="text-center md:flex items-center gap-4">
                             <div
                               className="border-none mt-2"
-                              onClick={() => deleteReserveTrack(item._id)}
+                              onClick={() =>
+                                deleteReserveTrack(item._id, false)
+                              }
                             >
                               <TiDeleteOutline className="size-8 m-auto text-gray-600 hover:text-gray-700" />
                             </div>
@@ -222,19 +224,22 @@ export default function ReserveCars() {
                   })}
                 </>
               )}
-              <div className="w-full bg-green-500 rounded-xl p-2 md:p-12">
+              <div className="w-full bg-orange-900 rounded-xl p-2 md:p-12">
                 <div className=" w-full md:w-3/6 m-auto flex flex-col gap-2 text-start">
                   <Button
                     onClick={() =>
                       session &&
                       deleteReservedCar(session?.user?.id, true, () => {})
                     }
-                    className="bg-red-500 text-white border-none font-semibold"
+                    className="bg-red-600 text-white border-none font-semibold"
                   >
                     Delete all reserved car
                   </Button>
-                  <Button className="bg-red-500 text-white border-none font-semibold">
-                    Delete all Reserved track
+                  <Button
+                    onClick={() => session && deleteReserveTrack("", true)}
+                    className="bg-red-600 text-white border-none font-semibold"
+                  >
+                    Delete all reserved track
                   </Button>
                   <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
                     <h1 className="w-20">Total Days:</h1>
@@ -271,14 +276,14 @@ export default function ReserveCars() {
               </div>
             </>
           ) : (
-            <div className="text-white flex flex-col gap-4 items-center font-mono">
+            <div className="text-white flex flex-col gap-4 items-cente font-mono">
               <h1 className="text-6xl">No Reserved</h1>
               {userId ? (
                 <>
                   <div className="flex flex-col items-center gap-4">
                     <Button
                       className="bg-orange-500 w-40 text-white font-mono border-none px-14"
-                      onClick={() => router.push("/")}
+                      onClick={() => router.push("/pages/collections")}
                     >
                       Explore
                     </Button>

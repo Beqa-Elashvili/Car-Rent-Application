@@ -123,7 +123,7 @@ interface GlobalContextProps {
   userId: string | undefined;
 
   fetchReservedCars: () => Promise<void>;
-  deleteReserveTrack: (_id: string) => Promise<void>;
+  deleteReserveTrack: (_id: string, userid: boolean) => Promise<void>;
   fetchReservedTrack: () => Promise<void>;
 
   deleteReservedCar: (

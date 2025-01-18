@@ -233,7 +233,6 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       setReservedTracks(response.data.ReservedTracks);
     } catch (error) {
       setReservedTracks([]);
-      console.log(error);
     }
   }
 
@@ -287,9 +286,10 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         setReserveCars([]);
       } else {
         url += `?id=${id}`;
+        await fetchReservedCars();
+        return;
       }
       const response = await axios.delete(url);
-      await fetchReservedCars();
       if (response.status === 200) {
         if (ReserveCars.length < 0 && setIsOpen) {
           setIsOpen(false);
@@ -300,17 +300,17 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const deleteReserveTrack = async (_id?: string, userId?: string) => {
+  const deleteReserveTrack = async (_id?: string, userId?: boolean) => {
     try {
-      if (_id) {
-        await axios.delete(`/api/reservedtracks?id=${_id}`);
-        await fetchReservedTrack();
-        return;
+      let url = "/api/reservedtracks";
+      if (userId) {
+        url += `?userId=${session?.user?.id}`;
+        setReservedTracks([]);
       } else {
-        await fetchReservedTrack();
-        await axios.delete(`/api/reservedtracks?userId=${userId}`);
-        await fetchReservedTrack();
+        url += `?id=${_id}`;
       }
+      await axios.delete(url);
+      await fetchReservedTrack();
     } catch (error) {
       console.log(error);
     }
