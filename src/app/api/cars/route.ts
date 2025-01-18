@@ -81,7 +81,6 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    // Update the car with new data
     const updatedCar = await Cars.findByIdAndUpdate(
       carId,
       { $set: carData },

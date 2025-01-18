@@ -144,7 +144,47 @@ async function GET(req: NextRequest) {
   }
 }
 
-// DELETE: Delete tracing car by ID
+async function PUT(req: NextRequest) {
+  try {
+    const { id, updates } = await req.json();
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { message: "Invalid or missing Car ID" },
+        { status: 400 }
+      );
+    }
+
+    await ConnectDB();
+
+    const updatedCar = await Tracing.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedCar) {
+      return NextResponse.json(
+        { message: "Tracing car not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Tracing car updated successfully", car: updatedCar },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error while updating car:", error);
+    return NextResponse.json(
+      {
+        message: "Failed to update tracing car",
+        error: error,
+      },
+      { status: 500 }
+    );
+  }
+}
+
 async function DELETE(req: NextRequest) {
   try {
     const carId = req.nextUrl.searchParams.get("id");
@@ -184,4 +224,4 @@ async function DELETE(req: NextRequest) {
   }
 }
 
-export { GET, POST, DELETE };
+export { GET, POST, DELETE, PUT };

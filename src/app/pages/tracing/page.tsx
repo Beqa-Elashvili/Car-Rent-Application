@@ -27,7 +27,7 @@ export default function Tracing() {
   async function GetTracingCars() {
     try {
       const resp = await axios.get("/api/tracing");
-      setTracingcars(resp.data.tracingcars);
+      setTracingcars(resp.data.tracingCars);
     } catch (error) {
       console.log("error Fetch Tracing cars", error);
     }
@@ -36,7 +36,7 @@ export default function Tracing() {
   useEffect(() => {
     GetTracingCars();
   }, []);
-  
+
   const iconVariants = (duration: number) => ({
     initial: { y: -10 },
     animate: {
@@ -221,10 +221,8 @@ export default function Tracing() {
                   <h1 className="text-xl hidden md:block font-sans font-medium text-amber-600">
                     {item.model}
                   </h1>
-                  <Image
+                  <img
                     src={item.img}
-                    width={2000}
-                    height={2000}
                     alt="carImg"
                     onClick={() => router.push(`/pages/solocar/${item._id}`)}
                     className="w-full h-16 md:h-40 object-contain"

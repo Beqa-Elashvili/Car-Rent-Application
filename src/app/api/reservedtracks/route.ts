@@ -142,7 +142,6 @@ export async function DELETE(req: any) {
       );
     }
 
-    // Delete a specific reserved track
     if (trackId) {
       if (!mongoose.Types.ObjectId.isValid(trackId)) {
         return NextResponse.json(
@@ -168,7 +167,6 @@ export async function DELETE(req: any) {
       );
     }
 
-    // If no userId, trackId, or deleteAll parameter is provided
     return NextResponse.json(
       { message: "Track ID, User ID, or deleteAll flag is required" },
       { status: 400 }
