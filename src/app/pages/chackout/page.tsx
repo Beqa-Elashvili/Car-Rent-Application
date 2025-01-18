@@ -138,7 +138,7 @@ export default function Chackout() {
     const totalDays = TotalRentDays();
     const totalPrice = handleToTalPrice();
     try {
-      const resp = await axios.post("/api/orders", {
+      await axios.post("/api/orders", {
         userId,
         order: {
           ...order,
