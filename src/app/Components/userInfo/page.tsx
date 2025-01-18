@@ -14,7 +14,7 @@ const UserProfile = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const { ReserveCars } = useGlobalProvider();
+  const { ReserveCars, reservedTracks } = useGlobalProvider();
 
   if (status === "loading") {
     return (
@@ -66,7 +66,7 @@ const UserProfile = () => {
           >
             <FaCarTunnel className="size-8" />
             <div className="absolute top-0 right-0 bg-yellow-500 p-2 rounded-full h-6 w-6 flex items-center justify-center">
-              {ReserveCars?.length}
+              {reservedTracks.length + ReserveCars.length}
             </div>
           </button>
         </div>

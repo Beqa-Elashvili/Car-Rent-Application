@@ -4,12 +4,13 @@ import { CarsType } from "@/app/Providers/GlobalProvider/GlobalContext";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { createCarImage } from "@/app/CreateCarImage";
-import { Button } from "antd";
+import { Button, Spin } from "antd";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Carousel } from "antd";
 import Image from "next/image";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
+import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
 
 export default function Car({ params }: { params: { id?: string } }) {
   const [car, setCar] = useState<CarsType>();
@@ -21,7 +22,14 @@ export default function Car({ params }: { params: { id?: string } }) {
     exit: { opacity: 0 },
     transition: { duration: 0.8 },
   };
-  const { ReserveCars, setLoading, loading } = useGlobalProvider();
+  const {
+    ReserveCars,
+    setLoading,
+    loading,
+    addCarToReserve,
+    ChangeCarDayCount,
+    loadingStates,
+  } = useGlobalProvider();
   const router = useRouter();
 
   const renderSectionContent = () => {
@@ -176,6 +184,9 @@ export default function Car({ params }: { params: { id?: string } }) {
     }
   };
 
+  const Found =
+    car !== undefined && ReserveCars?.find((item) => item.img === car.img);
+  console.log(Found);
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-2 md:p-12">
       {loading ? (
@@ -279,11 +290,43 @@ export default function Car({ params }: { params: { id?: string } }) {
                     Class
                   </Button>
                 </div>
+                {Found && (
+                  <div className="flex gap-2 items-center justify-center">
+                    <Button
+                      onClick={() => router.push("/pages/reserveCars")}
+                      className="flex md:hidden font-mono text-lg p-4 px-12 justify-center my-4 m-auto rounded-xl"
+                    >
+                      Return
+                    </Button>
+                    <button
+                      onClick={() =>
+                        ChangeCarDayCount(Found, false, "increase")
+                      }
+                    >
+                      <CiCirclePlus className="size-8  text-gray-600 hover:text-gray-700" />
+                    </button>
+                    {loadingStates[Found._id] ? (
+                      <Spin />
+                    ) : (
+                      <div>{Found.carDayCount}</div>
+                    )}
+                    <button
+                      onClick={() => {
+                        ChangeCarDayCount(Found, false, "decrease");
+                      }}
+                    >
+                      <CiCircleMinus className="size-8 text-gray-600 hover:text-gray-700" />
+                    </button>
+                  </div>
+                )}
                 <Button
-                  onClick={() => router.push("/pages/reserveCars")}
-                  className="flex md:hidden font-mono text-lg p-4 px-12 justify-center my-4 m-auto rounded-xl"
+                  onClick={() =>
+                    addCarToReserve(car, ChangeCarDayCount, () => {})
+                  }
+                  className="bg-orange-500 mt-2 text-white text-xl font-mono border-none"
                 >
-                  Return
+                  RESERVE
+                  <p>{car.dayPrice} $</p>
                 </Button>
                 <motion.div
                   key={selectedSection}
@@ -328,9 +371,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                   onClick={() => router.push(`/pages/solocar/${item._id}`)}
                   className="text-center p-0 md:p-2 hover:bg-slate-700 rounded-full cursor-pointer"
                 >
-                  <Image
-                    width={2000}
-                    height={2000}
+                  <img
                     className="h-20 md:h-60 md:w-96 m-auto object-contain"
                     src={item.img}
                     alt="Carimg"

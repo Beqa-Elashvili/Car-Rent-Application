@@ -1,3 +1,4 @@
+import { promises } from "dns";
 import { Dispatch, SetStateAction, createContext } from "react";
 import { IconType } from "react-icons";
 
@@ -122,6 +123,9 @@ interface GlobalContextProps {
   userId: string | undefined;
 
   fetchReservedCars: () => Promise<void>;
+  deleteReserveTrack: (_id: string) => Promise<void>;
+  fetchReservedTrack: () => Promise<void>;
+
   deleteReservedCar: (
     id: string,
     isUserId: boolean,
@@ -176,6 +180,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   collections: [],
   setCollections: () => {},
   addCarToReserve: async () => {},
+  deleteReserveTrack: async () => {},
   reservedTracks: [],
   setReservedTracks: () => {},
   conditions: [],
@@ -185,4 +190,5 @@ export const GlobalContext = createContext<GlobalContextProps>({
   fetchReservedCars: async () => {},
   deleteReservedCar: async () => {},
   ChangeCarDayCount: async () => {},
+  fetchReservedTrack: async () => {},
 });

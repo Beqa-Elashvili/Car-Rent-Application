@@ -148,11 +148,22 @@ export function Main() {
             <Skeleton.Image active className="w-full h-48" />
           </div>
           <div className=" hidden lg:flex items-center justify-between">
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
-            <Skeleton.Image active className="w-full h-48" />
+            <div>
+              <Skeleton.Image active className="w-full h-48" />
+            </div>
+            <div>
+              <Skeleton.Image active className="w-full h-48" />
+            </div>{" "}
+            <div>
+              <Skeleton.Image active className="w-full h-48" />
+            </div>{" "}
+            <div>
+              <Skeleton.Image active className="w-full h-48" />
+            </div>{" "}
+            <div>
+              <Skeleton.Image active className="w-full h-48" />
+              <Skeleton.Input active />
+            </div>
           </div>
         </div>
       )}
@@ -168,7 +179,7 @@ export function Main() {
           return (
             <div
               onClick={() => router.push(`/pages/solocar/${item._id}`)}
-              className="p-2 w-full cursor-pointer rounded-xl hover:bg-orange-300"
+              className="p-2 w-full cursor-pointer rounded-xl transition duration-300 hover:scale-105 overflow-hidden"
               key={item._id}
             >
               <div className="relative min-h-60 rounded-t-xl overflow-hidden">

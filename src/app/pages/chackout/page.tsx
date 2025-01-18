@@ -147,7 +147,9 @@ export default function Chackout() {
         },
       });
       {
-        userId && deleteReservedCar(userId, true, () => {});
+        if (userId) {
+          await deleteReservedCar(userId, true, () => {});
+        }
       }
       router.push("/pages/orders");
     } catch (error: unknown) {

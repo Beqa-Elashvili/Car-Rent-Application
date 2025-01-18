@@ -13,14 +13,17 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Track({ params }: { params: { id: number } }) {
-  const { tracks, userId } = useGlobalProvider();
+  const { tracks, userId, fetchReservedTrack } = useGlobalProvider();
   const router = useRouter();
   const currentTrack = tracks[params.id];
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOk = () => {
+    if (reserveTrackValue.dayEnd === "") {
+      alert("Please fill in the graphs");
+      return;
+    }
     PostReserveTrack();
-    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
@@ -129,7 +132,9 @@ export default function Track({ params }: { params: { id: number } }) {
         userId,
       };
 
-      const resp = await axios.post("/api/reservedtracks", requestData);
+      await axios.post("/api/reservedtracks", requestData);
+      await fetchReservedTrack();
+      setIsModalOpen(false);
     } catch (error) {
       console.log(error);
     } finally {
@@ -143,9 +148,9 @@ export default function Track({ params }: { params: { id: number } }) {
         oneLap: false,
       });
       setStartDate(null);
+      setIsModalOpen(false);
     }
   }
-  console.log(reserveTrackValue);
 
   return (
     <div className="bg-gray-900 p-2 md:p-0">

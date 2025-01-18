@@ -87,7 +87,6 @@ export async function DELETE(req: any) {
     await ConnectDB();
 
     if (deleteAll === "true") {
-      // Delete all orders in the database
       const result = await Orders.deleteMany({});
       return NextResponse.json(
         {

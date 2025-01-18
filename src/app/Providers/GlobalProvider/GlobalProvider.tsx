@@ -229,9 +229,10 @@ export function GlobalProvider({ children }: PropsWithChildren) {
 
   async function fetchReservedTrack() {
     try {
-      const resp = await axios.get(`/api/reservedtracks?userId=${userId}`);
-      setReservedTracks(resp.data.ReservedTracks);
+      const response = await axios.get(`/api/reservedtracks?userId=${userId}`);
+      setReservedTracks(response.data.ReservedTracks);
     } catch (error) {
+      setReservedTracks([]);
       console.log(error);
     }
   }
@@ -261,7 +262,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       setLoading(false);
     } catch (error: any) {
       setError(error.message || "Error fetching reserved cars");
-      setLoading(false);
+      setReserveCars([]);
     } finally {
       setLoading(false);
     }
@@ -296,6 +297,22 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       }
     } catch (error: any) {
       console.error("Error deleting reserved car(s):", error);
+    }
+  };
+
+  const deleteReserveTrack = async (_id?: string, userId?: string) => {
+    try {
+      if (_id) {
+        await axios.delete(`/api/reservedtracks?id=${_id}`);
+        await fetchReservedTrack();
+        return;
+      } else {
+        await fetchReservedTrack();
+        await axios.delete(`/api/reservedtracks?userId=${userId}`);
+        await fetchReservedTrack();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -395,10 +412,12 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         deleteReservedCar,
         addCarToReserve,
         userId,
+        deleteReserveTrack,
         carData,
         setCarData,
         tracks,
         setTracks,
+        fetchReservedTrack,
         loadingStates,
         setLoadingStates,
         ChangeCarDayCount,
