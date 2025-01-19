@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Cars } from "models/cars";
 import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export async function POST(req: NextRequest) {
   try {
@@ -61,44 +62,76 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PUT: Update car details by carId
 export async function PUT(req: NextRequest) {
   try {
-    const { carId, carData } = await req.json();
+    const { cars } = await req.json();
 
-    // Validate carId and carData
-    if (!carId || !mongoose.Types.ObjectId.isValid(carId)) {
+    if (!cars || !Array.isArray(cars) || cars.length === 0) {
       return NextResponse.json(
-        { message: "Invalid or missing car ID" },
+        { message: "An array of cars is required for updating" },
         { status: 400 }
       );
     }
 
-    if (!carData || typeof carData !== "object") {
-      return NextResponse.json(
-        { message: "Car data is required and should be an object" },
-        { status: 400 }
-      );
-    }
+    const updateResults = [];
 
-    const updatedCar = await Cars.findByIdAndUpdate(
-      carId,
-      { $set: carData },
-      { new: true, runValidators: true }
-    );
+    for (const { carId, carData } of cars) {
+      if (!carId || !mongoose.Types.ObjectId.isValid(carId)) {
+        updateResults.push({
+          carId,
+          status: "failed",
+          message: "Invalid car ID",
+        });
+        continue;
+      }
 
-    if (!updatedCar) {
-      return NextResponse.json({ message: "Car not found" }, { status: 404 });
+      if (
+        !carData ||
+        typeof carData !== "object" ||
+        Object.keys(carData).length === 0
+      ) {
+        updateResults.push({
+          carId,
+          status: "failed",
+          message:
+            "Car data is required and should include at least one field to update",
+        });
+        continue;
+      }
+
+      try {
+        const updatedCar = await Cars.findByIdAndUpdate(
+          carId,
+          { $set: carData },
+          { new: true, runValidators: true }
+        );
+
+        if (!updatedCar) {
+          updateResults.push({
+            carId,
+            status: "failed",
+            message: "Car not found",
+          });
+        } else {
+          updateResults.push({ carId, status: "success", car: updatedCar });
+        }
+      } catch (error) {
+        updateResults.push({
+          carId,
+          status: "failed",
+          message: `Error updating car: ${error}`,
+        });
+      }
     }
 
     return NextResponse.json(
-      { message: "Car updated successfully", car: updatedCar },
+      { message: "Bulk update completed", results: updateResults },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error updating car:", error);
+    console.error("Error updating cars:", error);
     return NextResponse.json(
-      { message: "Failed to update car", error },
+      { message: "Failed to update cars", error },
       { status: 500 }
     );
   }

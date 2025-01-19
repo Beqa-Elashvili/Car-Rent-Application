@@ -286,8 +286,6 @@ export function GlobalProvider({ children }: PropsWithChildren) {
         setReserveCars([]);
       } else {
         url += `?id=${id}`;
-        await fetchReservedCars();
-        return;
       }
       const response = await axios.delete(url);
       if (response.status === 200) {
@@ -295,6 +293,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
           setIsOpen(false);
         }
       }
+      await fetchReservedCars();
     } catch (error: any) {
       console.error("Error deleting reserved car(s):", error);
     }

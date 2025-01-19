@@ -23,6 +23,8 @@ export default function Conditions() {
   const router = useRouter();
   const { conditions, location } = useGlobalProvider();
 
+  // console.log(location);
+
   return (
     <div className="bg-gray-900 h-full w-full text-white">
       <div className="relative w-full bg-gray-800 flex flex-wrap overflow-hidden p-2 lg:p-16 items-center py-28">

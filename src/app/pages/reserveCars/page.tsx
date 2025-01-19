@@ -283,7 +283,7 @@ export default function ReserveCars() {
                   <div className="flex flex-col items-center gap-4">
                     <Button
                       className="bg-orange-500 w-40 text-white font-mono border-none px-14"
-                      onClick={() => router.push("/pages/collections")}
+                      onClick={() => router.push("/pages/collection")}
                     >
                       Explore
                     </Button>

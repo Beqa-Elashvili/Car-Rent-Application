@@ -20,12 +20,12 @@ export function Main() {
 
   const screens = Grid.useBreakpoint();
 
-  let slidesToShow = 1; 
+  let slidesToShow = 1;
   if (screens.md) {
-    slidesToShow = 3; 
+    slidesToShow = 3;
   }
   if (screens.xl) {
-    slidesToShow = 5; 
+    slidesToShow = 5;
   }
 
   const GetCarModel = (model: string) => {
