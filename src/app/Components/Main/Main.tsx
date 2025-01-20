@@ -297,7 +297,7 @@ export function Main() {
               return (
                 <div
                   onClick={() => router.push(`/pages/solocar/${item._id}`)}
-                  className="p-2 w-full cursor-pointer rounded-xl transition duration-300 hover:scale-105 overflow-hidden"
+                  className="p-2 w-full cursor-pointer rounded-xl transition duration-300 md:hover:scale-105 overflow-hidden"
                   key={item._id}
                 >
                   <div className="relative min-h-60 rounded-t-xl overflow-hidden">
