@@ -8,7 +8,7 @@ export default function useHandleBrandImg() {
       case "Bugatti":
         return "/BrandsLogos/bugatt.png";
       case "Jaguar":
-        return "/BrandsLogos/jaguar-Logo.png";
+        return "/BrandsLogos/Jaguar-Logo.png";
       case "Mercedes-Benz":
         return "/BrandsLogos/mercedes-benz.png";
       case "Audi":
