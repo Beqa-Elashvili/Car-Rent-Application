@@ -19,8 +19,6 @@ export default function Tracing() {
   const { tracks, addCarToReserve, ChangeCarDayCount, loadingStates } =
     useGlobalProvider();
 
-  console.log(tracks);
-
   const router = useRouter();
   const { data: session } = useSession();
 
