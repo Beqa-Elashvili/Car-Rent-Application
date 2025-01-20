@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { Cars } from "models/cars";
 import { NextRequest, NextResponse } from "next/server";
 import { ConnectDB } from "utils/connect";
-import { NextApiRequest, NextApiResponse } from "next";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,17 +33,13 @@ export async function POST(req: NextRequest) {
         { message: "Car created successfully", car: newCar },
         { status: 201 }
       );
-    }
-    // Check if multiple cars are provided
-    else if (cars && Array.isArray(cars)) {
+    } else if (cars && Array.isArray(cars)) {
       const newCars = await Cars.insertMany(cars);
       return NextResponse.json(
         { message: "Cars created successfully", cars: newCars },
         { status: 201 }
       );
-    }
-    // Invalid request format
-    else {
+    } else {
       return NextResponse.json(
         {
           message:

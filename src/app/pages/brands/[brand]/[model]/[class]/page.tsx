@@ -57,6 +57,7 @@ export default function Page({
   const router = useRouter();
   const [form] = useForm();
   const numb = 9;
+  console.log(brand);
 
   const sortByPrices = (values: number[]) => {
     setMaxMinPrices({

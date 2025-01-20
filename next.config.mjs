@@ -2,6 +2,7 @@
 const nextConfig = {
   images: {
     domains: ["storage.cloud.google.com"],
+    domains: ["raw.githubusercontent.com"],
   },
 };
 

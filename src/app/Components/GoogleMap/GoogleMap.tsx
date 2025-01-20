@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { randomIconUrl } from ".";
 import {
   MapContainer,
   Marker,
@@ -15,8 +14,8 @@ import L from "leaflet";
 import { Button } from "antd";
 import axios from "axios";
 
-export default function GoogleMap() {
-  const { setLocation, location } = useGlobalProvider();
+export default function OpenStreetMap() {
+  const { setLocation } = useGlobalProvider();
 
   const [clickedPosition, setClickedPosition] = useState<
     [number, number] | null
@@ -25,28 +24,24 @@ export default function GoogleMap() {
     [number, number] | null
   >(null);
 
-
   const fetchLocationData = async (lat: number, lon: number) => {
-    const apiKey = "AIzaSyC13XWRMgS774gH4VD_NqvMBe3jV6Ynh6Y";
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lon}&key=${apiKey}`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
 
     try {
       const response = await axios.get(url);
-      const results = response.data.results;
+      const data = response.data;
 
-      if (results.length > 0) {
-        const addressComponents = results[0].address_components;
-        const cityComponent = addressComponents.find(
-          (component: { types: string[] }) =>
-            component.types.includes("locality")
-        );
-        const streetComponent = addressComponents.find(
-          (component: { types: string[] }) => component.types.includes("route")
-        );
+      if (data) {
+        const city =
+          data.address.city ||
+          data.address.town ||
+          data.address.village ||
+          null;
+        const street = data.address.road || null;
 
         setLocation({
-          city: cityComponent ? cityComponent.long_name : null,
-          street: streetComponent ? streetComponent.long_name : null,
+          city: city,
+          street: street,
         });
       }
     } catch (error) {
@@ -98,7 +93,7 @@ export default function GoogleMap() {
   }
 
   const DefaultIcon = L.icon({
-    iconUrl: randomIconUrl,
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
     iconSize: [40, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -120,7 +115,7 @@ export default function GoogleMap() {
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://api.maptiler.com/maps/basic-v2/256/{z}/{x}/{y}.png?key=d3k12FZaz83jdLUdUwqb"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {clickedPosition ? (
             <Marker position={clickedPosition} icon={DefaultIcon}>
