@@ -5,6 +5,12 @@ import { IconType } from "react-icons";
 export interface TLocation {
   city: string | null;
   street: string | null;
+  country?: string | null;
+  house_number?: string | null;
+  neighbourhood?: string | null;
+  postcode?: string | null;
+  suburb?: string | null;
+  quarter?: string | null;
 }
 export interface TFormtype {
   brand: string;
@@ -175,7 +181,16 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setLoading: () => {},
   ReserveCars: [],
   setReserveCars: () => {},
-  location: { city: null, street: null },
+  location: {
+    city: null,
+    street: null,
+    country: null,
+    house_number: null,
+    neighbourhood: null,
+    postcode: null,
+    suburb: null,
+    quarter: null,
+  },
   setLocation: () => {},
   collections: [],
   setCollections: () => {},

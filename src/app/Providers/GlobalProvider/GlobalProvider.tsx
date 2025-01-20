@@ -193,7 +193,14 @@ export function GlobalProvider({ children }: PropsWithChildren) {
   const [location, setLocation] = useState<TLocation>({
     city: null,
     street: null,
+    country: null,
+    house_number: null,
+    neighbourhood: null,
+    postcode: null,
+    suburb: null,
+    quarter: null,
   });
+
   const [collections, setCollections] = useState<TCollecttion[]>([]);
   const [conditions, setConditions] = useState<TConditions[]>(ConditionsRules);
   const [ReserveCars, setReserveCars] = useState<CarsType[]>([]);

@@ -187,7 +187,7 @@ export default function Car({ params }: { params: { id?: string } }) {
 
   const Found =
     car !== undefined && ReserveCars?.find((item) => item.img === car.img);
-  console.log(Found);
+
   return (
     <div className="bg-gray-900 flex min-h-screen h-full flex-col justify-center p-2 md:p-12">
       {loading ? (
@@ -196,7 +196,7 @@ export default function Car({ params }: { params: { id?: string } }) {
           height={2000}
           className="w-2/4 m-auto"
           src="/Animation.gif"
-          alt=""
+          alt="img"
         />
       ) : (
         <>
@@ -292,7 +292,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                   </Button>
                 </div>
                 {Found && (
-                  <div className="flex gap-2 items-center justify-center">
+                  <div className="flex py-4 gap-2 items-center justify-center">
                     <Button
                       onClick={() => router.push("/pages/reserveCars")}
                       className="flex md:hidden font-mono text-lg p-4 px-12 justify-center my-4 m-auto rounded-xl"
@@ -321,7 +321,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                   </div>
                 )}
                 {userId ? (
-                  <>
+                  <div className="py-4">
                     <Button
                       onClick={() =>
                         addCarToReserve(car, ChangeCarDayCount, () => {})
@@ -331,7 +331,7 @@ export default function Car({ params }: { params: { id?: string } }) {
                       RESERVE
                       <p>{car.dayPrice} $</p>
                     </Button>
-                  </>
+                  </div>
                 ) : (
                   <Button
                     onClick={() => router.push("/login")}

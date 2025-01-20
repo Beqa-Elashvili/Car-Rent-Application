@@ -30,18 +30,18 @@ export default function OpenStreetMap() {
     try {
       const response = await axios.get(url);
       const data = response.data;
+      console.log(data);
 
       if (data) {
-        const city =
-          data.address.city ||
-          data.address.town ||
-          data.address.village ||
-          null;
-        const street = data.address.road || null;
-
         setLocation({
-          city: city,
-          street: street,
+          city: data.address.city || "...",
+          street: data.address.road,
+          country: data?.address.country || null,
+          house_number: data?.address.house_number || null,
+          postcode: data?.address.postcode || null,
+          neighbourhood: data?.address.neighbourhood || null,
+          suburb: data?.address.suburb || null,
+          quarter: data?.address.quarter || null,
         });
       }
     } catch (error) {

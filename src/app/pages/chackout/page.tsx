@@ -8,6 +8,7 @@ import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { LoadingOutlined } from "@ant-design/icons";
+import { FaMapMarkedAlt } from "react-icons/fa";
 import useGetUpdatedPrice from "@/app/hooks/GetDiscounthook/useGetDiscount";
 
 const GoogleMap = dynamic(
@@ -237,7 +238,6 @@ export default function Chackout() {
                 <Input disabled value={session?.user?.username || ""} />
               </div>
             </Form.Item>
-
             <Form.Item
               name="email"
               rules={[{ required: true, message: "Please input your email!" }]}
@@ -250,7 +250,6 @@ export default function Chackout() {
                 <Input disabled value={session?.user?.email || ""} />
               </div>
             </Form.Item>
-
             <Form.Item
               name="city"
               rules={[{ required: true, message: "Please input your city!" }]}
@@ -259,7 +258,7 @@ export default function Chackout() {
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   City
                 </p>
-                <Input value={location?.city} />
+                <Input value={location?.city || "..."} />
               </div>
             </Form.Item>
             <Form.Item
@@ -270,15 +269,48 @@ export default function Chackout() {
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   Street
                 </p>
-                {location?.street ? (
-                  <Input value={location?.street || "..."} />
-                ) : (
-                  <Input value={"..."} />
-                )}
+                <Input
+                  value={`${location?.street || "..."} ${
+                    location?.house_number
+                      ? `No ${location.house_number}`
+                      : "..."
+                  }`}
+                />
               </div>
             </Form.Item>
-            <Button className="mb-2" type="primary" onClick={showModal}>
-              Open Map
+            <Form.Item name="country">
+              <div>
+                <p className="mb-2 flex items-center gap-2 text-gray-600">
+                  Country
+                </p>
+                <Input value={location?.country || "..."} />
+              </div>
+            </Form.Item>{" "}
+            <Form.Item name="District">
+              <div>
+                <p className="mb-2 flex items-center gap-2 text-gray-600">
+                  District
+                </p>
+                <Input
+                  value={
+                    location?.neighbourhood ||
+                    location?.quarter ||
+                    location?.suburb ||
+                    "..."
+                  }
+                />
+              </div>
+            </Form.Item>{" "}
+            <Form.Item name="District">
+              <div>
+                <p className="mb-2 flex items-center gap-2 text-gray-600">
+                  Post code
+                </p>
+                <Input value={location?.postcode || "..."} />
+              </div>
+            </Form.Item>{" "}
+            <Button className="mb-2 flex" type="primary" onClick={showModal}>
+              <FaMapMarkedAlt /> Open Map
             </Button>
             <Form.Item
               name="drivingLicense"
@@ -296,7 +328,6 @@ export default function Chackout() {
                 <Input type="number" maxLength={9} placeholder="*********" />
               </div>
             </Form.Item>
-
             <Modal
               open={isModalOpen}
               footer={false}
@@ -305,7 +336,6 @@ export default function Chackout() {
             >
               <GoogleMap />
             </Modal>
-
             <div className="flex flex-col gap-4">
               <h1 className="text-2xl">Payment Method</h1>
               <div className="border rounded flex items-center justify-between w-full p-2">
@@ -445,7 +475,7 @@ export default function Chackout() {
           </Form>
         ) : (
           <Spin
-            className="w-full m-auto"
+            className="w-full h-96 m-auto"
             indicator={<LoadingOutlined spin />}
             size="large"
           />

@@ -143,7 +143,11 @@ function Register() {
                 { required: true, message: "Please input your username!" },
               ]}
             >
-              <Input className="border rounded p-2" placeholder="UserName" />
+              <Input
+                name="username"
+                className="border rounded p-2"
+                placeholder="UserName"
+              />
             </Form.Item>
             <Form.Item
               name="lastname"
