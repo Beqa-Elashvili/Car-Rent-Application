@@ -57,7 +57,6 @@ export default function Page({
   const router = useRouter();
   const [form] = useForm();
   const numb = 9;
-  console.log(brand);
 
   const sortByPrices = (values: number[]) => {
     setMaxMinPrices({
@@ -121,7 +120,10 @@ export default function Page({
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         setError(error.response?.data?.message);
-        console.log("error thile fatch brand data");
+        console.log(
+          "error thile fatch brand data",
+          error.response?.data?.message
+        );
       }
     } finally {
       setLoading(false);

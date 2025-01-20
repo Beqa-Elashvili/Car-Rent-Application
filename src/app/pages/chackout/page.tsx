@@ -33,6 +33,7 @@ export default function Chackout() {
   const [form] = Form.useForm();
   const router = useRouter();
   const { getUpdatedPrice } = useGetUpdatedPrice();
+  const [postOrderPending, setPostOrderPending] = useState<boolean>(false);
 
   const [state, setState] = useState({
     cardNumber: "",
@@ -75,48 +76,73 @@ export default function Chackout() {
     cardName: string;
     cardunlock: string;
   };
+  useEffect(() => {
+    console.log(ReserveCars);
+  }, []);
 
   const onFinish = (values: FieldType) => {
-    if (values.drivingLicense.length !== 9) {
-      form.setFields([
-        {
-          name: "drivingLicense",
-          errors: ["ნომერი უნდა შედგებოდეს 9 რიცხვისაგან"],
-        },
-      ]);
-      return;
-    }
-    if (values.cardNumber.toString().length !== 16) {
-      form.setFields([
-        {
-          name: "cardNumber",
-          errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის ნომერი"],
-        },
-      ]);
-      return;
-    }
-    if (values.cvc.toString().length !== 3) {
-      form.setFields([
-        {
-          name: "cvc",
-          errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის cvc კოდი"],
-        },
-      ]);
-      return;
-    }
-    if (values.expiry.toString().length !== 4) {
-      form.setFields([
-        {
-          name: "expiry",
-          errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის თარიღი"],
-        },
-      ]);
-      return;
-    }
     try {
+      if (ReserveCars.length <= 0 || reservedTracks.length <= 0) {
+        alert("please add reserve first");
+        return;
+      }
+      setPostOrderPending(true);
+      if (ReserveCars.length !== 0 || reservedTracks.length !== 0) {
+        alert("Please add Reserve first");
+        return;
+      }
+      if (values.drivingLicense.length !== 9) {
+        form.setFields([
+          {
+            name: "drivingLicense",
+            errors: ["ნომერი უნდა შედგებოდეს 9 რიცხვისაგან"],
+          },
+        ]);
+
+        return;
+      }
+      if (values.cardNumber.toString().length !== 16) {
+        form.setFields([
+          {
+            name: "cardNumber",
+            errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის ნომერი"],
+          },
+        ]);
+        return;
+      }
+      if (values.cvc.toString().length !== 3) {
+        form.setFields([
+          {
+            name: "cvc",
+            errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის cvc კოდი"],
+          },
+        ]);
+        return;
+      }
+      if (values.expiry.toString().length !== 4) {
+        form.setFields([
+          {
+            name: "expiry",
+            errors: ["გთხოვთ სწორად შეიყვანოთ ბარათის თარიღი"],
+          },
+        ]);
+        return;
+      }
+      if (values.cardunlock.length !== 4) {
+        form.setFields([
+          {
+            name: "cardunlock",
+            errors: ["განბლოკვის კოდი უნდა შედგებოდეს 4 რიცხვისგან"],
+          },
+        ]);
+
+        return;
+      }
       PostChackout(values);
     } catch (error) {
       console.log(error);
+    } finally {
+      setPostOrderPending(false);
     }
   };
 
@@ -139,6 +165,7 @@ export default function Chackout() {
     const totalDays = TotalRentDays();
     const totalPrice = handleToTalPrice();
     try {
+      setPostOrderPending(true);
       await axios.post("/api/orders", {
         userId,
         order: {
@@ -155,6 +182,8 @@ export default function Chackout() {
       router.push("/pages/orders");
     } catch (error: unknown) {
       console.log("error while post order", error);
+    } finally {
+      setPostOrderPending(false);
     }
   }
 
@@ -405,13 +434,24 @@ export default function Chackout() {
               </div>
             </div>
             <Form.Item className="mt-2" label={null}>
-              <Button type="primary" htmlType="submit">
+              <Button
+                className="flex items-center"
+                type="primary"
+                htmlType="submit"
+              >
                 Submit
+                {postOrderPending && (
+                  <Spin indicator={<LoadingOutlined spin />} />
+                )}
               </Button>
             </Form.Item>
           </Form>
         ) : (
-          <Spin className="w-full m-auto" indicator={<LoadingOutlined spin />} size="large" />
+          <Spin
+            className="w-full m-auto"
+            indicator={<LoadingOutlined spin />}
+            size="large"
+          />
         )}
         <div className="lg:border-l w-full lg:w-2/6 p-4">
           <div className="hidden">

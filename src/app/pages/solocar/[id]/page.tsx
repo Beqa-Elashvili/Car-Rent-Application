@@ -29,6 +29,7 @@ export default function Car({ params }: { params: { id?: string } }) {
     addCarToReserve,
     ChangeCarDayCount,
     loadingStates,
+    userId,
   } = useGlobalProvider();
   const router = useRouter();
 
@@ -319,15 +320,26 @@ export default function Car({ params }: { params: { id?: string } }) {
                     </button>
                   </div>
                 )}
-                <Button
-                  onClick={() =>
-                    addCarToReserve(car, ChangeCarDayCount, () => {})
-                  }
-                  className="bg-orange-500 mt-2 text-white text-xl font-mono border-none"
-                >
-                  RESERVE
-                  <p>{car.dayPrice} $</p>
-                </Button>
+                {userId ? (
+                  <>
+                    <Button
+                      onClick={() =>
+                        addCarToReserve(car, ChangeCarDayCount, () => {})
+                      }
+                      className="bg-orange-500 mt-2 text-white text-xl font-mono border-none"
+                    >
+                      RESERVE
+                      <p>{car.dayPrice} $</p>
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => router.push("/login")}
+                    className="bg-orange-500 mt-2 text-white text-xl font-mono border-none"
+                  >
+                    Sign in
+                  </Button>
+                )}
                 <motion.div
                   key={selectedSection}
                   initial={{ opacity: 0 }}

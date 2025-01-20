@@ -4,13 +4,14 @@ import { Ttracks } from "@/app/Providers/GlobalProvider/GlobalContext";
 
 import { Button, Input } from "antd";
 import { useRouter } from "next/navigation";
-import { Carousel, Calendar, Modal } from "antd";
+import { Carousel, Calendar, Modal, Spin } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useState } from "react";
 import axios from "axios";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function Track({ params }: { params: { id: number } }) {
   const { tracks, userId, fetchReservedTrack } = useGlobalProvider();
@@ -99,9 +100,10 @@ export default function Track({ params }: { params: { id: number } }) {
   const disableBeforeToday = (current: any) => {
     return current && current.isBefore(dayjs(), "day");
   };
-
+  const [postTrackPending, setPostTrackPending] = useState<boolean>(false);
   async function PostReserveTrack() {
     try {
+      setPostTrackPending(true);
       if (!reserveTrackValue || !currentTrack) {
         console.log("Missing data for reserveTrackValue or currentTrack");
         return;
@@ -147,6 +149,7 @@ export default function Track({ params }: { params: { id: number } }) {
         dayCount: 0,
         oneLap: false,
       });
+      setPostTrackPending(false);
       setStartDate(null);
       setIsModalOpen(false);
     }
@@ -160,6 +163,27 @@ export default function Track({ params }: { params: { id: number } }) {
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={[
+            <Button
+              key="cancel"
+              onClick={handleCancel}
+              disabled={postTrackPending}
+            >
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              onClick={handleOk}
+              disabled={postTrackPending}
+            >
+              {postTrackPending ? (
+                <Spin indicator={<LoadingOutlined spin />} />
+              ) : (
+                "OK"
+              )}
+            </Button>,
+          ]}
         >
           <div className="flex items-center justify-between gap-2">
             <div className="p-2 w-full border rounded h-8 flex items-center justify-center">
@@ -280,7 +304,4 @@ export default function Track({ params }: { params: { id: number } }) {
       </Carousel>
     </div>
   );
-}
-function moment(): any {
-  throw new Error("Function not implemented.");
 }

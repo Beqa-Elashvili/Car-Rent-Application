@@ -39,7 +39,6 @@ export async function GET(req: any) {
         );
       }
 
-      console.log("Looking for carId:", carId);
 
       const car = await reservedCars.findById(carId);
 
