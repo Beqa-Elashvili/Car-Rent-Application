@@ -80,12 +80,12 @@ export default function Orders() {
             key={item._id}
             className="border rounded-xl flex flex-col gap-2 p-2 bg-white bg-slate-500"
           >
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between">
               <Image
                 height={500}
                 width={1000}
                 className="w-24"
-                src="/car-stainless-logo-png.webp"
+                src="/car-logo-png-25.png"
                 alt="logoPng"
               />
               <p>NO. {item._id.replace(/\D/g, "").slice(-2)}</p>

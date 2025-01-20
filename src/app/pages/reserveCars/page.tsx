@@ -241,20 +241,20 @@ export default function ReserveCars() {
                   >
                     Delete all reserved track
                   </Button>
-                  <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
-                    <h1 className="w-20">Total Days:</h1>
+                  <div className="bg-white text-yellow-600 flex justify-between p-2 rounded-xl">
+                    <h1>Total Days:</h1>
                     <span>{TotalDayCount()} x</span>
                   </div>
-                  <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
-                    <h1 className="w-20">Total Cars:</h1>
+                  <div className="bg-white text-yellow-600 flex justify-between p-2 rounded-xl">
+                    <h1>Total Cars:</h1>
                     <span>{ReserveCars.length} x</span>
                   </div>
-                  <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
-                    <h1 className="w-20">Total Track:</h1>
+                  <div className="bg-white text-yellow-600 flex justify-between p-2 rounded-xl">
+                    <h1>Total Track:</h1>
                     <span>{reservedTracks.length} x</span>
                   </div>
-                  <div className="bg-white text-yellow-600 flex p-2 rounded-xl">
-                    <h1 className="w-20">Total Price:</h1>
+                  <div className="bg-white text-yellow-600 flex justify-between p-2 rounded-xl">
+                    <h1>Total Price:</h1>
                     <span>{getTotalPrice()} $</span>
                   </div>
                   {!userId ? (
@@ -267,7 +267,7 @@ export default function ReserveCars() {
                   ) : (
                     <button
                       onClick={() => router.push("/pages/chackout")}
-                      className="text-center bg-blue-500 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
+                      className="text-center bg-orange-500 mt-2 hover:bg-blue-600 p-2 rounded-xl w-3/6 m-auto"
                     >
                       Go to Chackout
                     </button>
