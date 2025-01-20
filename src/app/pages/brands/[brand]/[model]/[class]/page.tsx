@@ -100,7 +100,7 @@ export default function Page({
 
       const par = new URLSearchParams({
         page: String(page),
-        limit: "10",
+        limit: "6",
         ...params,
       });
       const url = `/api/cars?${params}&${par.toString()}`;
@@ -774,7 +774,11 @@ export default function Page({
                   })}
                 </div>
               </div>
-              <Button disabled={!hasMore} onClick={loadMoreData}>
+              <Button
+                className="bg-orange-500 border-none text-white font-mono text-xl"
+                disabled={!hasMore}
+                onClick={loadMoreData}
+              >
                 Load More
               </Button>
             </div>

@@ -24,6 +24,15 @@ const UserProfile = () => {
     );
   }
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const content = (
     <div className="flex flex-col gap-2">
       <Button
@@ -34,7 +43,7 @@ const UserProfile = () => {
       </Button>
       <Button
         className="font-medium text-red-600 p-2 rounded hover:text-red-500"
-        onClick={() => signOut()}
+        onClick={() => handleSignOut()}
       >
         Log Out
       </Button>
@@ -45,13 +54,11 @@ const UserProfile = () => {
     <div className="flex items-center">
       {!session ? (
         <button
-          onClick={() => router.push("/register")}
-          className="p-1 px-2 relative text-white border-none flex items-center"
+          onClick={() => router.push("/login")}
+          className="p-2 rounded-full font-mono text-white hover:bg-orange-600 bg-orange-500 relative text-white border-none flex items-center"
         >
-          <span className="absolute left-0 border  border-gray-400 h-full"></span>
           <Avatar className="bg-orange-700" icon={<UserOutlined />} />
-          <h1 className="text-xl hidden lg:inline ml-2">Sign Up</h1>
-          <span className="absolute right-0 border border-gray-400 h-full"></span>
+          <h1 className="text-xl hidden lg:inline ml-2">Sign in</h1>
         </button>
       ) : (
         <div className="flex gap-4">
