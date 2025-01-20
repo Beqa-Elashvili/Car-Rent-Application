@@ -83,7 +83,7 @@ export default function Orders() {
             <div className="flex justify-between items-center">
               <Image
                 height={500}
-                width={1000}git 
+                width={1000}
                 className="w-24"
                 src="/car-stainless-logo-png.webp"
                 alt="logoPng"
