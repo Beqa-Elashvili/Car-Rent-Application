@@ -21,9 +21,7 @@ import { motion } from "framer-motion";
 export default function Conditions() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { conditions, location } = useGlobalProvider();
-
-  // console.log(location);
+  const { conditions, location, userId } = useGlobalProvider();
 
   return (
     <div className="bg-gray-900 h-full w-full text-white">
@@ -78,14 +76,14 @@ export default function Conditions() {
                   </div>
                 </div>
               </div>
-              <div>
+              {!userId && (
                 <Button
                   onClick={() => router.push("/register")}
                   className="flex items-center py-5 rounded-xl bg-blue-500 border-none text-white font-medium w-full"
                 >
                   Sign up
                 </Button>
-              </div>
+              )}
             </div>
           </div>
           <div className="w-full">

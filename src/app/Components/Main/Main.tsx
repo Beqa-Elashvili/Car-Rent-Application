@@ -516,8 +516,8 @@ export function Main() {
           ))}
         </div>
         <div className="h-px bg-gray-900 w-full mt-40"></div>
-        <div className="relative h-96 bg-orange-900 ">
-          <div className="absolute inset-0 h-96 bg-gradient-to-t to-black from-transparent opacity-90 ">
+        <div className="relative h-96 bg-orange-700 ">
+          <div className="absolute inset-0 h-96 bg-gradient-to-b to-black from-transparent opacity-90 ">
             <div className="w-3/4 py-12 m-auto">
               <h1 className=" text-3xl md:text-6xl">Get a quote</h1>
               <div className="grid grid-cols-2 items-center mt-12 gap-8">

@@ -24,8 +24,13 @@ import "react-credit-cards-2/dist/es/styles-compiled.css";
 import axios from "axios";
 
 export default function Chackout() {
-  const { ReserveCars, location, deleteReservedCar, reservedTracks } =
-    useGlobalProvider();
+  const {
+    ReserveCars,
+    location,
+    deleteReservedCar,
+    deleteReserveTrack,
+    reservedTracks,
+  } = useGlobalProvider();
   const { data: session } = useSession();
   const [randomNumber, setRandomNumber] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,21 +81,14 @@ export default function Chackout() {
     cardName: string;
     cardunlock: string;
   };
-  useEffect(() => {
-    console.log(ReserveCars);
-  }, []);
 
   const onFinish = (values: FieldType) => {
     try {
-      if (ReserveCars.length <= 0 || reservedTracks.length <= 0) {
+      if (ReserveCars.length === 0 && reservedTracks.length === 0) {
         alert("please add reserve first");
         return;
       }
-      setPostOrderPending(true);
-      if (ReserveCars.length !== 0 || reservedTracks.length !== 0) {
-        alert("Please add Reserve first");
-        return;
-      }
+
       if (values.drivingLicense.length !== 9) {
         form.setFields([
           {
@@ -141,8 +139,6 @@ export default function Chackout() {
       PostChackout(values);
     } catch (error) {
       console.log(error);
-    } finally {
-      setPostOrderPending(false);
     }
   };
 
@@ -177,6 +173,7 @@ export default function Chackout() {
       {
         if (userId) {
           await deleteReservedCar(userId, true, () => {});
+          await deleteReserveTrack(userId, true);
         }
       }
       router.push("/pages/orders");

@@ -31,7 +31,6 @@ export default function Orders() {
   const { userId } = useGlobalProvider();
   const [code, setCode] = useState<{ [key: string]: string }>({});
 
-  console.log(orders);
   const handleCodeChange = (id: string, value: string) => {
     setCode((prev) => ({
       ...prev,
@@ -39,21 +38,38 @@ export default function Orders() {
     }));
   };
 
-  async function GetOrders() {
-    try {
-      if (userId) {
-        const resp = await axios.get("/api/orders", {
-          params: { userId },
-        });
-        setOrders(resp.data.orders);
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      async function GetOrders() {
+        try {
+          if (userId) {
+            const resp = await axios.get("/api/orders", {
+              params: { userId },
+            });
+            setOrders(resp.data.orders);
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
+      GetOrders();
+      return () => clearTimeout(timeOut);
+    }, 30);
+  }, [userId]);
+
+  async function DeleteOrder(userId?: string, id?: string) {
+    try {
+      let url = "/api/orders";
+      if (userId) {
+        url += `?userId=${userId}`;
+      } else {
+        url += `?id=${id}`;
+      }
+      await axios.delete(url);
     } catch (error) {
-      console.log(error);
+      console.error("something get wrong while delete order/orders");
     }
   }
-  useEffect(() => {
-    GetOrders();
-  }, [userId]);
 
   return (
     <div className="bg-slate-800 min-h-screen h-full  w-full items-start p-4 md:p-20 grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -67,7 +83,7 @@ export default function Orders() {
             <div className="flex justify-between items-center">
               <Image
                 height={500}
-                width={1000}
+                width={1000}git 
                 className="w-24"
                 src="/car-stainless-logo-png.webp"
                 alt="logoPng"

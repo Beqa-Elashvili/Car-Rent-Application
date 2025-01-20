@@ -171,7 +171,7 @@ export default function ReserveCars() {
                   </h1>
                   {reservedTracks?.map((item: TRentalTracks) => {
                     return (
-                      <div key={item._id}>
+                      <div className="cursor-pointer" key={item._id}>
                         <div className="bg-yellow-500 p-2 rounded-xl mx-2 md:flex items-center  justify-between">
                           <div className="flex md:text-start flex-col">
                             <p className="font-medium text-xl">
