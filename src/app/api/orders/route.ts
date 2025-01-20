@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       email: order.email,
       city: order.city,
       street: order.street,
-      drivingLicense: order.drivingLicense || "",
+      drivingLicense: order.drivingLicense,
       cardNumber: order.cardNumber,
       expiry: order.expiry,
       cvc: order.cvc,
@@ -105,9 +105,9 @@ export async function DELETE(req: any) {
         );
       }
 
-      const deletedCars = await Orders.deleteMany({ userId });
+      const orders = await Orders.deleteMany({ userId });
 
-      if (deletedCars.deletedCount === 0) {
+      if (orders.deletedCount === 0) {
         return NextResponse.json(
           { message: "No orders found to delete for this user" },
           { status: 404 }
@@ -117,7 +117,7 @@ export async function DELETE(req: any) {
       return NextResponse.json(
         {
           message: "All orders for user deleted successfully",
-          deletedCount: deletedCars.deletedCount,
+          deletedCount: orders.deletedCount,
         },
         { status: 200 }
       );
@@ -131,9 +131,9 @@ export async function DELETE(req: any) {
         );
       }
 
-      const deletedCar = await Orders.findOneAndDelete({ _id: orderId });
+      const orders = await Orders.findOneAndDelete({ _id: orderId });
 
-      if (!deletedCar) {
+      if (!orders) {
         return NextResponse.json(
           { message: "Order not found" },
           { status: 404 }

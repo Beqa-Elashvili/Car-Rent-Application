@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, Spin } from "antd";
 import { CiUser } from "react-icons/ci";
 import { useSession } from "next-auth/react";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { LoadingOutlined } from "@ant-design/icons";
 import useGetUpdatedPrice from "@/app/hooks/GetDiscounthook/useGetDiscount";
 
 const GoogleMap = dynamic(
@@ -410,7 +411,7 @@ export default function Chackout() {
             </Form.Item>
           </Form>
         ) : (
-          "loading"
+          <Spin className="w-full m-auto" indicator={<LoadingOutlined spin />} size="large" />
         )}
         <div className="lg:border-l w-full lg:w-2/6 p-4">
           <div className="hidden">
