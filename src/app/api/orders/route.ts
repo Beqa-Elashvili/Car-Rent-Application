@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       drivingLicense: order.drivingLicense,
       cardNumber: order.cardNumber,
       expiry: order.expiry,
+      district: order.district,
       cvc: order.cvc,
       cardName: order.cardName,
       TotalPrice: order.TotalPrice,

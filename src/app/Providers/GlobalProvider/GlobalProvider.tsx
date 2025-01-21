@@ -199,6 +199,7 @@ export function GlobalProvider({ children }: PropsWithChildren) {
     postcode: null,
     suburb: null,
     quarter: null,
+    district: null,
   });
 
   const [collections, setCollections] = useState<TCollecttion[]>([]);

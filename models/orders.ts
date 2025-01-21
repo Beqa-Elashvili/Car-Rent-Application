@@ -19,6 +19,7 @@ const ordersSchema = new mongoose.Schema(
     cardName: { type: String, required: true },
     TotalPrice: { type: String, required: true },
     TotalDays: { type: String, required: true },
+    district: { type: String, required: true },
   },
   { timestamps: true }
 );

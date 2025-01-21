@@ -30,7 +30,6 @@ export default function OpenStreetMap() {
     try {
       const response = await axios.get(url);
       const data = response.data;
-      console.log(data);
 
       if (data) {
         setLocation({
@@ -42,6 +41,7 @@ export default function OpenStreetMap() {
           neighbourhood: data?.address.neighbourhood || null,
           suburb: data?.address.suburb || null,
           quarter: data?.address.quarter || null,
+          district: data?.address.District || null,
         });
       }
     } catch (error) {

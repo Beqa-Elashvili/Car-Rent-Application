@@ -11,6 +11,7 @@ export interface TLocation {
   postcode?: string | null;
   suburb?: string | null;
   quarter?: string | null;
+  district?: string | null;
 }
 export interface TFormtype {
   brand: string;
@@ -31,10 +32,10 @@ export interface TRentalTracks {
   dayRentPrice: number;
   location: string;
   description: string;
-  dayCount: number; // Optional field
+  dayCount: number;
   dayStart: string;
   dayEnd: string;
-  oneLap?: boolean; // Optional field
+  oneLap?: boolean;
   totalPrice: number;
   _id: string;
 }
@@ -190,6 +191,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
     postcode: null,
     suburb: null,
     quarter: null,
+    district: null,
   },
   setLocation: () => {},
   collections: [],

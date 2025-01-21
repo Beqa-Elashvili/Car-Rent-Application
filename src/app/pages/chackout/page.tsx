@@ -54,14 +54,21 @@ export default function Chackout() {
     username: session?.user.username,
     email: session?.user.email,
     city: location?.city,
-    street: location?.street,
+    street: `${location?.street || "..."} ${
+      location?.house_number ? `No ${location.house_number}` : "..."
+    }`,
     drivingLicense: "",
     cardNumber: state.cardNumber,
     expiry: state.expiry,
     cvc: state.cvc,
     cardName: state.cardName,
     cardunlock: state.cardunlock,
+    country: location?.country,
+    district:
+      location?.neighbourhood || location?.quarter || location?.suburb || "...",
   };
+
+  console.log(location);
 
   useEffect(() => {
     const generateRandomNumber = () => {
@@ -81,7 +88,24 @@ export default function Chackout() {
     cvc: string;
     cardName: string;
     cardunlock: string;
+    country: string;
+    district: string;
   };
+  useEffect(() => {
+    form.setFieldsValue({
+      city: location?.city || "",
+      street: `${location?.street || "..."} ${
+        location?.house_number ? `No ${location.house_number}` : "..."
+      }`,
+      country: location?.country || "",
+      district:
+        location?.neighbourhood ||
+        location?.quarter ||
+        location?.suburb ||
+        "...",
+      postcode: location?.postcode || "",
+    });
+  }, [location, form]);
 
   const onFinish = (values: FieldType) => {
     try {
@@ -219,7 +243,7 @@ export default function Chackout() {
         {session?.user && location.city ? (
           <Form<FieldType>
             form={form}
-            initialValues={userValues}
+            initialValues={{ ...userValues }}
             autoComplete="on"
             className=" w-full lg:w-8/12"
             onFinish={onFinish}
@@ -286,7 +310,7 @@ export default function Chackout() {
                 <Input value={location?.country || "..."} />
               </div>
             </Form.Item>{" "}
-            <Form.Item name="District">
+            <Form.Item name="district">
               <div>
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   District
@@ -301,7 +325,7 @@ export default function Chackout() {
                 />
               </div>
             </Form.Item>{" "}
-            <Form.Item name="District">
+            <Form.Item name="postcode">
               <div>
                 <p className="mb-2 flex items-center gap-2 text-gray-600">
                   Post code
@@ -476,7 +500,7 @@ export default function Chackout() {
         ) : (
           <Spin
             className="w-full h-96 m-auto"
-            indicator={<LoadingOutlined spin style={{fontSize: 100}} />}
+            indicator={<LoadingOutlined spin style={{ fontSize: 100 }} />}
             size="large"
           />
         )}
