@@ -6,6 +6,7 @@ import { ConnectDB } from "utils/connect";
 
 export async function POST(req: Request) {
   try {
+    await ConnectDB();
     const { userId, order } = await req.json();
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       return NextResponse.json(
@@ -13,7 +14,6 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    await ConnectDB();
 
     const user = await User.findById(userId);
     if (!user) {

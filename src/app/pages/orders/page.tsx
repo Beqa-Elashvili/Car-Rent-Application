@@ -1,7 +1,7 @@
 "use client";
 
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { Button, Input } from "antd";
@@ -40,34 +40,34 @@ export default function Orders() {
     }));
   };
 
+  async function GetOrders() {
+    try {
+      if (userId) {
+        const resp = await axios.get("/api/orders", {
+          params: { userId },
+        });
+        setOrders(resp.data.orders);
+      }
+    } catch (error) {
+      setOrders([]);
+    }
+  }
+
   useEffect(() => {
     const timeOut = setTimeout(() => {
-      async function GetOrders() {
-        try {
-          if (userId) {
-            const resp = await axios.get("/api/orders", {
-              params: { userId },
-            });
-            setOrders(resp.data.orders);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
       GetOrders();
       return () => clearTimeout(timeOut);
     }, 30);
   }, [userId]);
 
-  async function DeleteOrder(userId?: string, id?: string) {
+  async function DeleteOrder(userId?: string, _id?: string) {
     try {
-      let url = "/api/orders";
-      if (userId) {
-        url += `?userId=${userId}`;
-      } else {
-        url += `?id=${id}`;
-      }
+      const url = userId
+        ? `/api/orders?userId=${userId}`
+        : `/api/orders?id=${_id}`;
+
       await axios.delete(url);
+      await GetOrders();
     } catch (error) {
       console.error("something get wrong while delete order/orders");
     }
@@ -127,7 +127,18 @@ export default function Orders() {
                   src="/car-logo-png-25.png"
                   alt="logoPng"
                 />
-                <p>NO. {item._id.replace(/\D/g, "").slice(-2)}</p>
+                <div>
+                  <p className="text-end">
+                    NO. {item._id.replace(/\D/g, "").slice(-2)}
+                  </p>
+                  <Button
+                    onClick={() => DeleteOrder("", item._id)}
+                    type="dashed"
+                    className="border rounded bg-red-500 font-semibold text-white"
+                  >
+                    Delete
+                  </Button>
+                </div>
               </div>
               <h1 className="text-4xl font-medium">INVOICE</h1>
               <p>Date: {item.createdAt.split("T").slice(0, -1)}</p>
