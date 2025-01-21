@@ -335,7 +335,7 @@ export function Main() {
       )}
       <div className="bg-gray-500 h-px w-full my-8"></div>
 
-      <div className="py-2 relative ">
+      <div className="py-2 relative">
         <Image
           alt="image"
           width={2000}

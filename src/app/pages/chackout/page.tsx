@@ -476,7 +476,7 @@ export default function Chackout() {
         ) : (
           <Spin
             className="w-full h-96 m-auto"
-            indicator={<LoadingOutlined spin />}
+            indicator={<LoadingOutlined spin style={{fontSize: 100}} />}
             size="large"
           />
         )}
