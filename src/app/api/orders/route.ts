@@ -13,6 +13,7 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+    await ConnectDB();
 
     const user = await User.findById(userId);
     if (!user) {
