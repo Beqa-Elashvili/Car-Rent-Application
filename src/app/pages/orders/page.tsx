@@ -8,6 +8,7 @@ import { Button, Input, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
 import { useRouter } from "next/navigation";
+import { input } from "framer-motion/client";
 
 interface orderType {
   TotalDays: string;
@@ -188,6 +189,12 @@ export default function Orders() {
                     <div className="h-px bg-gray-500 w-full"></div>
                     <div>
                       <h1 className="font-medium">Card</h1>
+                      {inputCode.length === 4 &&
+                        inputCode !== item.cardunlock && (
+                          <p className="text-red-500 font-mono">
+                            !Invalid unlock code
+                          </p>
+                        )}
                       <div className="relative mt-2 flex overflow-hidden items-center">
                         <Input
                           value={inputCode}
