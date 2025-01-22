@@ -93,6 +93,12 @@ export function Header() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearchResults(brand, value);
+    }
+  };
+
   return (
     <div className="w-full bg-slate-800 text-white relative h-full text-2xl">
       <div className="flex justify-between p-2 text-xl h-full items-center">
@@ -134,6 +140,7 @@ export function Header() {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="Search"
+              onKeyDown={handleKeyDown}
               className={`w-full z-30 pl-20 ${
                 searchResults.length !== 0 && "rounded-b-none"
               }`}
@@ -234,6 +241,7 @@ export function Header() {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="Search the car"
+            onKeyDown={handleKeyDown}
             className={`w-full px-44 z-30 ${
               searchResults.length !== 0 && "rounded-b-none"
             }`}

@@ -350,7 +350,7 @@ export function Main() {
             transition={{ duration: 1 }}
             className="text-orange-300 text-3xl md:text-8xl"
           >
-            Find Your Best
+            Discover your best option
           </motion.h1>
           <motion.button
             onClick={() => router.push(`/pages/collection`)}
@@ -393,7 +393,7 @@ export function Main() {
               transition={{ duration: 1 }}
               className="text-3xl md:text-8xl text-orange-300"
             >
-              Rest with Porsche
+              Relax with Porsche
             </motion.h1>
             <motion.button
               onClick={() => router.push("/pages/brands/Porsche/All/All")}

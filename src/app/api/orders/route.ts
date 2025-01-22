@@ -52,6 +52,8 @@ export async function POST(req: Request) {
 }
 export async function GET(req: Request) {
   try {
+    await ConnectDB();
+
     const url = new URL(req.url);
     const userId = url.searchParams.get("userId");
 
@@ -82,6 +84,8 @@ export async function GET(req: Request) {
 }
 export async function DELETE(req: any) {
   try {
+    await ConnectDB();
+
     const userId = req.nextUrl.searchParams.get("userId");
     const orderId = req.nextUrl.searchParams.get("id");
     const deleteAll = req.nextUrl.searchParams.get("deleteAll");

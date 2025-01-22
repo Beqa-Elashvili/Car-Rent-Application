@@ -323,7 +323,7 @@ export default function Page({
                     Reserved
                   </Button>
                   <div className="border text-center text-white p-2 mt-2 rounded">
-                    <h1 className="font-medium">PRICES SORT</h1>
+                    <h1 className="font-medium">PRICE SORT</h1>
                     <Slider
                       onChange={(e: number[]) => sortByPrices(e)}
                       range
