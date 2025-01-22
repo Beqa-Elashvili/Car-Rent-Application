@@ -268,7 +268,6 @@ export function GlobalProvider({ children }: PropsWithChildren) {
       setReserveCars(response.data.ReservedCars);
       setLoading(false);
     } catch (error: any) {
-      setError(error.response.data.message || "Error fetching reserved cars");
       setReserveCars([]);
     } finally {
       setLoading(false);
