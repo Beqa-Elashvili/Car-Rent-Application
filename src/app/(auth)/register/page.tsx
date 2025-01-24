@@ -12,7 +12,7 @@ const GoogleMap = dynamic(
     ssr: false,
   }
 );
-import { Input, Button, Form, Modal } from "antd";
+import { Input, Button, Form, Modal, Checkbox } from "antd";
 import { useGlobalProvider } from "@/app/Providers/GlobalProvider";
 import axios from "axios";
 
@@ -23,6 +23,12 @@ function Register() {
   const [pending, setPending] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isAdminRegistration, setIsAdminRegistration] = useState(false);
+
+  const toggleAdminRegistration = () => {
+    setIsAdminRegistration((prev) => !prev);
+  };
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -35,6 +41,7 @@ function Register() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
   type FormValues = {
     phonenumber: string;
     password: string;
@@ -42,6 +49,8 @@ function Register() {
     email: string;
     city: string;
     street: string;
+    isAdmin?: boolean;
+    adminSecret?: string;
   };
 
   const handleSubmit = async (values: FormValues) => {
@@ -73,10 +82,19 @@ function Register() {
       setError("Please enter a valid email address.");
       return;
     }
+    const payload: FormValues = {
+      ...values,
+      isAdmin: isAdminRegistration ? true : false,
+      ...(isAdminRegistration && {
+        adminSecret: values.adminSecret,
+      }),
+    };
+
+    console.log(values, isAdminRegistration);
 
     try {
       setPending(true);
-      const res = await axios.post("/api/register", values, {
+      const res = await axios.post("/api/register", payload, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -137,6 +155,34 @@ function Register() {
             autoComplete="off"
           >
             <h1 className="text-2xl mb-4">Please Input all Providers</h1>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                type="checkbox"
+                checked={isAdminRegistration}
+                onChange={toggleAdminRegistration}
+              />
+              <label className="text-white">Register as Admin</label>
+            </div>
+            <Form.Item name="role" initialValue="user" hidden>
+              <Input type="hidden" />
+            </Form.Item>
+            {isAdminRegistration && (
+              <Form.Item
+                name="adminSecret"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please provide the admin secret!",
+                  },
+                ]}
+              >
+                <Input
+                  className="border rounded p-2"
+                  type="password"
+                  placeholder="Admin Secret"
+                />
+              </Form.Item>
+            )}
             <Form.Item
               name="username"
               rules={[

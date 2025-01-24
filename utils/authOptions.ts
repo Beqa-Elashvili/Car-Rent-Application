@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
         token.username = user.username;
         token.email = user.email;
         token.id = user.id;
+        token.isAdmin = user.isAdmin;
       }
       console.log("Final token", token);
       return token;
@@ -59,6 +60,7 @@ export const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.email = token.email;
         session.user.id = token.id;
+        session.user.isAdmin = token.isAdmin;
       }
       console.log("this is Session", session);
       return session;
