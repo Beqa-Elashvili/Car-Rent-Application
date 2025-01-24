@@ -90,8 +90,6 @@ function Register() {
       }),
     };
 
-    console.log(values, isAdminRegistration);
-
     try {
       setPending(true);
       const res = await axios.post("/api/register", payload, {
@@ -107,9 +105,9 @@ function Register() {
       } else {
         setError(res.data.message || "Registration failed.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("error", error);
-      setError("An error occurred while registering.");
+      setError(error.response.data.message);
     } finally {
       setPending(false);
     }
@@ -163,9 +161,6 @@ function Register() {
               />
               <label className="text-white">Register as Admin</label>
             </div>
-            <Form.Item name="role" initialValue="user" hidden>
-              <Input type="hidden" />
-            </Form.Item>
             {isAdminRegistration && (
               <Form.Item
                 name="adminSecret"
